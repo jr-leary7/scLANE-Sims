@@ -1,0 +1,6 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|iteration|parent|children|seconds|warnings|error
+run_scLANE|function|ffe48f07be2d3fa9||||||||||||||
+simulate_scaffold|function|9bbdd6c119f95a83||||||||||||||
+lung_data_raw|stem|0fbc618f3f65f418|5db68dda8766cd4e|c3b5fc02cdc369c1|1236129992||t19088.1606035594s|9c455ed968dd1302|134249666|rds|vector|||27.164|package scran was built under R version 4.0.5|
+lung_data_clean|stem|b5fa5a2e251f7d13|5d368821f2817ff7|2290c2675d64e548|47404244||t19088.1609110063s|f046d8076b9048ac|110289838|rds|vector|||1.568||
+lung_sim_DEG_20_CELLS_5000|stem||990ebf6e5dbf629e|75feb662a9159c1d|-1017573920||t19088.1717283701s||0|rds|vector|||933.951||vector memory exhausted limit reached
