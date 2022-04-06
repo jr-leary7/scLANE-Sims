@@ -3,8 +3,9 @@
 library(targets)
 source("R/functions.R")
 tar_option_set(packages = c("tidyverse", "scLANE", "glm2", "scRNAseq", "parallel", "geeM", "SingleCellExperiment",
-                            "scaffold", "pryr", "bigstatsr", "doparallel", "foreach", "tidyr", "slingshot", "igraph",
-                            "MASS", "stats", "gamlss", "broom", "mgcv", "mvabund", "scran", "scater", "S4Vectors"))
+                            "scaffold", "pryr", "bigstatsr", "doParallel", "foreach", "tidyr", "slingshot", "igraph",
+                            "MASS", "stats", "gamlss", "broom", "mgcv", "mvabund", "scran", "scater", "S4Vectors"),
+               garbage_collection = TRUE)
 
 ##### targets #####
 
@@ -143,5 +144,5 @@ list(
   tar_target(scLANE_res_DEG_20_CELLS_30000, run_scLANE(sim.data = lung_sim_DEG_20_CELLS_30000,
                                                        n.iter = 3,
                                                        param.list = list(Prop_Dyn_Genes = 0.20, Cells = 30000),
-                                                       n.cores = 4)),
+                                                       n.cores = 4))
 )
