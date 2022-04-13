@@ -31,7 +31,7 @@ simulate_scaffold <- function(ref.dataset = NULL,
   g <- buildSNNGraph(sim_data, use.dimred = "PCAsub", k = 30)
   clusters <- igraph::cluster_louvain(graph = g)$membership
   colLabels(sim_data) <- factor(clusters)
-  colData(data_sim) <- colData(data_sim) %>%
+  colData(sim_data) <- colData(sim_data) %>%
                        as.data.frame() %>%
                        dplyr::mutate(cell_time = as.numeric(gsub("Cell_", "", rownames(.))),
                                      cell_time_normed = cell_time / max(cell_time)) %>%
@@ -42,7 +42,9 @@ simulate_scaffold <- function(ref.dataset = NULL,
 run_scLANE <- function(sim.data = NULL,
                        n.iter = 3,
                        param.list = NULL,
-                       n.cores = NULL) {
+                       n.cores = NULL, 
+                       scLANE.log = TRUE, 
+                       scLANE.log.iter = 1000) {
   # check inputs
   if (is.null(sim.data) | is.null(param.list) | is.null(n.cores)) { stop("You failed to provide necessary parameters to run_scLANE().") }
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
@@ -61,7 +63,7 @@ run_scLANE <- function(sim.data = NULL,
   # prepare counts matrix & cell-ordering dataframe
   sim_counts <- as.matrix(t(counts(sim.data)))
   sim_counts <- sim_counts[, which(colSums(sim_counts) > 0)]
-  pt_df <- colData(sim_data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -74,7 +76,9 @@ run_scLANE <- function(sim.data = NULL,
                                   parallel.exec = TRUE,
                                   n.cores = n.cores,
                                   n.potential.basis.fns = 5,
-                                  track.time = TRUE)
+                                  track.time = TRUE, 
+                                  log.file = scLANE.log, 
+                                  log.iter = scLANE.log.iter)
         global_test_results <- getResultsDE(gene_stats, p.adj.method = "bonferroni", fdr.cutoff = 0.01) %>%
                                dplyr::inner_join((rowData(sim.data) %>%
                                as.data.frame() %>%

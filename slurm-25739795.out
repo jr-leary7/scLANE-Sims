@@ -1,0 +1,81 @@
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+v skip target lung_data_raw
+v skip target lung_data_clean
+v skip target lung_sim_DEG_05_CELLS_1000
+v skip target lung_sim_DEG_20_CELLS_1000
+v skip target lung_sim_DEG_05_CELLS_100
+v skip target lung_sim_DEG_01_CELLS_500
+v skip target lung_sim_DEG_01_CELLS_5000
+v skip target lung_sim_DEG_10_CELLS_500
+v skip target lung_sim_DEG_01_CELLS_1000
+v skip target lung_sim_DEG_10_CELLS_1000
+v skip target lung_sim_DEG_01_CELLS_100
+v skip target lung_sim_DEG_20_CELLS_500
+v skip target lung_sim_DEG_05_CELLS_500
+v skip target lung_sim_DEG_10_CELLS_100
+v skip target lung_sim_DEG_20_CELLS_100
+v skip target lung_sim_DEG_05_CELLS_5000
+v skip target lung_sim_DEG_20_CELLS_5000
+v skip target lung_sim_DEG_10_CELLS_5000
+* start target scLANE_res_DEG_05_CELLS_1000
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+[1] "testDynamic evaluated 31282 genes with 1 lineages apiece in 2.746 hours"
+* built target scLANE_res_DEG_05_CELLS_1000
+v skip target scLANE_res_DEG_20_CELLS_1000
+v skip target scLANE_res_DEG_05_CELLS_100
+v skip target scLANE_res_DEG_01_CELLS_500
+* start target scLANE_res_DEG_10_CELLS_500
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+[1] "testDynamic evaluated 28504 genes with 1 lineages apiece in 1.366 hours"
+* built target scLANE_res_DEG_10_CELLS_500
+v skip target scLANE_res_DEG_01_CELLS_1000
+* start target scLANE_res_DEG_10_CELLS_1000
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
+During startup - Warning message:
+Setting LC_CTYPE failed, using "C" 
