@@ -139,7 +139,7 @@ run_scLANE_reduced <- function(sim.data = NULL,
   ts_res_list <- vector("list", length = n.iter)
 
   # prepare subsampled (preserves % dynamic genes) counts matrix & cell-ordering dataframe (no need to set seed b/c targets takes care of reproducibility)
-  p_dynamic <- mean(rowData(a)[, 1] == "Dynamic")
+  p_dynamic <- mean(rowData(sim.data)[, 1] == "Dynamic")
   n_dyn_genes <- ceiling(p_dynamic * n.genes.sample)
   n_norm_genes <- n.genes.sample - n_dyn_genes
   samp_dyn_genes <- rowData(sim.data) %>%
@@ -385,7 +385,7 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
   td_res_tidy_list <- vector("list", length = n.iter)
   ts_res_list <- vector("list", length = n.iter)
   # prepare subsampled (preserves % dynamic genes) counts matrix & cell-ordering dataframe (no need to set seed b/c targets takes care of reproducibility)
-  p_dynamic <- rowData(a) %>%
+  p_dynamic <- rowData(sim.data) %>%
                as.data.frame() %>% View()
                select(contains("geneStatus")) %>%
                tidyr::pivot_longer(cols = everything(), values_to = "geneStatus") %>%
