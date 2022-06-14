@@ -4,12 +4,13 @@ library(targets)
 source("R/functions.R")
 tar_option_set(packages = c("tidyverse", "scLANE", "glm2", "scRNAseq", "parallel", "geeM", "SingleCellExperiment",
                             "scaffold", "pryr", "bigstatsr", "doParallel", "foreach", "tidyr", "slingshot", "igraph",
-                            "MASS", "stats", "gamlss", "broom", "mgcv", "mvabund", "scran", "scater", "S4Vectors"),
+                            "MASS", "stats", "gamlss", "broom", "mgcv", "mvabund", "scran", "scater", "S4Vectors", "geeM"),
                garbage_collection = TRUE)
 
 ##### targets #####
 
 list(
+  ##### GLM SIMS #####
   # prep data
   tar_target(lung_data_raw, scRNAseq::ZilionisLungData(which = "human")),
   tar_target(lung_data_clean, lung_data_raw[, lung_data_raw$Used]),
@@ -43,7 +44,7 @@ list(
   #tar_target(lung_sim_DEG_05_CELLS_30000, simulate_scaffold(ref.dataset = lung_data_clean, perc.dyn.genes = 0.05, n.cells = 30000)),
   #tar_target(lung_sim_DEG_10_CELLS_30000, simulate_scaffold(ref.dataset = lung_data_clean, perc.dyn.genes = 0.10, n.cells = 30000)),
   #tar_target(lung_sim_DEG_20_CELLS_30000, simulate_scaffold(ref.dataset = lung_data_clean, perc.dyn.genes = 0.20, n.cells = 30000)),
-  # run scLANE for 100 cell datasets
+  # run GLM scLANE for 100 cell datasets
   tar_target(scLANE_res_DEG_01_CELLS_100, run_scLANE(sim.data = lung_sim_DEG_01_CELLS_100,
                                                      n.iter = 1,
                                                      param.list = list(Prop_Dyn_Genes = 0.01, Cells = 100),
@@ -60,7 +61,7 @@ list(
                                                      n.iter = 1,
                                                      param.list = list(Prop_Dyn_Genes = 0.20, Cells = 100),
                                                      n.cores = 4)),
-  # run scLANE for 500 cell datasets
+  # run GLM scLANE for 500 cell datasets
   tar_target(scLANE_res_DEG_01_CELLS_500, run_scLANE(sim.data = lung_sim_DEG_01_CELLS_500,
                                                      n.iter = 1,
                                                      param.list = list(Prop_Dyn_Genes = 0.01, Cells = 500),
@@ -77,7 +78,7 @@ list(
                                                      n.iter = 1,
                                                      param.list = list(Prop_Dyn_Genes = 0.20, Cells = 500),
                                                      n.cores = 8)),
-  # run scLANE for 1,000 cell datasets
+  # run GLM scLANE for 1,000 cell datasets
   tar_target(scLANE_res_DEG_01_CELLS_1000, run_scLANE(sim.data = lung_sim_DEG_01_CELLS_1000,
                                                       n.iter = 1,
                                                       param.list = list(Prop_Dyn_Genes = 0.01, Cells = 1000),
@@ -93,8 +94,8 @@ list(
   tar_target(scLANE_res_DEG_20_CELLS_1000, run_scLANE(sim.data = lung_sim_DEG_20_CELLS_1000,
                                                       n.iter = 1,
                                                       param.list = list(Prop_Dyn_Genes = 0.20, Cells = 1000),
-                                                      n.cores = 8))#,
-  # run scLANE for 5,000 cell datasets
+                                                      n.cores = 8)),
+  # run GLM scLANE for 5,000 cell datasets
   #tar_target(scLANE_res_DEG_01_CELLS_5000, run_scLANE(sim.data = lung_sim_DEG_01_CELLS_5000,
   #                                                    n.iter = 1,
   #                                                    param.list = list(Prop_Dyn_Genes = 0.01, Cells = 5000),
@@ -111,7 +112,7 @@ list(
   #                                                   n.iter = 1,
   #                                                    param.list = list(Prop_Dyn_Genes = 0.20, Cells = 5000),
   #                                                    n.cores = 8))#,
-  # run scLANE for 10,000 cell datasets
+  # run GLM scLANE for 10,000 cell datasets
   #tar_target(scLANE_res_DEG_01_CELLS_10000, run_scLANE(sim.data = lung_sim_DEG_01_CELLS_10000,
   #                                                     n.iter = 3,
   #                                                     param.list = list(Prop_Dyn_Genes = 0.01, Cells = 10000),
@@ -128,7 +129,7 @@ list(
   #                                                     n.iter = 3,
   #                                                     param.list = list(Prop_Dyn_Genes = 0.20, Cells = 10000),
   #                                                     n.cores = 4)),
-  # run scLANE for 30,000 cell datasets
+  # run GLM scLANE for 30,000 cell datasets
   #tar_target(scLANE_res_DEG_01_CELLS_30000, run_scLANE(sim.data = lung_sim_DEG_01_CELLS_30000,
   #                                                     n.iter = 3,
   #                                                     param.list = list(Prop_Dyn_Genes = 0.01, Cells = 30000),
@@ -145,4 +146,82 @@ list(
   #                                                     n.iter = 3,
   #                                                     param.list = list(Prop_Dyn_Genes = 0.20, Cells = 30000),
   #                                                     n.cores = 4))
+
+  ##### GEE SIMS #####
+  # simulate datasets with 250 cells
+  tar_target(lung_sim_DEG_10_CELLS_250_balanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                       perc.dyn.genes = 0.1,
+                                                                       n.cells = 250,
+                                                                       perc.allocation = rep(100/6, 6),
+                                                                       n.subjects = 6)),
+  tar_target(lung_sim_DEG_20_CELLS_250_balanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                       perc.dyn.genes = 0.2,
+                                                                       n.cells = 250,
+                                                                       perc.allocation = rep(100/6, 6),
+                                                                       n.subjects = 6)),
+  tar_target(lung_sim_DEG_10_CELLS_250_unbalanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                         perc.dyn.genes = 0.1,
+                                                                         n.cells = 250,
+                                                                         perc.allocation = c(0.25, 0.15, 0.2, 0.2, 0.1, 0.1),
+                                                                         n.subjects = 6)),
+  tar_target(lung_sim_DEG_20_CELLS_250_unbalanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                         perc.dyn.genes = 0.2,
+                                                                         n.cells = 250,
+                                                                         perc.allocation = c(0.25, 0.15, 0.2, 0.2, 0.1, 0.1),
+                                                                         n.subjects = 6)),
+  # simulate datasets with 5,000 cells
+  tar_target(lung_sim_DEG_10_CELLS_5000_balanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                        perc.dyn.genes = 0.1,
+                                                                        n.cells = 5000,
+                                                                        perc.allocation = rep(100/6, 6),
+                                                                        n.subjects = 6)),
+  tar_target(lung_sim_DEG_20_CELLS_5000_balanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                        perc.dyn.genes = 0.2,
+                                                                        n.cells = 5000,
+                                                                        perc.allocation = rep(100/6, 6),
+                                                                        n.subjects = 6)),
+  tar_target(lung_sim_DEG_10_CELLS_5000_unbalanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                          perc.dyn.genes = 0.1,
+                                                                          n.cells = 5000,
+                                                                          perc.allocation = c(0.25, 0.15, 0.2, 0.2, 0.1, 0.1),
+                                                                          n.subjects = 6)),
+  tar_target(lung_sim_DEG_20_CELLS_5000_unbalanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
+                                                                          perc.dyn.genes = 0.2,
+                                                                          n.cells = 5000,
+                                                                          perc.allocation = c(0.25, 0.15, 0.2, 0.2, 0.1, 0.1),
+                                                                          n.subjects = 6)),
+  # run GEE scLANE for 250 cell datasets
+  tar_target(scLANE_res_DEG_10_CELLS_250_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_250_balanced,
+                                                                  n.iter = 1,
+                                                                  param.list = list(Prop_Dyn_Genes = 0.1, Cells = 250, Allocation = "balanced"),
+                                                                  n.cores = 4)),
+  tar_target(scLANE_res_DEG_20_CELLS_250_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_250_balanced,
+                                                                  n.iter = 1,
+                                                                  param.list = list(Prop_Dyn_Genes = 0.2, Cells = 250, Allocation = "balanced"),
+                                                                  n.cores = 4)),
+  tar_target(scLANE_res_DEG_10_CELLS_250_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_250_unbalanced,
+                                                                    n.iter = 1,
+                                                                    param.list = list(Prop_Dyn_Genes = 0.1, Cells = 250, Allocation = "unbalanced"),
+                                                                    n.cores = 4)),
+  tar_target(scLANE_res_DEG_20_CELLS_250_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_250_unbalanced,
+                                                                    n.iter = 1,
+                                                                    param.list = list(Prop_Dyn_Genes = 0.2, Cells = 250, Allocation = "unbalanced"),
+                                                                    n.cores = 4)),
+  # run GEE scLANE for 5,000 cell datasets
+  tar_target(scLANE_res_DEG_10_CELLS_5000_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_250_balanced,
+                                                                  n.iter = 1,
+                                                                  param.list = list(Prop_Dyn_Genes = 0.1, Cells = 5000, Allocation = "balanced"),
+                                                                  n.cores = 8)),
+  tar_target(scLANE_res_DEG_20_CELLS_5000_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_5000_balanced,
+                                                                  n.iter = 1,
+                                                                  param.list = list(Prop_Dyn_Genes = 0.2, Cells = 5000, Allocation = "balanced"),
+                                                                  n.cores = 8)),
+  tar_target(scLANE_res_DEG_10_CELLS_5000_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_5000_unbalanced,
+                                                                    n.iter = 1,
+                                                                    param.list = list(Prop_Dyn_Genes = 0.1, Cells = 5000, Allocation = "unbalanced"),
+                                                                    n.cores = 8)),
+  tar_target(scLANE_res_DEG_20_CELLS_5000_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_5000_unbalanced,
+                                                                    n.iter = 1,
+                                                                    param.list = list(Prop_Dyn_Genes = 0.2, Cells = 5000, Allocation = "unbalanced"),
+                                                                    n.cores = 8))
 )
