@@ -1,0 +1,494 @@
+---
+title: "`scLANE` Simulation Results Analysis"
+subtitle: "University of Florida Dept. of Biostatistics - Bacher Group"
+author: "Jack Leary, M.S."
+format: html
+editor: source
+---
+
+```{r setup}
+set.seed(312)  # lucky seed
+```
+
+# Libraries
+
+```{r libraries, results='hide'}
+library(dplyr)
+library(ggplot2)
+library(targets)
+```
+
+# Load Targets
+
+Because `targets` won't recognize the dependencies of this document unless we explicitly list them out by name (loading them programmatically with `tidyselect` functions doesn't work), this chunk of code is unfortunately necessary. 
+
+## Single Subject 
+
+### `scLANE`
+
+First, we need to load in all the output from our pipeline for runs of `scLANE` on single subject datasets. 
+
+```{r, results='hide'}
+# 100 cells
+tar_load(scLANE_res_DEG_01_CELLS_100)
+tar_load(scLANE_res_DEG_05_CELLS_100)
+tar_load(scLANE_res_DEG_10_CELLS_100)
+tar_load(scLANE_res_DEG_20_CELLS_100)
+# 500 cells
+tar_load(scLANE_res_DEG_01_CELLS_500)
+tar_load(scLANE_res_DEG_05_CELLS_500)
+tar_load(scLANE_res_DEG_10_CELLS_500)
+tar_load(scLANE_res_DEG_20_CELLS_500)
+# 1,000 cells
+tar_load(scLANE_res_DEG_01_CELLS_1000)
+tar_load(scLANE_res_DEG_05_CELLS_1000)
+tar_load(scLANE_res_DEG_10_CELLS_1000)
+tar_load(scLANE_res_DEG_20_CELLS_1000)
+# 5,000 cells
+tar_load(scLANE_res_DEG_01_CELLS_5000)
+tar_load(scLANE_res_DEG_05_CELLS_5000)
+tar_load(scLANE_res_DEG_10_CELLS_5000)
+tar_load(scLANE_res_DEG_20_CELLS_5000)
+# coerce to list
+scLANE_single_subj_list <- purrr::map(ls(pattern = "scLANE_res*"), function(x) { eval(as.symbol(x)) })
+names(scLANE_single_subj_list) <- ls(pattern = "scLANE_res*")
+rm(list = ls(pattern = "scLANE_res*")); gc(verbose = FALSE, full = TRUE)
+```
+
+Next, we process the data, landing it in a `tibble`. 
+
+```{r}
+purrr::map2(scLANE_single_subj_list, 
+            names(scLANE_single_subj_list), 
+            function(x, y) {
+  tibble(
+    DATASET_NAME = y, 
+    PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+    N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+    N_GENES = length(unique(names(x$testDynamic_results_raw[[1]]))), 
+    RUNTIME = as.numeric(x$time_diff[[1]]), 
+    RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+    MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+    MEM_UNITS = "MB", 
+    ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
+                                 truth = as.factor(geneStatus), 
+                                 .estimate = P_Val_Adj, 
+                                 event_level = "second") %>% pull(.estimate), 
+    ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
+                                   truth = as.factor(geneStatus), 
+                                   estimate = as.factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"))) %>% 
+               pull(.estimate), 
+    SENSITIVITY = yardstick::sens(x$testDynamic_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus), 
+                                   estimate = as.factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    SPECIFICITY = yardstick::spec(x$testDynamic_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus), 
+                                   estimate = as.factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
+    ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
+                                          truth = as.factor(geneStatus), 
+                                          .estimate = P_Val_Adj, 
+                                          event_level = "second") %>% 
+                       mutate(dataset = y))
+  )
+}) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = 7) %>% 
+  mutate(DATASET_TYPE = "Single subject", .before = 2) -> scLANE_single_subj_metrics
+```
+
+### `tradeSeq`
+
+Once again, we load in the pipeline output, this time for runs of `tradeSeq` on single subject datasets. 
+
+```{r, results='hide'}
+# 100 cells
+tar_load(tradeSeq_res_DEG_01_CELLS_100)
+tar_load(tradeSeq_res_DEG_05_CELLS_100)
+tar_load(tradeSeq_res_DEG_10_CELLS_100)
+tar_load(tradeSeq_res_DEG_20_CELLS_100)
+# 500 cells
+tar_load(tradeSeq_res_DEG_01_CELLS_500)
+tar_load(tradeSeq_res_DEG_05_CELLS_500)
+tar_load(tradeSeq_res_DEG_10_CELLS_500)
+tar_load(tradeSeq_res_DEG_20_CELLS_500)
+# 1,000 cells
+tar_load(tradeSeq_res_DEG_01_CELLS_1000)
+tar_load(tradeSeq_res_DEG_05_CELLS_1000)
+tar_load(tradeSeq_res_DEG_10_CELLS_1000)
+tar_load(tradeSeq_res_DEG_20_CELLS_1000)
+# 5,000 cells
+tar_load(tradeSeq_res_DEG_01_CELLS_5000)
+tar_load(tradeSeq_res_DEG_05_CELLS_5000)
+tar_load(tradeSeq_res_DEG_10_CELLS_5000)
+tar_load(tradeSeq_res_DEG_20_CELLS_5000)
+# coerce to list 
+tradeSeq_single_subj_list <- purrr::map(ls(pattern = "tradeSeq_res*"), function(x) { eval(as.symbol(x)) })
+names(tradeSeq_single_subj_list) <- ls(pattern = "tradeSeq_res*")
+rm(list = ls(pattern = "tradeSeq_res*")); gc(verbose = FALSE, full = TRUE)
+```
+
+We process the list of outputs in the same way as we did above. 
+
+```{r}
+purrr::map2(tradeSeq_single_subj_list, 
+            names(tradeSeq_single_subj_list), 
+            function(x, y) {
+  tibble(
+    DATASET_NAME = y, 
+    PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+    N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+    N_GENES = length(unique(names(x$tradeSeq_results_raw[[1]]))), 
+    RUNTIME = as.numeric(x$time_diff[[1]]), 
+    RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+    MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+    MEM_UNITS = "MB", 
+    ROC_AUC = yardstick::roc_auc(x$tradeSeq_results_tidy[[1]], 
+                                 truth = as.factor(geneStatus), 
+                                 .estimate = pvalue_adj, 
+                                 event_level = "second") %>% pull(.estimate), 
+    ACCURACY = yardstick::accuracy(x$tradeSeq_results_tidy[[1]], 
+                                   truth = as.factor(geneStatus), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+               pull(.estimate), 
+    SENSITIVITY = yardstick::sens(x$tradeSeq_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    SPECIFICITY = yardstick::spec(x$tradeSeq_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    NIR = mean(x$tradeSeq_results_tidy[[1]]$geneStatus == "NotDynamic"), 
+    ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
+                                          truth = as.factor(geneStatus), 
+                                          .estimate = pvalue_adj, 
+                                          event_level = "second") %>% 
+                       mutate(dataset = y))
+  )
+}) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = 7)  %>% 
+  mutate(DATASET_TYPE = "Single subject", .before = 2) -> tradeSeq_single_subj_metrics
+```
+
+## Multiple Subjects 
+
+### `scLANE`
+
+First we load the targets. 
+
+```{r, results='hide'}
+# 100 cells
+tar_load(scLANE_res_DEG_10_CELLS_100_balanced)
+tar_load(scLANE_res_DEG_10_CELLS_100_unbalanced)
+tar_load(scLANE_res_DEG_20_CELLS_100_balanced)
+tar_load(scLANE_res_DEG_20_CELLS_100_unbalanced)
+# 250 cells
+tar_load(scLANE_res_DEG_10_CELLS_250_balanced)
+tar_load(scLANE_res_DEG_10_CELLS_250_unbalanced)
+tar_load(scLANE_res_DEG_20_CELLS_250_balanced)
+tar_load(scLANE_res_DEG_20_CELLS_250_unbalanced)
+# 1,000 cells
+# tar_load(scLANE_res_DEG_10_CELLS_1000_balanced)
+# tar_load(scLANE_res_DEG_10_CELLS_1000_unbalanced)
+# tar_load(scLANE_res_DEG_20_CELLS_1000_balanced)
+# tar_load(scLANE_res_DEG_20_CELLS_1000_unbalanced)
+# 5,000 cells
+# tar_load(scLANE_res_DEG_10_CELLS_5000_balanced)
+# tar_load(scLANE_res_DEG_10_CELLS_5000_unbalanced)
+# tar_load(scLANE_res_DEG_20_CELLS_5000_balanced)
+# tar_load(scLANE_res_DEG_20_CELLS_5000_unbalanced)
+# coerce to list 
+scLANE_multi_subj_list <- purrr::map(ls(pattern = "scLANE_res*"), function(x) { eval(as.symbol(x)) })
+names(scLANE_multi_subj_list) <- ls(pattern = "scLANE_res*")
+rm(list = ls(pattern = "scLANE_res*")); gc(verbose = FALSE, full = TRUE)
+```
+
+And we process the multiple-subject output. 
+
+```{r}
+purrr::map2(scLANE_multi_subj_list, 
+            names(scLANE_multi_subj_list), 
+            function(x, y) {
+  tibble(
+    DATASET_NAME = y, 
+    PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+    N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+    N_GENES = length(unique(names(x$testDynamic_results_raw[[1]]))), 
+    RUNTIME = as.numeric(x$time_diff[[1]]), 
+    RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+    MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+    MEM_UNITS = "MB", 
+    ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
+                                 truth = as.factor(geneStatus_overall), 
+                                 .estimate = P_Val_Adj, 
+                                 event_level = "second") %>% pull(.estimate), 
+    ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
+                                   truth = as.factor(geneStatus_overall), 
+                                   estimate = as.factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"))) %>% 
+               pull(.estimate), 
+    SENSITIVITY = yardstick::sens(x$testDynamic_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus_overall), 
+                                   estimate = as.factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    SPECIFICITY = yardstick::spec(x$testDynamic_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus_overall), 
+                                   estimate = as.factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
+    ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
+                                          truth = as.factor(geneStatus_overall), 
+                                          .estimate = P_Val_Adj, 
+                                          event_level = "second"))
+  )
+}) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = 7) %>% 
+  mutate(DATASET_TYPE = "Multiple subjects", .before = 2) -> scLANE_multiple_subj_metrics
+```
+
+### `tradeSeq`
+
+Finally, the last set of targets. 
+
+```{r, results='hide'}
+# 100 cells
+tar_load(tradeSeq_res_DEG_10_CELLS_100_balanced)
+tar_load(tradeSeq_res_DEG_10_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_100_balanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_100_unbalanced)
+# 250 cells
+tar_load(tradeSeq_res_DEG_10_CELLS_250_balanced)
+tar_load(tradeSeq_res_DEG_10_CELLS_250_unbalanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_250_balanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_250_unbalanced)
+# 1,000 cells
+tar_load(tradeSeq_res_DEG_10_CELLS_1000_balanced)
+tar_load(tradeSeq_res_DEG_10_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_1000_balanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_1000_unbalanced)
+# 5,000 cells
+tar_load(tradeSeq_res_DEG_10_CELLS_5000_balanced)
+tar_load(tradeSeq_res_DEG_10_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_5000_balanced)
+tar_load(tradeSeq_res_DEG_20_CELLS_5000_unbalanced)
+# coerce to list 
+tradeSeq_multi_subj_list <- purrr::map(ls(pattern = "tradeSeq_res*"), function(x) { eval(as.symbol(x)) })
+names(tradeSeq_multi_subj_list) <- ls(pattern = "tradeSeq_res*")
+rm(list = ls(pattern = "tradeSeq_res*")); gc(verbose = FALSE, full = TRUE)
+```
+
+And the last processing step. 
+
+```{r}
+purrr::map2(tradeSeq_multi_subj_list, 
+            names(tradeSeq_multi_subj_list), 
+            function(x, y) {
+  tibble(
+    DATASET_NAME = y, 
+    PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+    N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+    N_GENES = length(unique(names(x$tradeSeq_results_raw[[1]]))), 
+    RUNTIME = as.numeric(x$time_diff[[1]]), 
+    RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+    MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+    MEM_UNITS = "MB", 
+    ROC_AUC = yardstick::roc_auc(x$tradeSeq_results_tidy[[1]], 
+                                 truth = as.factor(geneStatus), 
+                                 .estimate = pvalue_adj, 
+                                 event_level = "second") %>% pull(.estimate), 
+    ACCURACY = yardstick::accuracy(x$tradeSeq_results_tidy[[1]], 
+                                   truth = as.factor(geneStatus), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+               pull(.estimate), 
+    SENSITIVITY = yardstick::sens(x$tradeSeq_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    SPECIFICITY = yardstick::spec(x$tradeSeq_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    NIR = mean(x$tradeSeq_results_tidy[[1]]$geneStatus == "NotDynamic"), 
+    ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
+                                          truth = as.factor(geneStatus), 
+                                          .estimate = pvalue_adj, 
+                                          event_level = "second"))
+  )
+}) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = 7)  %>% 
+  mutate(DATASET_TYPE = "Multiple subjects", .before = 2) -> tradeSeq_multi_subj_metrics
+```
+
+# Save Data
+
+```{r}
+metric_table <- purrr::map(ls(pattern = "*_metrics"), function(x) { eval(as.symbol(x)) }) %>% 
+                purrr::reduce(rbind)
+saveRDS(metric_table, file = "")
+```
+
+# Single Subject Plots
+
+```{r}
+if (!dir.exists("./results/plots")) {
+  dir.create("./results/plots")
+}
+if (!dir.exists("./results/plots/SingleSubject")) {
+  dir.create("./results/plots/SingleSubject")
+}
+```
+
+## Compute Time
+
+### By $N_{cells}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $N_{genes}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $P_{DE}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+## Memory Usage
+
+### By $N_{cells}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $N_{genes}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $P_{DE}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+## AUC-ROC
+
+### `scLANE`
+
+### `tradeSeq`
+
+# Multiple Subject Plots
+
+```{r}
+if (!dir.exists("./results/plots/MultiSubject")) {
+  dir.create("./results/plots/MultiSubject")
+}
+```
+
+## Compute Time
+
+### By $N_{cells}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $N_{genes}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $P_{DE}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+## Memory Usage
+
+### By $N_{cells}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $N_{genes}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+### By $P_{DE}$
+
+#### `scLANE`
+
+#### `tradeSeq`
+
+## AUC-ROC
+
+### `scLANE`
+
+```{r}
+metric_table$ROC_CURVE %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(method = case_when(stringr::str_detect(dataset, "scLANE_") ~ "scLANE", 
+                            TRUE ~ "tradeSeq")) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = method)) + 
+  geom_line(size = 0.75, alpha = 0.8) + 
+  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+  paletteer::scale_color_paletteer_d("ggsci::category10_d3") + 
+  scale_x_continuous(labels = scales::number_format(accuracy = 0.1)) + 
+  labs(x = "1 - Specificity", 
+       y = "Sensitivity", 
+       color = "Method", 
+       subtitle = "Single Subject Simulated Data", 
+       title = "Dynamic Gene Classification Performance") + 
+  theme_classic(base_size = 15) + 
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
+        plot.title.position = "plot", 
+        legend.title = element_blank()) + 
+  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1)))
+```
+
+
+### `tradeSeq`

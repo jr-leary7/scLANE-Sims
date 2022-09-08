@@ -1,34 +1,108 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-lung_data_clean|stem|d528d0d42a108f85|5d368821f2817ff7|cc364a69e696f599|47404244||t19090.0277893519s|c44cf37f8057f4e3|110289817|rds|local|vector|||20.671||
-lung_data_raw|stem|a5eed227f9b6c528|5db68dda8766cd4e|c3b5fc02cdc369c1|1236129992||t19088.1902893519s|c92818181c227058|134249293|rds|local|vector|||35.149||
-lung_sim_DEG_01_CELLS_100|stem|19d3e82f5cd11f02|7a21f2ed8d33ccb7|de29140dc7458347|1806197263||t19090.1786689815s|ee32e775a8983017|7343279|rds|local|vector|||44.779|Youre computing too large a percentage of total singular values, use a standard svd instead.|
-lung_sim_DEG_01_CELLS_1000|stem|9e228e755cd76cb3|0d178a6eb84fcb74|de29140dc7458347|579582275||t19090.1940162037s|514e1b31010a0701|53921433|rds|local|vector|||100.173||
-lung_sim_DEG_01_CELLS_10000|stem|35b8b8936aa60463|b3ad825f9c109aad|de29140dc7458347|632329643||t19088.6110763889s|ce620ca116a4741e|435992076|rds|local|vector|||1010.129||
-lung_sim_DEG_01_CELLS_500|stem|ca42c7c535f6802c|954c4456cc597288|de29140dc7458347|1502994914||t19090.1916087963s|75b7f26b41b85b80|28493531|rds|local|vector|||63.409||
-lung_sim_DEG_01_CELLS_5000|stem|5353b2d157070429|5de94fd2d1cf1df6|de29140dc7458347|-246017140||t19090.1907638889s|72cec4e38af4f087|225347486|rds|local|vector|||446.175||
-lung_sim_DEG_05_CELLS_100|stem|8e989be6354a1a5d|72b1e36d21e87c27|de29140dc7458347|-1693733748||t19090.1966898148s|c55fa0ab0f10d463|6613078|rds|local|vector|||40.491|collapsing to unique x values. Youre computing too large a percentage of total singular values, use a standard svd instead.|
-lung_sim_DEG_05_CELLS_1000|stem|dec74e521aacedc9|2bfc2bef2bb47ac8|de29140dc7458347|2142047041||t19090.1953472222s|1a2025a950037817|52929298|rds|local|vector|||98.505||
-lung_sim_DEG_05_CELLS_10000|stem||6eb6eb16c9d1827e|de29140dc7458347|-145083566||t19088.6204725375s||0|rds|local|vector|||1287.418||data must be of a vector type, was NULL
-lung_sim_DEG_05_CELLS_500|stem|b221bca0d5528c2a|1c0993f1c6074a4c|de29140dc7458347|-1239730587||t19090.1781134259s|051ea8c3affff055|25970911|rds|local|vector|||81.831||
-lung_sim_DEG_05_CELLS_5000|stem|e94e7a86e2a7d813|a743189a93722218|de29140dc7458347|1013421426||t19090.2039814815s|f3663a516b012089|229136741|rds|local|vector|||428.875||
-lung_sim_DEG_10_CELLS_100|stem|86c60157c999317b|567cb2044884ad60|de29140dc7458347|962008890||t19090.1921180556s|442f07a4add13809|7062645|rds|local|vector|||41.289|Youre computing too large a percentage of total singular values, use a standard svd instead.|
-lung_sim_DEG_10_CELLS_1000|stem|2e1dc11478e6055e|4c4b6b5cb62d4805|de29140dc7458347|-1629425712||t19090.1980902778s|c624b9e1eaa50c1b|54483391|rds|local|vector|||103.456||
-lung_sim_DEG_10_CELLS_500|stem|84708f969f4a01c4|f6b5b154c70662f8|de29140dc7458347|258167628||t19090.1961921296s|8ed425dce1d410f7|28201096|rds|local|vector|||63.342||
-lung_sim_DEG_10_CELLS_5000|stem|4f625aa265f82f41|d479a0d0b3aadcf8|de29140dc7458347|-1403749217||t19090.1846759259s|f5ec016d98a9ad51|232606079|rds|local|vector|||438.875||
-lung_sim_DEG_20_CELLS_100|stem|933eeb275c90d1fb|5ff6111409227469|de29140dc7458347|-1960119782||t19090.192662037s|75be0ce0125ed671|7636996|rds|local|vector|||43.825|Youre computing too large a percentage of total singular values, use a standard svd instead.|
-lung_sim_DEG_20_CELLS_1000|stem|996407c651af1058|8de44c5c82d6633e|de29140dc7458347|1271220213||t19090.1770486111s|01529b0500e3a7b0|53202563|rds|local|vector|||147.613||
-lung_sim_DEG_20_CELLS_500|stem|17dd38c23965ddd4|edc41d0985f1ac0f|de29140dc7458347|-1668526564||t19090.2048611111s|33427ddcafe4b41a|29946883|rds|local|vector|||66.14||
-lung_sim_DEG_20_CELLS_5000|stem|9ff99a0c0a06ae5d|990ebf6e5dbf629e|de29140dc7458347|-1017573920||t19088.5974074074s|7f511582a7c47a52|247692100|rds|local|vector|||579.872||
-scLANE_res_DEG_20_CELLS_1000|stem|62608ec44edf9cb5|22e517a7a65cffa7|333f57f0d39d1e4a|-210590676||t19092.814212963s|4d8ead546acffd07|44466831|rds|local|vector|||9914.764||
-run_scLANE|function|428dd0e549cef0b5|||||||||||||||
-simulate_scaffold|function|827cabdff9c90819|||||||||||||||
-scLANE_res_DEG_20_CELLS_500|stem|ff57fbee56373560|b73c6070c1c9a86a|41124440765df7a0|1758738175||t19092.9437268519s|7eb5b0c9e1a77031|36148486|rds|local|vector|||9048.873||
-scLANE_res_DEG_01_CELLS_500|stem|f7485a0793310a97|794bc7bd19931540|c8e65027595391c4|-709397849||t19093.0346643519s|f47e4dc0b8b0db06|11357510|rds|local|vector|||7847.357||
-scLANE_res_DEG_20_CELLS_100|stem|e9f0aab950945c08|24ad7bef2e370019|d2ef33df327a03ff|-1994556695||t19093.0731018519s|1fe9e79887750036|8515285|rds|local|vector|||3316.943||
-scLANE_res_DEG_01_CELLS_1000|stem|8b2e5a5c19a99b5f|f8747c697b0c1fe2|c3ba0ccd55e7c502|1582395335||t19093.2650462963s|21dbf241eb1e1389|31419419|rds|local|vector|||16565.335||
-scLANE_res_DEG_05_CELLS_100|stem|9dc2eee7391c76f5|04148087d3206993|2307a198e6502029|-244986310||t19093.2958796296s|2cbd5c3b2d89640c|5173943|rds|local|vector|||2659.977||
-scLANE_res_DEG_10_CELLS_100|stem|ed0101350e9fe1af|0a897d46230dae7e|806549ef6651e99a|-634663713||t19093.3320833333s|9c159c1154fda4da|5461455|rds|local|vector|||3122.993||
-run_scLANE|function|428dd0e549cef0b5
-simulate_scaffold|function|827cabdff9c90819
-scLANE_res_DEG_05_CELLS_1000|stem|8abf052f2da59dba|cc9f513a3f303cc4|66d9dd58a257841b|-1270804221||t19094.9625115741s|b17e80eeb086201f|31352285|rds|local|vector|||10001.119||
-scLANE_res_DEG_10_CELLS_500|stem|159ade936aa8b67c|93de0d81130ef80f|1b1bb3e395fcdca8|-314521505||t19095.020474537s|01a172f842ef0282|16115238|rds|local|vector|||4999.645||
+lung_data|stem|89e22572b2bdbf9f|ab7c13ad7ea2088e|c3b5fc02cdc369c1|1547760150||t19242.0727777778s|44996e6fc112b12c|110289788|rds|local|vector|||32.453||
+lung_data_clean|stem|36c6947d132d699e|6750e55738ec6316|196c707d46525dd0|47404244||t19242.0733101852s|d9996c42a60f72e2|110265360|rds|local|vector|||15.812||
+lung_sim_DEG_01_CELLS_100|stem|7a0bc3b538fa1200|7a21f2ed8d33ccb7|4259ddfcf7b68d52|1806197263||t19242.2006134259s|691b2d6cf7982560|6590721|rds|local|vector|||63.963|Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_01_CELLS_1000|stem|c2b62cb70d7e0270|0d178a6eb84fcb74|4259ddfcf7b68d52|579582275||t19242.1094444444s|48f6a6fd741d7fdb|51751514|rds|local|vector|||260.302||
+lung_sim_DEG_01_CELLS_500|stem|1f07d6e310eef7f2|954c4456cc597288|4259ddfcf7b68d52|1502994914||t19242.3425231481s|bb2e3c558bb846f5|27477544|rds|local|vector|||84.842||
+lung_sim_DEG_01_CELLS_5000|stem|9bc3295e254414c0|5de94fd2d1cf1df6|4259ddfcf7b68d52|-246017140||t19242.2153819444s|2d7852606e01364b|221852861|rds|local|vector|||986.924||
+lung_sim_DEG_05_CELLS_100|stem|b1b264ac1f40304b|72b1e36d21e87c27|4259ddfcf7b68d52|-1693733748||t19242.4439930556s|ad79430ce44776c3|6419747|rds|local|vector|||235.074|Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_05_CELLS_1000|stem|27bedec9f789b781|2bfc2bef2bb47ac8|4259ddfcf7b68d52|2142047041||t19242.2691782407s|0f2d65fa211e4dfa|52282842|rds|local|vector|||401.748||
+lung_sim_DEG_05_CELLS_500|stem|d18bb885d4b35391|1c0993f1c6074a4c|4259ddfcf7b68d52|-1239730587||t19242.199537037s|edc7e6b02f468704|27579350|rds|local|vector|||85.275||
+lung_sim_DEG_05_CELLS_5000|stem|d85bc04264890e49|a743189a93722218|4259ddfcf7b68d52|1013421426||t19242.0830671296s|591d3d2b73715a88|239960307|rds|local|vector|||569.623||
+lung_sim_DEG_10_CELLS_100|stem|29aec2d16556eb6a|567cb2044884ad60|4259ddfcf7b68d52|962008890||t19242.2999305556s|099a19f47e420fa9|6703780|rds|local|vector|||82.344|Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_10_CELLS_100_balanced|stem|99030fc08162c56c|6006df555e5094b4|0e73bb02059921a1|-2002115400||t19242.4321180556s|298fe847643585e5|3718107|rds|local|vector|||739.192|collapsing to unique x values. Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_10_CELLS_100_unbalanced|stem|579351864e32873d|7b042e76fc6fcd59|b534200b9d23fd65|1276116475||t19242.4892708333s|004bf96557d04914|3381607|rds|local|vector|||786.702|collapsing to unique x values. Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_10_CELLS_1000|stem|eeefd4520a23cff2|4c4b6b5cb62d4805|4259ddfcf7b68d52|-1629425712||t19242.1006712963s|8f5c83b2074e721a|50981893|rds|local|vector|||391.375||
+lung_sim_DEG_10_CELLS_1000_balanced|stem|385e4a27fee3d2d6|8c953bc032803afa|0e73bb02059921a1|-794894201||t19242.0769907407s|1d04f346fb7361c9|25338475|rds|local|vector|||302.673||
+lung_sim_DEG_10_CELLS_1000_unbalanced|stem|803b6b03d864364b|08fca8b0549970ad|b534200b9d23fd65|316722571||t19242.1066203704s|e6aaae73a2476bd6|24777343|rds|local|vector|||1264.19||
+lung_sim_DEG_10_CELLS_250_balanced|stem|285781854948d8d7|f36678960b5ae84f|0e73bb02059921a1|-1333857045||t19242.3996990741s|e4badcb1ea25eea4|7265028|rds|local|vector|||841.529||
+lung_sim_DEG_10_CELLS_250_unbalanced|stem|45bab2ed3d06eb34|cd4b3b589d01ef1b|b534200b9d23fd65|-257105115||t19242.3077430556s|2dd9d4bdf97411ff|7412374|rds|local|vector|||256.432||
+lung_sim_DEG_10_CELLS_500|stem|fa998edc2b27e0dc|f6b5b154c70662f8|4259ddfcf7b68d52|258167628||t19242.1982986111s|86f778da9280db3d|28923321|rds|local|vector|||92.409||
+lung_sim_DEG_10_CELLS_5000|stem|5dff3ddd3a1f4236|d479a0d0b3aadcf8|4259ddfcf7b68d52|-1403749217||t19242.3256134259s|732419b7e25c5b79|236406269|rds|local|vector|||471.154||
+lung_sim_DEG_10_CELLS_5000_balanced|stem|317064dd58b60d04|d8c4eba8d5856a45|0e73bb02059921a1|1318918239||t19242.3126041667s|0944c58709c3a025|106662587|rds|local|vector|||945.497||
+lung_sim_DEG_10_CELLS_5000_unbalanced|stem|6079933db5883308|4e02faedfa4aec6f|b534200b9d23fd65|380350814||t19242.3752199074s|9c3505ca5d2fee2e|101781840|rds|local|vector|||1327.292||
+lung_sim_DEG_20_CELLS_100|stem|2578148831c92c1d|5ff6111409227469|4259ddfcf7b68d52|-1960119782||t19242.302962963s|bb0aee4b1f352470|6163830|rds|local|vector|||64.974|collapsing to unique x values. Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_20_CELLS_100_balanced|stem|8b808f4a5f37a482|2e3f9a7f6962b810|0e73bb02059921a1|-53124527||t19242.2595949074s|50ba28decbe19248|3614368|rds|local|vector|||748.6|collapsing to unique x values. Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_20_CELLS_100_unbalanced|stem|77a4c19b60e9d5b7|c6e8e6f5ee490ba9|b534200b9d23fd65|-1938419186||t19242.2407523148s|7a67750907736dd8|3719354|rds|local|vector|||734.369|collapsing to unique x values. Youre computing too large a percentage of total singular values, use a standard svd instead.|
+lung_sim_DEG_20_CELLS_1000|stem|13659f42c838396d|8de44c5c82d6633e|4259ddfcf7b68d52|1271220213||t19242.3171064815s|583f97cb58adfad3|49077897|rds|local|vector|||132.318||
+lung_sim_DEG_20_CELLS_1000_balanced|stem|d9eb61340f3346f8|4757d706f121338a|0e73bb02059921a1|185271670||t19242.5083449074s|2171f4dab26a6549|24137266|rds|local|vector|||960.41||
+lung_sim_DEG_20_CELLS_1000_unbalanced|stem|7dd638e623f9d975|2d005859db2b5e46|b534200b9d23fd65|-241151249||t19242.655162037s|21b7fbfe0f15f52e|25578494|rds|local|vector|||967.039||
+lung_sim_DEG_20_CELLS_250_balanced|stem|e628bd5624651c76|d8c45870220d69e7|0e73bb02059921a1|165576493||t19242.2645717593s|e2764d6436887328|7439425|rds|local|vector|||843.01||
+lung_sim_DEG_20_CELLS_250_unbalanced|stem|e60c945919e83a93|02f04d6f50215878|b534200b9d23fd65|1059797872||t19242.0847800926s|23f5363acbbc17f6|7237973|rds|local|vector|||274.744||
+lung_sim_DEG_20_CELLS_500|stem|365bdd025dc6faea|edc41d0985f1ac0f|4259ddfcf7b68d52|-1668526564||t19242.2004166667s|89bd3fa6cc112d83|26872834|rds|local|vector|||92.186||
+lung_sim_DEG_20_CELLS_5000|stem|a5964604883e7b77|990ebf6e5dbf629e|4259ddfcf7b68d52|-1017573920||t19242.2068055556s|be9495ee92e2e05c|235780630|rds|local|vector|||711.738||
+lung_sim_DEG_20_CELLS_5000_balanced|stem|02eeb5d82c7c59bd|1977aae0d62570a8|0e73bb02059921a1|1613374755||t19242.4205324074s|2af18b82f7644237|103521073|rds|local|vector|||2102.735||
+lung_sim_DEG_20_CELLS_5000_unbalanced|stem|8c38a2dbedab5b48|4ff61cf73354ae9d|b534200b9d23fd65|-1833974612||t19242.3261805556s|65427984fc21216a|108999304|rds|local|vector|||1051.925||
+run_scLANE|function|514d47fba5789fba|||||||||||||||
+run_scLANE_GEE|function|5a1388f3d850a73a|||||||||||||||
+run_scLANE_reduced|function|5b7d99a5a7e739d8|||||||||||||||
+run_scLANE_reduced_GEE|function|8778a223a66ad597|||||||||||||||
+run_tradeSeq_reduced|function|18d20ea77ece8393|||||||||||||||
+run_tradeSeq_reduced_GEE|function|13e256f0816d972f|||||||||||||||
+scLANE_res_DEG_01_CELLS_100|stem|c2b92ecdbd238996|9f57cc7e727ae898|4f433600388fe555|-1510854325||t19242.3614930556s|540158836b7273d2|759640|rds|local|vector|||284.418||
+scLANE_res_DEG_01_CELLS_1000|stem|a401d2bad1e84060|d8109e29caf116c3|b146a92769254b11|1582395335||t19242.1959837963s|58720efcabf5aaee|973534|rds|local|vector|||340.074||
+scLANE_res_DEG_01_CELLS_500|stem|66a664e0ff6a7bf2|a6f2683ffffea700|0604ebadd91f92c7|-709397849||t19242.7068402778s|439f1e404498d1e0|992697|rds|local|vector|||866.114||
+scLANE_res_DEG_01_CELLS_5000|stem|2a6a235960bd1275|8d8cb70bdd57d4fb|4a3b49ec9a0ef026|549895824||t19242.7576273148s|685fffba77d5a1d4|96678363|rds|local|vector|||13265.941||
+scLANE_res_DEG_05_CELLS_100|stem|ab9877e4726d9439|806b681680fce641|287c79a2eeef260d|-244986310||t19242.5007407407s|3787ce9a0e26f2a2|1087359|rds|local|vector|||612.558||
+scLANE_res_DEG_05_CELLS_1000|stem|2ae1036bc4d1f795|f856eb5492232e0d|a9dc8dc77f543808|-1270804221||t19242.2991203704s|2f8d25b736b10845|4892860|rds|local|vector|||1163.703||
+scLANE_res_DEG_05_CELLS_500|stem|eaad81523f36ad56|3abbf228c3c899a8|9f72bc79c055a223|1666854521||t19242.2090277778s|8b0bc841405077ca|1622053|rds|local|vector|||467.729||
+scLANE_res_DEG_05_CELLS_5000|stem|132d83acc2327495|f77657eb707ef4f3|0b5ff76270984484|-1954396479||t19242.7707175926s|bace799a157a2772|36837728|rds|local|vector|||5396.554||
+scLANE_res_DEG_10_CELLS_100|stem|05e58d2a0ae45d4d|39cdcdd7d941326b|6f56f680714cd8d5|-634663713||t19242.6633101852s|70f0e1ce69ca8d6c|538623|rds|local|vector|||402.704||
+scLANE_res_DEG_10_CELLS_100_balanced|stem|ca0b55c4d03291fc|094ebe49d7865ce3|be70246999b624fe|-1589316010||t19242.8672916667s|54d362565221899c|453592|rds|local|vector|||1208.908||
+scLANE_res_DEG_10_CELLS_100_unbalanced|stem|f91ce582e091ba1c|22baf1b356153526|06a5d9905863c4e1|669498980||t19242.9176388889s|8ce44f5150b176f1|1599609|rds|local|vector|||4308.214||
+scLANE_res_DEG_10_CELLS_1000|stem|e15cdc9d0ad01e60|a460cc9d7f879367|739662674915ef9b|860078096||t19242.5799884259s|f81f562e104a4623|4445198|rds|local|vector|||1353.649||
+scLANE_res_DEG_10_CELLS_250_balanced|stem|aebbdb43d945acbf|2ce7f8bb8e188b36|fd427048ad0c1c5d|-604517797||t19242.9603125s|90a5afe9e76a2306|1775245|rds|local|vector|||3672.066||
+scLANE_res_DEG_10_CELLS_250_unbalanced|stem|faeb6f345f38b3b4|254d8383fd0285a4|48859fad3c03cdef|1223165682||t19242.8531597222s|31a22175005a3a52|2217482|rds|local|vector|||3220.552||
+scLANE_res_DEG_10_CELLS_500|stem|a3088d6006ee3c5d|01bbea3a3a7769fa|1e559c47d8025f2c|-314521505||t19242.3267824074s|11fe84f0f2666198|2879979|rds|local|vector|||647.645||
+scLANE_res_DEG_10_CELLS_5000|stem|2b3f90f61928c7ae|81efc61c5b508b81|6c9680b7927c1868|1587919469||t19242.5646064815s|509eb9594fac34c2|174995055|rds|local|vector|||17285.279||
+scLANE_res_DEG_20_CELLS_100|stem|7c6869300f532d64|638135ba91729dd7|49e05a9568125ff3|-1994556695||t19242.7708449074s|50ec9e0ffab57ade|903331|rds|local|vector|||750.357||
+scLANE_res_DEG_20_CELLS_100_balanced|stem|3f899b045472f6ae|eb287f6bb622e963|4e66e30481cd844d|-1033555261||t19242.9441898148s|f788b8eb8b9c30df|905993|rds|local|vector|||2230.683||
+scLANE_res_DEG_20_CELLS_100_unbalanced|stem|2f797517a0212483|36355dafe76f4221|e66683e2bfe595c7|-1581678274||t19242.9641203704s|55c2b8eff3b6ba3b|719793|rds|local|vector|||1715.89||
+scLANE_res_DEG_20_CELLS_1000|stem|53f1b819e60b65ad|08f3edad3789d39e|4beada93f6b1c9bc|-210590676||t19242.355775463s|5d14fcccfaa041a5|3075381|rds|local|vector|||594.329||
+scLANE_res_DEG_20_CELLS_1000_unbalanced|stem||f743948a68d93282|ce0009c7ee0b7faa|-1759366318||t19243.2030038208s||0|rds|local|vector|||13224.131||task 1501 failed  missing value where TRUEFALSE needed
+scLANE_res_DEG_20_CELLS_250_balanced|stem|51c444bdef696367|ad12926bbe0c0702|3621e8d760124593|1252226717||t19242.850625s|f8c21df4e6794d1f|1366812|rds|local|vector|||2987.075||
+scLANE_res_DEG_20_CELLS_250_unbalanced|stem|cf559bb0373c31af|884d77cb51047b75|58b90e159b3aa280|638696555||t19242.9181828704s|8d5691ce7e11cb87|4454842|rds|local|vector|||5827.989||
+scLANE_res_DEG_20_CELLS_500|stem|2e7065101bb21612|72f9eb2d90f8ee2c|70f9a9580826533e|1758738175||t19242.3622337963s|6a7f4bc62d676dae|605456|rds|local|vector|||185.272||
+scLANE_res_DEG_20_CELLS_5000|stem|5ecd568c1f59c8ba|31c5f15f544710b6|d749a254a21d1c7d|693142126||t19242.2986342593s|76bab3ef2c04e30a|87491504|rds|local|vector|||7595.868||
+simulate_scaffold|function|2cd8eba561415451|||||||||||||||
+simulate_scaffold_GEE|function|6687aef2fa43e388|||||||||||||||
+tradeSeq_res_DEG_01_CELLS_100|stem|362bb3fe46cd20f6|034661b730162584|3565b931f9c3b100|2095520412||t19242.222037037s|e476100864100272|32481542|rds|local|vector|||241.723||
+tradeSeq_res_DEG_01_CELLS_1000|stem|5d64cd719a750ad7|6fd9aa450da62dab|8dfc1cc1071d0451|124864478||t19242.6393402778s|300be1f5874fa7d0|261130335|rds|local|vector|||1239.436||
+tradeSeq_res_DEG_01_CELLS_500|stem|b6aa0d0b5f259284|e1e53a9e01301192|0a83038b7306826f|773611831||t19242.4824074074s|46366658cf28c568|165864630|rds|local|vector|||1140.12||
+tradeSeq_res_DEG_01_CELLS_5000|stem|74c580ec22794d51|b795f0bf2ecdd5b8|491695d6924e2385|-89090222||t19242.251412037s|2a616e342c2316e6|908914996|rds|local|vector|||1532.364||
+tradeSeq_res_DEG_05_CELLS_100|stem|d091c30bc547495c|300175c2015e4f34|4d4b1611d1979c4a|58160637||t19242.6736805556s|d17a22230a6fa220|50573030|rds|local|vector|||678.701||
+tradeSeq_res_DEG_05_CELLS_1000|stem|97df46aac28abbff|ad9bda6f9dc3c11c|bd6bfa4ab81da990|2027827299||t19242.5271759259s|3b5b58c9043f3533|161388083|rds|local|vector|||721.662||
+tradeSeq_res_DEG_05_CELLS_500|stem|7b462bf346a9324f|ef1f43babd353243|a7703d82127c660f|-1588953579||t19242.3592708333s|82f8b9d6f088d55e|107110739|rds|local|vector|||526.126||
+tradeSeq_res_DEG_05_CELLS_5000|stem|a2b0d02313d4e771|22eb239db3131806|9b6f0a68d7025fac|-2134380105||t19242.1062152778s|59bb77e53c8d7108|1632187637|rds|local|vector|||1496.971||
+tradeSeq_res_DEG_10_CELLS_100|stem|815363af2a821138|e4e371e3883fc911|270b634dca15c087|-1809931540||t19242.3099537037s|46b1503ea46fb2de|66922396|rds|local|vector|||398.344||
+tradeSeq_res_DEG_10_CELLS_100_balanced|stem|55dc7644ce9ab1e5|5f312c41ea9af5e0|4a1cb7b8ffb39b39|-2130560525||t19242.6096180556s|d4d76426fb5d0467|37900677|rds|local|vector|||488.926||
+tradeSeq_res_DEG_10_CELLS_100_unbalanced|stem|da21e5fa5d501b2a|52dde8efe8930aae|12e14720aad76fe6|1025452758||t19242.5171759259s|7b5052299a12704d|35564356|rds|local|vector|||614.4||
+tradeSeq_res_DEG_10_CELLS_1000|stem|5c53dbd1a9373472|7c62db865b088099|01e2c0fb941ccec0|-42352685||t19242.1179976852s|4e74d18f8a057534|221721635|rds|local|vector|||537.388||
+tradeSeq_res_DEG_10_CELLS_1000_balanced|stem|3bc69d3c8b8394a2|7f90e552b98c2a30|6fcce46d5c222487|1424046834||t19242.0850115741s|ba7343a0634e4e55|134470661|rds|local|vector|||374.781||
+tradeSeq_res_DEG_10_CELLS_1000_unbalanced|stem|2cffdf5b04a241ec|bf4a5a87e7cc3d64|130a2d5a6ab3507e|-385570640||t19242.1184953704s|9f60c7bd153092e1|307363768|rds|local|vector|||702.144||
+tradeSeq_res_DEG_10_CELLS_250_balanced|stem|b3a156ff4a34fca4|d687cb8f7fb894ef|41eff07603d7a909|1784176344||t19242.6223148148s|655d6b77aa4b86fd|90681912|rds|local|vector|||1794.539||
+tradeSeq_res_DEG_10_CELLS_250_unbalanced|stem|805ee072e671c656|fb7c57d3e273dc9c|3ea07cb270e0c5a0|1327844444||t19242.5625810185s|425f491857eafd4f|70629164|rds|local|vector|||784.568||
+tradeSeq_res_DEG_10_CELLS_500|stem|162f9e792ed3be13|2ddcf591de0f4dbf|b628a9900494f7b1|-1550467641||t19242.5468865741s|a62a603dc3bd6c6e|133811004|rds|local|vector|||835.218||
+tradeSeq_res_DEG_10_CELLS_5000|stem|1ca80cb7942aef0f|30b23c98591b78c8|7bd39b92e20c3216|821478193||t19242.3492708333s|5ff13246321bc0b1|682677132|rds|local|vector|||1283.94||
+tradeSeq_res_DEG_10_CELLS_5000_balanced|stem|d44ba935225b77a4|5b8951bc31b84534|47751239eca3afd2|1161502932||t19242.7215856481s|81c848cff55ae0be|957502387|rds|local|vector|||1854.282||
+tradeSeq_res_DEG_10_CELLS_5000_unbalanced|stem|8edcf0718a5ba4c5|116cf735f1e246c5|1410cbee872f5533|-1991664838||t19242.4303240741s|a16c3fe2a4ce23ed|800874023|rds|local|vector|||1648.91|no nonmissing arguments to max returning Inf|
+tradeSeq_res_DEG_20_CELLS_100|stem|6e13ecfa66e3cbcc|d2f777bc58093ee2|f7bb3d86ba842976|-1180101246||t19242.3106134259s|9b501af9dc7106c8|22203607|rds|local|vector|||169.383||
+tradeSeq_res_DEG_20_CELLS_100_balanced|stem|42eb4fdf4abb1b4b|92131548b1253438|ddac77915dd6b624|2106274319||t19242.2852546296s|a96d8c91eb70586f|22902567|rds|local|vector|||342.572||
+tradeSeq_res_DEG_20_CELLS_100_unbalanced|stem|1a7d8c1a4f7b70e7|6e4569f81ae8ac8b|31788da86cd1d557|1591051665||t19242.6371643519s|8c9fbddae64df6b3|61282629|rds|local|vector|||1037.211||
+tradeSeq_res_DEG_20_CELLS_1000|stem|fe66460b90e943e8|888359f5fe4408ad|19bfdc158ffb7ff3|1659272234||t19242.4730787037s|60cd4200f40ecb9b|231564158|rds|local|vector|||1081.701||
+tradeSeq_res_DEG_20_CELLS_1000_balanced|stem|e6c69f6574c24185|256bcd0ae570a5ff|04c337c1bc0c7664|-541401257||t19242.5375s|9b6fffbc3537661b|192766703|rds|local|vector|||805.631||
+tradeSeq_res_DEG_20_CELLS_1000_unbalanced|stem|cdab29014264a96e|59f16372266c3656|818b97137e23219c|-166096626||t19242.6844212963s|32dceea0240d1ebf|189496005|rds|local|vector|||830.39||
+tradeSeq_res_DEG_20_CELLS_250_balanced|stem|e30f5ab790651770|5c540bc2f6bfa5f4|dbc76ef72c567940|-465311882||t19242.2989236111s|2a268ff8a74e1ddd|78062986|rds|local|vector|||1374.975||
+tradeSeq_res_DEG_20_CELLS_250_unbalanced|stem|d36fc371ebf6cbb2|fdc64cfb76c5ccde|70452d3e3e9ac30d|-1664248344||t19242.7733333333s|e71367171ceb2984|47877137|rds|local|vector|||467.513||
+tradeSeq_res_DEG_20_CELLS_500|stem|326d76bdf2794761|924c59da4dfcd645|d85f1d85c5a07295|872059013||t19242.5828587963s|11689efd453dbd52|214920308|rds|local|vector|||1454.823||
+tradeSeq_res_DEG_20_CELLS_5000|stem|bcbe6bbbae0ce6ef|41d7094d5d7ba35d|e1462b13d973f1a4|1745260692||t19242.7639467593s|0f4f3a204c756a85|1591292127|rds|local|vector|||3169.575||
+tradeSeq_res_DEG_20_CELLS_5000_balanced|stem|95091fda525c085b|4e596b9e1d74c369|1c7102b34c6750d6|-576279315||t19242.4466550926s|c792334476625b25|463075671|rds|local|vector|||959.503||
+tradeSeq_res_DEG_20_CELLS_5000_unbalanced|stem|f95354cdf5452c11|9009214a2bee6cb2|4cd23b5c1962496d|1758984906||t19242.3502199074s|292be23a457c6827|1117880598|rds|local|vector|||1753.307|no nonmissing arguments to max returning Inf|
+run_scLANE|function|514d47fba5789fba
+run_tradeSeq_reduced_GEE|function|13e256f0816d972f
+run_tradeSeq_reduced|function|18d20ea77ece8393
+run_scLANE_reduced|function|5b7d99a5a7e739d8
+run_scLANE_reduced_GEE|function|8778a223a66ad597
+run_scLANE_GEE|function|5a1388f3d850a73a
+simulate_scaffold|function|2cd8eba561415451
+simulate_scaffold_GEE|function|6687aef2fa43e388
