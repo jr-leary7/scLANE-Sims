@@ -8,9 +8,24 @@ simulate_scaffold <- function(ref.dataset = NULL,
   
   # set up simulation parameters
   n_dyn_genes <- ceiling(perc.dyn.genes * nrow(ref.dataset))
+  n_possible_dyn_genes <- ceiling((perc.dyn.genes / 0.8) * nrow(ref.dataset))  # make dynamic genes an 80% sample of the total pool of possible dynamic genes
+  Q75 <- unname(quantile(rowMeans(counts(ref.dataset)), 0.75))
+  high_exp_genes <- rownames(ref.dataset)[rowMeans(counts(ref.dataset)) > Q75]
+  if (length(high_exp_genes) < n_possible_dyn_genes) {
+    Q60 <- unname(quantile(rowMeans(counts(ref.dataset)), 0.6))
+    high_exp_genes <- rownames(ref.dataset)[rowMeans(counts(ref.dataset)) > Q60]
+    if (length(high_exp_genes) < n_possible_dyn_genes) {
+      stop("Your dataset has too few highly expressed genes to support the number of dynamic genes you want. Please reduce the % dynamic genes parameter.")
+    }
+  }
+  possible_dyn_genes <- sample(high_exp_genes,  # make sure pool of possible dynamic genes has high expression
+                               size = n_possible_dyn_genes, 
+                               replace = FALSE)
+  dyn_genes <- sample(possible_dyn_genes, n_dyn_genes, replace = FALSE)
   my_knots <- matrix(runif(2 * n_dyn_genes, 0, 1), ncol = 2, nrow = n_dyn_genes)
   my_theta <- matrix(rnorm(5, 5, 5), ncol = 5, nrow = n_dyn_genes)
   dynamic_params <- list(propGenes = perc.dyn.genes,
+                         dynGenes = dyn_genes, 
                          degree = 2,
                          knots = my_knots,
                          theta = my_theta)
@@ -24,7 +39,7 @@ simulate_scaffold <- function(ref.dataset = NULL,
                                                 popHet = c(1, 1),
                                                 useDynamic = dynamic_params)
   sim_data <- simulateScaffold(scaffoldParams = scaffold_params, originalSCE = ref.dataset)
-  sim_data <- sim_data[rowSums(counts(sim_data)) > 0, ]  # only non-zero genes
+  sim_data <- sim_data[rowSums(counts(sim_data)) > 0, ]  # only non-zero genes -- shouldn't drop any dynamic genes thanks to biased selection
   
   # typical scran + scater pre-processing pipeline
   sim_data <- logNormCounts(sim_data)
@@ -322,14 +337,24 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
   if (is.null(perc.allocation)) { stop("% allocation must be non-NULL.") }
   if (length(perc.allocation) != n.subjects) { stop("Each subject must have a % sample allocation value.") }
   
+  browser()
+  
   obj_list <- vector("list", length = n.subjects)
   # set up simulation parameters -- common across subjects
   n_dyn_genes <- ceiling(perc.dyn.genes * nrow(ref.dataset))
   n_possible_dyn_genes <- ceiling((perc.dyn.genes / 0.8) * nrow(ref.dataset))  # make dynamic genes an 80% sample of the total pool of possible dynamic genes
-  possible_dyn_genes <- sample(rownames(ref.dataset), 
+  Q75 <- unname(quantile(rowMeans(counts(ref.dataset)), 0.75))
+  high_exp_genes <- rownames(ref.dataset)[rowMeans(counts(ref.dataset)) > Q75]
+  if (length(high_exp_genes) < n_possible_dyn_genes) {
+    Q60 <- unname(quantile(rowMeans(counts(ref.dataset)), 0.6))
+    high_exp_genes <- rownames(ref.dataset)[rowMeans(counts(ref.dataset)) > Q60]
+    if (length(high_exp_genes) < n_possible_dyn_genes) {
+      stop("Your dataset has too few highly expressed genes to support the number of dynamic genes you want. Please reduce the % dynamic genes parameter.")
+    }
+  }
+  possible_dyn_genes <- sample(high_exp_genes,  # make sure pool of possible dynamic genes has high expression
                                size = n_possible_dyn_genes, 
                                replace = FALSE)
-  
   # simulate a given dynamic for each possible dynamic gene, which will be preserved across subject IFF the gene is chosen to be dynamic in each subject
   my_knots <- matrix(runif(2 * n_possible_dyn_genes, 0, 1), ncol = 2, nrow = n_possible_dyn_genes)
   my_knots <- as.data.frame(my_knots) %>% 
@@ -369,7 +394,7 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
     obj_list[[s]] <- sim_data
   }
   
-  # combine & clean datasets
+  # combine & clean datasets / metadata
   counts_mat <- purrr::map(obj_list, function(x) { counts(x) }) %>%
                 purrr::reduce(cbind) %>%
                 as.matrix()  # cast to dense matrix (yikes)
@@ -396,7 +421,7 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
   cell_time_normed <- c()
   for (i in seq_along(obj_list)) {
     subj_names <- c(subj_names, rep(paste0("P", i), ncol(obj_list[[i]])))
-    cell_time_normed <- c(cell_time_normed, 1:ncol(obj_list[[i]]) / ncol(obj_list[[i]]))
+    cell_time_normed <- c(cell_time_normed, 1:ncol(obj_list[[i]]) / ncol(obj_list[[i]]))  # cells are ordered by creation time within each object
   }
   col_data <- dplyr::mutate(col_data,
                             subject = subj_names,
@@ -408,7 +433,7 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
   rowData(sim_data) <- row_data
   
   # process data w/ typical pipeline
-  sim_data <- sim_data[rowSums(counts(sim_data)) > 0, ]
+  sim_data <- sim_data[rowSums(counts(sim_data)) > 0, ]  # drop all-zero genes -- shouldn't drop any dynamic genes thanks to biased selection
   sim_data <- logNormCounts(sim_data)
   var_decomp <- modelGeneVar(sim_data)
   top2k_hvgs <- getTopHVGs(var_decomp, n = 2000)
