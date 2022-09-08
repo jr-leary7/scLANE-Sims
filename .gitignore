@@ -4,6 +4,7 @@
 
 # Session Data files
 .RData
+.Rds
 
 # User-specific files
 .Ruserdata
@@ -37,3 +38,19 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# slurm files 
+slurm*
+
+# RStudio Server files
+rserver/
+
+# Hadley's old files
+ratecheck.sh
+Simulation_Success.R
+scLANESimRates.out
+sim_successes
+
+# targets stuff
+_targets/objects/
+

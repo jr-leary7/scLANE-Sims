@@ -1,5 +1,0 @@
-
-Starting iteration: 1000 
-Starting iteration: 2000 
-Starting iteration: 3000 
-Starting iteration: 4000 
