@@ -187,6 +187,10 @@ purrr::map2(tradeSeq_single_subj_list,
   mutate(DATASET_TYPE = "Single subject", .before = 2) -> tradeSeq_single_subj_metrics
 ```
 
+```{r, echo=FALSE, results='hide'}
+rm(c(scLANE_single_subj_list, tradeSeq_single_subj_list)); gc(verbose = FALSE, full = TRUE)
+```
+
 ## Multiple Subjects 
 
 ### `scLANE`
@@ -205,15 +209,15 @@ tar_load(scLANE_res_DEG_10_CELLS_250_unbalanced)
 tar_load(scLANE_res_DEG_20_CELLS_250_balanced)
 tar_load(scLANE_res_DEG_20_CELLS_250_unbalanced)
 # 1,000 cells
-# tar_load(scLANE_res_DEG_10_CELLS_1000_balanced)
-# tar_load(scLANE_res_DEG_10_CELLS_1000_unbalanced)
-# tar_load(scLANE_res_DEG_20_CELLS_1000_balanced)
-# tar_load(scLANE_res_DEG_20_CELLS_1000_unbalanced)
+tar_load(scLANE_res_DEG_10_CELLS_1000_balanced)
+tar_load(scLANE_res_DEG_10_CELLS_1000_unbalanced)
+tar_load(scLANE_res_DEG_20_CELLS_1000_balanced)
+tar_load(scLANE_res_DEG_20_CELLS_1000_unbalanced)
 # 5,000 cells
-# tar_load(scLANE_res_DEG_10_CELLS_5000_balanced)
-# tar_load(scLANE_res_DEG_10_CELLS_5000_unbalanced)
-# tar_load(scLANE_res_DEG_20_CELLS_5000_balanced)
-# tar_load(scLANE_res_DEG_20_CELLS_5000_unbalanced)
+tar_load(scLANE_res_DEG_10_CELLS_5000_balanced)
+tar_load(scLANE_res_DEG_10_CELLS_5000_unbalanced)
+tar_load(scLANE_res_DEG_20_CELLS_5000_balanced)
+tar_load(scLANE_res_DEG_20_CELLS_5000_unbalanced)
 # coerce to list 
 scLANE_multi_subj_list <- purrr::map(ls(pattern = "scLANE_res*"), function(x) { eval(as.symbol(x)) })
 names(scLANE_multi_subj_list) <- ls(pattern = "scLANE_res*")
@@ -350,12 +354,47 @@ purrr::map2(tradeSeq_multi_subj_list,
   mutate(DATASET_TYPE = "Multiple subjects", .before = 2) -> tradeSeq_multi_subj_metrics
 ```
 
+```{r, echo=FALSE, results='hide'}
+rm(c(scLANE_multi_subj_list, tradeSeq_multi_subj_list)); gc(verbose = FALSE, full = TRUE)
+```
+
 # Save Data
 
 ```{r}
 metric_table <- purrr::map(ls(pattern = "*_metrics"), function(x) { eval(as.symbol(x)) }) %>% 
                 purrr::reduce(rbind)
-saveRDS(metric_table, file = "")
+saveRDS(metric_table, file = "./results/data/Simulation_Performance_Metrics.Rds")
+```
+
+# Plot-Saving Function
+
+This function will help us save our `ggplot2` objects as PDFs in the correct directories. 
+
+```{r}
+save_plot <- function(p.obj = NULL, 
+                      p.name = NULL,
+                      data.type = "single", 
+                      p.dims = c("8", "5"), 
+                      ...) {
+  # check inputs 
+  if (is.null(p.obj)) { stop("ggplot2 object must not be null.") }
+  if (is.null(p.name)) { stop("Plot name must not be null.") }
+  data.type <- tolower(data.type)
+  
+  # save plot
+  if (data.type == "single") {
+    ppath <- "./results/plots/SingleSubject/"
+  } else {
+    ppath <- "./results/plots/MultiSubject/"
+  }
+  ggplot2::ggsave(path = ppath, 
+                  filename = p.name, 
+                  plot = p, 
+                  device = "pdf", 
+                  width = p.dims[1], 
+                  height = p.dims[2], 
+                  ...)
+}
 ```
 
 # Single Subject Plots
@@ -413,6 +452,32 @@ if (!dir.exists("./results/plots/SingleSubject")) {
 
 ### `scLANE`
 
+```{r}
+p <- metric_table$ROC_CURVE %>% 
+     purrr::reduce(rbind) %>% 
+     mutate(method = case_when(stringr::str_detect(dataset, "scLANE_") ~ "scLANE", 
+                               TRUE ~ "tradeSeq")) %>% 
+     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = method)) + 
+     geom_line(size = 0.75, alpha = 0.8) + 
+     geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+     paletteer::scale_color_paletteer_d("ggsci::category10_d3") + 
+     scale_x_continuous(labels = scales::number_format(accuracy = 0.1)) + 
+     labs(x = "1 - Specificity", 
+          y = "Sensitivity", 
+          color = "Method", 
+          subtitle = "Single Subject Simulated Data", 
+          title = "Dynamic Gene Classification Performance") + 
+     theme_classic(base_size = 15) + 
+     theme(plot.title = element_text(hjust = 0.5), 
+           plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
+           plot.title.position = "plot", 
+           legend.title = element_blank()) + 
+     guides(color = guide_legend(override.aes = list(size = 3, alpha = 1)))
+save_plot(p.obj = p, 
+          p.name = "Single_Subject_ROCAUC_Curves_scLANE.pdf", 
+          data.type = "single")
+```
+
 ### `tradeSeq`
 
 # Multiple Subject Plots
@@ -466,29 +531,5 @@ if (!dir.exists("./results/plots/MultiSubject")) {
 ## AUC-ROC
 
 ### `scLANE`
-
-```{r}
-metric_table$ROC_CURVE %>% 
-  purrr::reduce(rbind) %>% 
-  mutate(method = case_when(stringr::str_detect(dataset, "scLANE_") ~ "scLANE", 
-                            TRUE ~ "tradeSeq")) %>% 
-  ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = method)) + 
-  geom_line(size = 0.75, alpha = 0.8) + 
-  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
-  paletteer::scale_color_paletteer_d("ggsci::category10_d3") + 
-  scale_x_continuous(labels = scales::number_format(accuracy = 0.1)) + 
-  labs(x = "1 - Specificity", 
-       y = "Sensitivity", 
-       color = "Method", 
-       subtitle = "Single Subject Simulated Data", 
-       title = "Dynamic Gene Classification Performance") + 
-  theme_classic(base_size = 15) + 
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
-        plot.title.position = "plot", 
-        legend.title = element_blank()) + 
-  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1)))
-```
-
 
 ### `tradeSeq`

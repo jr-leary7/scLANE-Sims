@@ -337,8 +337,6 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
   if (is.null(perc.allocation)) { stop("% allocation must be non-NULL.") }
   if (length(perc.allocation) != n.subjects) { stop("Each subject must have a % sample allocation value.") }
   
-  browser()
-  
   obj_list <- vector("list", length = n.subjects)
   # set up simulation parameters -- common across subjects
   n_dyn_genes <- ceiling(perc.dyn.genes * nrow(ref.dataset))

@@ -518,6 +518,6 @@ list(
   
   ##### OUTPUT #####
   
-  # tar_quarto(performance_report, "Simulation_Analysis.qmd", cue = tar_cue(mode = "never"))
+  # tar_quarto(performance_report, "Simulation_Analysis.qmd", cue = tar_cue(mode = "always"))
 )
 
