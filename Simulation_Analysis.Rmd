@@ -2,8 +2,15 @@
 title: "`scLANE` Simulation Results Analysis"
 subtitle: "University of Florida Dept. of Biostatistics - Bacher Group"
 author: "Jack Leary, M.S."
-format: html
-editor: source
+output:
+  html_document:
+    theme: paper
+    highlight: tango
+    code_download: true
+    code_folding: show
+    toc: true
+    toc_depth: 3
+    toc_float: true
 ---
 
 ```{r setup}
@@ -95,7 +102,7 @@ purrr::map2(scLANE_single_subj_list,
   )
 }) %>% 
   purrr::reduce(rbind) %>% 
-  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "secs" ~ RUNTIME / 60^2, 
                                    RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
                                    RUNTIME_UNITS == "hours" ~ RUNTIME, 
                                    RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
@@ -178,7 +185,7 @@ purrr::map2(tradeSeq_single_subj_list,
   )
 }) %>% 
   purrr::reduce(rbind) %>% 
-  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "secs" ~ RUNTIME / 60^2, 
                                    RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
                                    RUNTIME_UNITS == "hours" ~ RUNTIME, 
                                    RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
@@ -414,19 +421,139 @@ if (!dir.exists("./results/plots/SingleSubject")) {
 
 #### `scLANE`
 
+```{r}
+p1 <- metric_table %>% 
+      filter(grepl("scLANE_", DATASET_NAME), 
+             DATASET_TYPE == "Single subject") %>% 
+      ggplot(aes(x = N_CELLS, y = RUNTIME_HOURS)) + 
+      geom_point() + 
+      geom_smooth(method = "lm") + 
+      scale_x_continuous(labels = scales::comma_format()) + 
+      labs(x = "Number of Cells", 
+           y = "Runtime (Hours)", 
+           title = "scLANE Computational Cost") + 
+      theme_classic(base_size = 14)
+p1
+```
+
 #### `tradeSeq`
+
+```{r}
+p2 <- metric_table %>% 
+      filter(grepl("tradeSeq_", DATASET_NAME), 
+             DATASET_TYPE == "Single subject") %>% 
+      ggplot(aes(x = N_CELLS, y = RUNTIME_HOURS)) + 
+      geom_point() + 
+      geom_smooth(method = "lm") + 
+      scale_x_continuous(labels = scales::comma_format()) + 
+      labs(x = "Number of Cells", 
+           y = "Runtime (Hours)", 
+           title = "tradeSeq Computational Cost") + 
+      theme_classic(base_size = 14)
+p2
+```
 
 ### By $N_{genes}$
 
 #### `scLANE`
 
+```{r}
+p3 <- metric_table %>% 
+      filter(grepl("scLANE_", DATASET_NAME), 
+             DATASET_TYPE == "Single subject") %>% 
+      ggplot(aes(x = N_GENES, y = RUNTIME_HOURS)) + 
+      # facet_wrap(~N_CELLS) + 
+      geom_point() + 
+      geom_smooth(method = "lm") + 
+      scale_x_continuous(labels = scales::comma_format()) + 
+      labs(x = "Number of Genes", 
+           y = "Runtime (Hours)", 
+           title = "scLANE Computational Cost") + 
+      theme_classic(base_size = 14) 
+p3
+```
+
 #### `tradeSeq`
+
+```{r}
+p3 <- metric_table %>% 
+      filter(grepl("tradeSeq_", DATASET_NAME), 
+             DATASET_TYPE == "Single subject") %>% 
+      ggplot(aes(x = N_GENES, y = RUNTIME_HOURS)) + 
+      # facet_wrap(~N_CELLS) + 
+      geom_point() + 
+      geom_smooth(method = "lm") + 
+      scale_x_continuous(labels = scales::comma_format()) + 
+      labs(x = "Number of Genes", 
+           y = "Runtime (Hours)", 
+           title = "tradeSeq Computational Cost") + 
+      theme_classic(base_size = 14) 
+p3
+```
 
 ### By $P_{DE}$
 
 #### `scLANE`
 
+```{r}
+p5 <- metric_table %>% 
+      filter(grepl("scLANE_", DATASET_NAME), 
+             DATASET_TYPE == "Single subject") %>% 
+      ggplot(aes(x = PERCENT_DEG, y = RUNTIME_HOURS)) + 
+      # facet_wrap(~N_CELLS) + 
+      geom_point() + 
+      geom_smooth(method = "lm") + 
+      scale_x_continuous(labels = scales::percent_format()) + 
+      labs(x = "% Dynamic Genes", 
+           y = "Runtime (Hours)", 
+           title = "scLANE Computational Cost") + 
+      theme_classic(base_size = 14) 
+p5
+```
+
 #### `tradeSeq`
+
+```{r}
+p6 <- metric_table %>% 
+      filter(grepl("tradeSeq_", DATASET_NAME), 
+             DATASET_TYPE == "Single subject") %>% 
+      ggplot(aes(x = PERCENT_DEG, y = RUNTIME_HOURS)) + 
+      # facet_wrap(~N_CELLS) + 
+      geom_point() + 
+      geom_smooth(method = "lm") + 
+      scale_x_continuous(labels = scales::percent_format()) + 
+      labs(x = "% Dynamic Genes", 
+           y = "Runtime (Hours)", 
+           title = "tradeSeq Computational Cost") + 
+      theme_classic(base_size = 14) 
+p6
+```
+
+### Modeling Compute Time 
+
+```{r}
+single_subj_mod_data <- metric_table %>% 
+                        filter(DATASET_TYPE == "Single subject") %>% 
+                        mutate(METHOD = case_when(grepl("scLANE_", DATASET_NAME) ~ "scLANE", TRUE ~ "tradeSeq")) %>% 
+                        select(DATASET_NAME, 
+                               METHOD, 
+                               RUNTIME_HOURS, 
+                               N_CELLS, 
+                               N_GENES,
+                               PERCENT_DEG) %>% 
+                        mutate(across(c(N_CELLS, N_GENES, PERCENT_DEG), function(x) scale(x, scale = FALSE)))
+m1 <- glm(RUNTIME_HOURS ~ METHOD + N_CELLS + N_GENES + PERCENT_DEG, 
+          family = gaussian(), 
+          data = single_subj_mod_data)
+broom::tidy(m1) %>% 
+  mutate(across(where(is.numeric), round, digits = 4))
+
+m2 <- lme4::lmer(RUNTIME_HOURS ~ (1 | METHOD) + N_CELLS + N_GENES + PERCENT_DEG, 
+                 data = single_subj_mod_data)
+summary(m2)
+broomExtra::tidy(m2) %>% 
+  mutate(across(where(is.numeric), round, digits = 4))
+```
 
 ## Memory Usage
 
@@ -446,39 +573,123 @@ if (!dir.exists("./results/plots/SingleSubject")) {
 
 #### `scLANE`
 
+```{r}
+metric_table %>% 
+  filter(grepl("scLANE_", DATASET_NAME), 
+         DATASET_TYPE == "Single subject") %>% 
+  ggplot(aes(x = PERCENT_DEG, y = MEM_USED)) + 
+  geom_point() + 
+  geom_smooth() + 
+  scale_x_continuous(labels = scales::percent_format()) + 
+  labs(x = "% Dynamic Genes", 
+       y = "Memory Used (Mb)") + 
+  theme_classic(base_size = 14) 
+```
+
 #### `tradeSeq`
 
 ## AUC-ROC
 
 ### `scLANE`
 
-```{r}
-p <- metric_table$ROC_CURVE %>% 
+```{r, fig.width=5}
+p <- metric_table %>% 
+     filter(stringr::str_detect(DATASET_NAME, "scLANE_")) %>% 
+     pull(ROC_CURVE) %>% 
      purrr::reduce(rbind) %>% 
-     mutate(method = case_when(stringr::str_detect(dataset, "scLANE_") ~ "scLANE", 
-                               TRUE ~ "tradeSeq")) %>% 
-     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = method)) + 
-     geom_line(size = 0.75, alpha = 0.8) + 
+     mutate(P_DEG = paste0(as.numeric(substr(stringr::str_extract(dataset, "DEG_[0-9][0-9]"), 5, 6)), "%"), 
+            N_CELLS = stringr::str_replace(stringr::str_extract(dataset, "CELLS_.*"), "CELLS_", ""), 
+            P_DEG = factor(P_DEG, levels = c("1%", "5%", "10%", "20%")), 
+            N_CELLS = factor(N_CELLS, levels = as.character(sort(as.numeric(unique(N_CELLS)))))) %>% 
+     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
+     facet_wrap(~P_DEG) + 
+     geom_line(size = 1, alpha = 0.8) + 
      geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
-     paletteer::scale_color_paletteer_d("ggsci::category10_d3") + 
-     scale_x_continuous(labels = scales::number_format(accuracy = 0.1)) + 
+     scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
      labs(x = "1 - Specificity", 
           y = "Sensitivity", 
-          color = "Method", 
-          subtitle = "Single Subject Simulated Data", 
-          title = "Dynamic Gene Classification Performance") + 
+          title = "ROC-AUC", 
+          color = "Number of Cells", 
+          subtitle = "scLANE on Single-Subject Simulated Data") + 
      theme_classic(base_size = 15) + 
      theme(plot.title = element_text(hjust = 0.5), 
            plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
-           plot.title.position = "plot", 
-           legend.title = element_blank()) + 
-     guides(color = guide_legend(override.aes = list(size = 3, alpha = 1)))
+           plot.title.position = "panel")
+p
 save_plot(p.obj = p, 
           p.name = "Single_Subject_ROCAUC_Curves_scLANE.pdf", 
           data.type = "single")
 ```
 
 ### `tradeSeq`
+
+```{r, fig.width=5}
+p2 <- metric_table %>% 
+     filter(stringr::str_detect(DATASET_NAME, "tradeSeq_")) %>% 
+     pull(ROC_CURVE) %>% 
+     purrr::reduce(rbind) %>% 
+     mutate(P_DEG = paste0(as.numeric(substr(stringr::str_extract(dataset, "DEG_[0-9][0-9]"), 5, 6)), "%"), 
+            N_CELLS = stringr::str_replace(stringr::str_extract(dataset, "CELLS_.*"), "CELLS_", ""), 
+            P_DEG = factor(P_DEG, levels = c("1%", "5%", "10%", "20%")), 
+            N_CELLS = factor(N_CELLS, levels = as.character(sort(as.numeric(unique(N_CELLS)))))) %>% 
+     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
+     facet_wrap(~P_DEG) + 
+     geom_line(size = 1, alpha = 0.8) + 
+     geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+     scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     labs(x = "1 - Specificity", 
+          y = "Sensitivity", 
+          title = "ROC-AUC", 
+          color = "Number of Cells", 
+          subtitle = "tradeSeq on Single-Subject Simulated Data") + 
+     theme_classic(base_size = 15) + 
+     theme(plot.title = element_text(hjust = 0.5), 
+           plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
+           plot.title.position = "panel")
+p2
+save_plot(p.obj = p, 
+          p.name = "Single_Subject_ROCAUC_Curves_scLANE.pdf", 
+          data.type = "single")
+```
+
+## Distributions of P-values
+
+### `scLANE`
+
+```{r}
+purrr::map2(scLANE_single_subj_list, names(scLANE_single_subj_list), function(x, y) {
+  x$testDynamic_results_tidy[[1]] %>% 
+    select(Gene, Test_Stat, P_Val, P_Val_Adj, Gene_Dynamic_Overall, geneStatus) %>% 
+    mutate(Dataset = y, .before = 1)
+}) %>% 
+  purrr::reduce(rbind) -> scLANE_single_subj_pvals
+scLANE_single_subj_pvals %>% 
+  mutate(P_DEG = stringr::str_match(Dataset, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) %>% 
+  mutate(across(contains("P_Val"), function(x) tidyr::replace_na(x, 1))) %>% 
+  ggplot(aes(x = P_Val, fill = geneStatus)) + 
+  facet_wrap(~P_DEG) + 
+  geom_histogram(position = "dodge") + 
+  theme_classic(base_size = 14)
+```
+
+### `tradeSeq`
+
+```{r}
+purrr::map2(tradeSeq_single_subj_list, names(tradeSeq_single_subj_list), function(x, y) {
+  x$tradeSeq_results_tidy[[1]] %>% 
+    select(gene, waldStat, pvalue, pvalue_adj, gene_dynamic_overall, geneStatus) %>% 
+    mutate(Dataset = y, .before = 1)
+}) %>% 
+  purrr::reduce(rbind) -> tradeSeq_single_subj_pvals
+tradeSeq_single_subj_pvals %>% 
+  mutate(across(contains("pval"), function(x) tidyr::replace_na(x, 1))) %>% 
+  ggplot(aes(x = pvalue_adj, fill = geneStatus)) + 
+  geom_histogram(position = "dodge") + 
+  theme_classic(base_size = 14)
+```
+
 
 # Multiple Subject Plots
 
