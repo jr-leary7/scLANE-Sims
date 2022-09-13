@@ -39,7 +39,7 @@ simulate_scaffold <- function(ref.dataset = NULL,
                                                 popHet = c(1, 1),
                                                 useDynamic = dynamic_params)
   sim_data <- simulateScaffold(scaffoldParams = scaffold_params, originalSCE = ref.dataset)
-  sim_data <- sim_data[rowSums(counts(sim_data)) > 0, ]  # only non-zero genes -- shouldn't drop any dynamic genes thanks to biased selection
+  sim_data <- sim_data[rowSums(counts(sim_data) > 1) >= 3, ]  # only genes detected in >3 cells -- shouldn't drop many dynamic genes thanks to biased selection
   
   # typical scran + scater pre-processing pipeline
   sim_data <- logNormCounts(sim_data)
@@ -431,7 +431,7 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
   rowData(sim_data) <- row_data
   
   # process data w/ typical pipeline
-  sim_data <- sim_data[rowSums(counts(sim_data)) > 0, ]  # drop all-zero genes -- shouldn't drop any dynamic genes thanks to biased selection
+  sim_data <- sim_data[rowSums(counts(sim_data) > 1) >= 3, ]  # gene detected in >=3 cells -- shouldn't drop many dynamic genes thanks to biased selection
   sim_data <- logNormCounts(sim_data)
   var_decomp <- modelGeneVar(sim_data)
   top2k_hvgs <- getTopHVGs(var_decomp, n = 2000)
@@ -585,7 +585,7 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
         start_time <- Sys.time()
         gene_stats <- testDynamic(expr.mat = sim_counts,
                                   pt = pt_df,
-                                  parallel.exec = TRUE,
+                                  parallel.exec = FALSE,
                                   n.cores = n.cores,
                                   n.potential.basis.fns = 5,
                                   is.gee = TRUE,

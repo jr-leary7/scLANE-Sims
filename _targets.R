@@ -156,7 +156,7 @@ list(
                                                               param.list = list(Prop_Dyn_Genes = 0.05, Cells = 5000),
                                                               n.cores = 4)),
   tar_target(scLANE_res_DEG_10_CELLS_5000, run_scLANE_reduced(sim.data = lung_sim_DEG_10_CELLS_5000,
-                                                              n.genes.sample = 5000, 
+                                                              n.genes.sample = 3100, 
                                                               n.iter = 1,
                                                               param.list = list(Prop_Dyn_Genes = 0.10, Cells = 5000),
                                                               n.cores = 4)),
@@ -409,7 +409,7 @@ list(
                                                                              n.cores = 4)), 
   # run GEE scLANE for 5,000 cell datasets
   tar_target(scLANE_res_DEG_10_CELLS_5000_balanced, run_scLANE_reduced_GEE(sim.data = lung_sim_DEG_10_CELLS_5000_balanced,
-                                                                           n.genes.sample = 4100, 
+                                                                           n.genes.sample = 3600, 
                                                                            n.iter = 1,
                                                                            param.list = list(Prop_Dyn_Genes = 0.1, Cells = 5000, Allocation = "balanced"),
                                                                            n.cores = 4)),
@@ -518,6 +518,6 @@ list(
   
   ##### OUTPUT #####
   
-  # tar_quarto(performance_report, "Simulation_Analysis.qmd", cue = tar_cue(mode = "always"))
+  # tar_render(performance_report, "Simulation_Analysis.Rmd", cue = tar_cue(mode = "always"))
 )
 
