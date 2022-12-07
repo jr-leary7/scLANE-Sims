@@ -20,9 +20,9 @@ set.seed(312)  # lucky seed
 # Libraries
 
 ```{r libraries, results='hide'}
-library(dplyr)
-library(ggplot2)
-library(targets)
+library(dplyr)    # data manipulation
+library(ggplot2)  # plots
+library(targets)  # pipeline tools 
 ```
 
 # Load Targets
@@ -205,7 +205,7 @@ purrr::map2(tradeSeq_single_subj_list,
 ```
 
 ```{r, echo=FALSE, results='hide'}
-rm(c(scLANE_single_subj_list, tradeSeq_single_subj_list)); gc(verbose = FALSE, full = TRUE)
+rm(scLANE_single_subj_list, tradeSeq_single_subj_list); gc(verbose = FALSE, full = TRUE)
 ```
 
 ## Multiple Subjects 
@@ -567,12 +567,6 @@ m1 <- glm(RUNTIME_HOURS ~ METHOD + N_CELLS + N_GENES + PERCENT_DEG,
           data = single_subj_mod_data)
 broom::tidy(m1) %>% 
   mutate(across(where(is.numeric), round, digits = 4))
-
-m2 <- lme4::lmer(RUNTIME_HOURS ~ (1 | METHOD) + N_CELLS + N_GENES + PERCENT_DEG, 
-                 data = single_subj_mod_data)
-summary(m2)
-broomExtra::tidy(m2) %>% 
-  mutate(across(where(is.numeric), round, digits = 4))
 ```
 
 ## Memory Usage
@@ -672,6 +666,28 @@ p2
 save_plot(p.obj = p, 
           p.name = "Single_Subject_ROCAUC_Curves_scLANE.pdf", 
           data.type = "single")
+```
+
+## Distribution of ROC-AUC 
+
+### `scLANE`
+
+```{r}
+metric_table %>% 
+  filter(DATASET_TYPE == "Single subject") %>% 
+  mutate(METHOD = case_when(grepl("scLANE_", DATASET_NAME) ~ "scLANE", TRUE ~ "tradeSeq")) %>% 
+  select(METHOD, N_CELLS, N_GENES, ROC_AUC) %>% 
+  ggplot(aes(x = METHOD, y = ROC_AUC, fill = METHOD)) + 
+  geom_violin(draw_quantiles = 0.5, size = 1) + 
+  scale_y_continuous(labels = scales::percent_format()) + 
+  labs(x = "Method", y = "ROC-AUC", color = "Method") + 
+  theme_classic(base_size = 14)
+```
+
+### `tradeSeq`
+
+```{r}
+
 ```
 
 ## Distributions of P-values
