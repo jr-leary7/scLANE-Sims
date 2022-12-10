@@ -43,7 +43,7 @@ simulate_scaffold <- function(ref.dataset = NULL,
   sim_data <- scaffold::simulateScaffold(scaffoldParams = scaffold_params, originalSCE = ref.dataset)
   
   # typical scran + scater pre-processing pipeline
-  sim_data <- sim_data[rowSums(SingleCellExperiment::counts(sim_data) > 0) > 0, ]  # only genes detected in >3 cells -- shouldn't drop many dynamic genes thanks to biased selection
+  sim_data <- sim_data[rowSums(SingleCellExperiment::counts(sim_data) > 0) > 0, ]  # only non-zero genes -- shouldn't drop many dynamic genes thanks to biased selection
   sim_data <- scater::logNormCounts(sim_data)
   var_decomp <- scran::modelGeneVar(sim_data)
   top2k_hvgs <- scran::getTopHVGs(var_decomp, n = 2000)
@@ -53,11 +53,11 @@ simulate_scaffold <- function(ref.dataset = NULL,
   g <- scran::buildSNNGraph(sim_data, use.dimred = "PCAsub", k = 30)
   clusters <- igraph::cluster_louvain(graph = g)$membership
   SingleCellExperiment::colLabels(sim_data) <- factor(clusters)
-  SingleCellExperiment::colData(sim_data) <- SingleCellExperiment::colData(sim_data) %>%
-                                             as.data.frame() %>%
-                                             dplyr::mutate(cell_time = as.numeric(gsub("Cell_", "", rownames(.))),
-                                                           cell_time_normed = cell_time / max(cell_time)) %>%
-                                             S4Vectors::DataFrame()
+  colData(sim_data) <- colData(sim_data) %>%
+                       as.data.frame() %>%
+                       dplyr::mutate(cell_time = as.numeric(gsub("Cell_", "", rownames(.))),
+                                     cell_time_normed = cell_time / max(cell_time)) %>%
+                       S4Vectors::DataFrame()
   return(sim_data)
 }
 
@@ -72,8 +72,8 @@ run_scLANE <- function(sim.data = NULL,
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
   
   # prepare results objects & sub-lists
-  res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results")
+  res_list <- vector("list", length = 9)
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -82,10 +82,11 @@ run_scLANE <- function(sim.data = NULL,
   td_res_raw_list <- vector("list", length = n.iter)
   td_res_tidy_list <- vector("list", length = n.iter)
   ts_res_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
 
   # prepare counts matrix & cell-ordering dataframe
   sim_counts <- as.matrix(t(counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -105,7 +106,7 @@ run_scLANE <- function(sim.data = NULL,
                                   log.file = scLANE.log,
                                   log.iter = scLANE.log.iter)
         global_test_results <- getResultsDE(gene_stats, p.adj.method = "bonferroni", fdr.cutoff = 0.01) %>%
-                               dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                               dplyr::inner_join((rowData(sim.data) %>%
                                as.data.frame() %>%
                                dplyr::mutate(gene = rownames(.))), by = c("Gene" = "gene"))
         slope_test_results <- testSlope(test.dyn.results = gene_stats,
@@ -125,6 +126,14 @@ run_scLANE <- function(sim.data = NULL,
     td_res_tidy_list[[i]] <- global_test_results
     ts_res_list[[i]] <- slope_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = exp(y$Lineage_A$MARGE_Preds$marge_link_fit))
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -136,6 +145,7 @@ run_scLANE <- function(sim.data = NULL,
   res_list$testDynamic_results_raw <- td_res_raw_list
   res_list$testDynamic_results_tidy <- td_res_tidy_list
   res_list$testSlope_results <- ts_res_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
 
@@ -152,8 +162,8 @@ run_scLANE_reduced <- function(sim.data = NULL,
   if (n.genes.sample <= 0) { stop("n.genes.sample HAS to be positive, come on.") }
   
   # prepare results objects & sub-lists
-  res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results")
+  res_list <- vector("list", length = 9)
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -162,17 +172,18 @@ run_scLANE_reduced <- function(sim.data = NULL,
   td_res_raw_list <- vector("list", length = n.iter)
   td_res_tidy_list <- vector("list", length = n.iter)
   ts_res_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
 
   # prepare subsampled (preserves % dynamic genes) counts matrix & cell-ordering dataframe (no need to set seed b/c targets takes care of reproducibility)
-  p_dynamic <- mean(SingleCellExperiment::rowData(sim.data)[, 1] == "Dynamic")
+  p_dynamic <- mean(rowData(sim.data)[, 1] == "Dynamic")
   n_dyn_genes <- ceiling(p_dynamic * n.genes.sample)
   n_norm_genes <- n.genes.sample - n_dyn_genes
-  samp_dyn_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_dyn_genes <- rowData(sim.data) %>%
                     as.data.frame() %>%
                     dplyr::filter(geneStatus == "Dynamic") %>%
                     dplyr::slice_sample(n = n_dyn_genes) %>%
                     rownames(.)
-  samp_norm_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_norm_genes <- rowData(sim.data) %>%
                      as.data.frame() %>%
                      dplyr::filter(geneStatus == "NotDynamic") %>%
                      dplyr::slice_sample(n = n_norm_genes) %>%
@@ -180,7 +191,7 @@ run_scLANE_reduced <- function(sim.data = NULL,
   samp_genes <- c(samp_dyn_genes, samp_norm_genes)
   sim.data <- sim.data[rownames(sim.data) %in% samp_genes, ]
   sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -200,13 +211,13 @@ run_scLANE_reduced <- function(sim.data = NULL,
                                   log.file = scLANE.log,
                                   log.iter = scLANE.log.iter)
         global_test_results <- getResultsDE(gene_stats, p.adj.method = "bonferroni", fdr.cutoff = 0.01) %>%
-          dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+          dplyr::inner_join((rowData(sim.data) %>%
                                as.data.frame() %>%
                                dplyr::mutate(gene = rownames(.))), by = c("Gene" = "gene"))
         slope_test_results <- testSlope(test.dyn.results = gene_stats,
                                         p.adj.method = "bonferroni",
                                         fdr.cutoff = 0.01) %>%
-          dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+          dplyr::inner_join((rowData(sim.data) %>%
                              as.data.frame() %>%
                              dplyr::mutate(gene = rownames(.))), by = c("Gene" = "gene"))
         end_time <- Sys.time()
@@ -220,6 +231,14 @@ run_scLANE_reduced <- function(sim.data = NULL,
     td_res_tidy_list[[i]] <- global_test_results
     ts_res_list[[i]] <- slope_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = exp(y$Lineage_A$MARGE_Preds$marge_link_fit))
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -231,6 +250,7 @@ run_scLANE_reduced <- function(sim.data = NULL,
   res_list$testDynamic_results_raw <- td_res_raw_list
   res_list$testDynamic_results_tidy <- td_res_tidy_list
   res_list$testSlope_results <- ts_res_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
 
@@ -238,9 +258,7 @@ run_tradeSeq_reduced <- function(sim.data = NULL,
                                  n.genes.sample = 1000,
                                  n.iter = 3,
                                  param.list = NULL,
-                                 n.cores = NULL,
-                                 scLANE.log = FALSE,
-                                 scLANE.log.iter = 1000) {
+                                 n.cores = NULL) {
   # check inputs
   if (is.null(sim.data) | is.null(param.list) | is.null(n.cores)) { stop("You failed to provide necessary parameters to run_tradeSeq_reduced().") }
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
@@ -248,7 +266,7 @@ run_tradeSeq_reduced <- function(sim.data = NULL,
   
   # prepare results objects & sub-lists
   res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "tradeSeq_results_raw", "tradeSeq_results_tidy")
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "tradeSeq_results_raw", "tradeSeq_results_tidy", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -256,17 +274,18 @@ run_tradeSeq_reduced <- function(sim.data = NULL,
   mem_usage_list <- vector("list", length = n.iter)
   ts_res_raw_list <- vector("list", length = n.iter)
   ts_res_tidy_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
   
   # prepare subsampled (preserves % dynamic genes) counts matrix & cell-ordering dataframe (no need to set seed b/c targets takes care of reproducibility)
-  p_dynamic <- mean(SingleCellExperiment::rowData(sim.data)[, 1] == "Dynamic")
+  p_dynamic <- mean(rowData(sim.data)[, 1] == "Dynamic")
   n_dyn_genes <- ceiling(p_dynamic * n.genes.sample)
   n_norm_genes <- n.genes.sample - n_dyn_genes
-  samp_dyn_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_dyn_genes <- rowData(sim.data) %>%
                     as.data.frame() %>%
                     dplyr::filter(geneStatus == "Dynamic") %>%
                     dplyr::slice_sample(n = n_dyn_genes) %>%
                     rownames(.)
-  samp_norm_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_norm_genes <- rowData(sim.data) %>%
                      as.data.frame() %>%
                      dplyr::filter(geneStatus == "NotDynamic") %>%
                      dplyr::slice_sample(n = n_norm_genes) %>%
@@ -274,7 +293,7 @@ run_tradeSeq_reduced <- function(sim.data = NULL,
   samp_genes <- c(samp_dyn_genes, samp_norm_genes)
   sim.data <- sim.data[rownames(sim.data) %in% samp_genes, ]
   sim_counts <- as.matrix(t(counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -300,7 +319,7 @@ run_tradeSeq_reduced <- function(sim.data = NULL,
                         pvalue_adj = p.adjust(pvalue, method = "bonferroni"), 
                         gene_dynamic_overall = dplyr::case_when(pvalue_adj < 0.01 ~ 1, TRUE ~ 0)) %>% 
           dplyr::relocate(gene) %>% 
-          dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+          dplyr::inner_join((rowData(sim.data) %>%
                              as.data.frame() %>%
                              dplyr::mutate(gene = rownames(.))), by = "gene")
         end_time <- Sys.time()
@@ -313,6 +332,14 @@ run_tradeSeq_reduced <- function(sim.data = NULL,
     ts_res_raw_list[[i]] <- gene_stats
     ts_res_tidy_list[[i]] <- global_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = y$fitted.values)
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -323,6 +350,7 @@ run_tradeSeq_reduced <- function(sim.data = NULL,
   res_list$mem_usage <- mem_usage_list
   res_list$tradeSeq_results_raw <- ts_res_raw_list
   res_list$tradeSeq_results_tidy <- ts_res_tidy_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
 
@@ -413,7 +441,7 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
   row_names <- rownames(obj_list[[1]])  # common to all sim data
   rownames(counts_mat) <- row_names
   colnames(counts_mat) <- col_names
-  row_data <- purrr::map(obj_list, \(x) SingleCellExperiment::rowData(x)) %>%
+  row_data <- purrr::map(obj_list, \(x) rowData(x)) %>%
               purrr::reduce(cbind) %>%
               as.data.frame()
   colnames(row_data) <- paste0("geneStatus_P", 1:n.subjects)
@@ -421,7 +449,7 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
                             geneDynamic_n = rowSums(dplyr::across(dplyr::contains("geneStatus_"), \(x) x == "Dynamic")), 
                             geneStatus_overall = dplyr::if_else(geneDynamic_n >= gene.dyn.threshold, "Dynamic", "NotDynamic")) 
   row_data <- S4Vectors::DataFrame(row_data)
-  col_data <- purrr::map(obj_list, \(x) SingleCellExperiment::colData(x)) %>%
+  col_data <- purrr::map(obj_list, \(x) colData(x)) %>%
               purrr::reduce(rbind) %>%
               as.data.frame()
   subj_names <- c()
@@ -436,11 +464,11 @@ simulate_scaffold_GEE <- function(ref.dataset = NULL,
   rownames(col_data) <- col_names
   col_data <- S4Vectors::DataFrame(col_data)
   sim_data <- SingleCellExperiment::SingleCellExperiment(list(counts = counts_mat))
-  SingleCellExperiment::colData(sim_data) <- col_data
-  SingleCellExperiment::rowData(sim_data) <- row_data
+  colData(sim_data) <- col_data
+  rowData(sim_data) <- row_data
   
   # process data w/ typical pipeline
-  sim_data2 <- sim_data[rowSums(SingleCellExperiment::counts(sim_data) > 0) > 0, ]  # genes detected in at least 1 cell -- shouldn't drop many dynamic genes thanks to biased selection
+  sim_data <- sim_data[rowSums(SingleCellExperiment::counts(sim_data) > 0) > 0, ]  # only non-zero genes -- shouldn't drop many dynamic genes thanks to biased selection
   sim_data <- scater::logNormCounts(sim_data)
   var_decomp <- scran::modelGeneVar(sim_data)
   top2k_hvgs <- scran::getTopHVGs(var_decomp, n = 2000)
@@ -464,8 +492,8 @@ run_scLANE_GEE <- function(sim.data = NULL,
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
   
   # prepare results objects & sub-lists
-  res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results")
+  res_list <- vector("list", length = 9)
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -474,10 +502,11 @@ run_scLANE_GEE <- function(sim.data = NULL,
   td_res_raw_list <- vector("list", length = n.iter)
   td_res_tidy_list <- vector("list", length = n.iter)
   ts_res_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
 
   # prepare counts matrix & cell-ordering dataframe
   sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -500,14 +529,14 @@ run_scLANE_GEE <- function(sim.data = NULL,
                                   log.file = scLANE.log,
                                   log.iter = scLANE.log.iter)
         global_test_results <- getResultsDE(gene_stats, p.adj.method = "bonferroni", fdr.cutoff = 0.01) %>%
-                               dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                               dplyr::inner_join((rowData(sim.data) %>%
                                                   as.data.frame() %>%
                                                   dplyr::select(geneStatus_overall) %>% 
                                                   dplyr::mutate(gene = rownames(.))), by = c("Gene" = "gene"))
         slope_test_results <- testSlope(test.dyn.results = gene_stats,
                                         p.adj.method = "bonferroni",
                                         fdr.cutoff = 0.01) %>%
-                              dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                              dplyr::inner_join((rowData(sim.data) %>%
                                                  as.data.frame() %>%
                                                  dplyr::select(geneStatus_overall) %>% 
                                                  dplyr::mutate(gene = rownames(.))), by = c("Gene" = "gene"))
@@ -522,6 +551,14 @@ run_scLANE_GEE <- function(sim.data = NULL,
     td_res_tidy_list[[i]] <- global_test_results
     ts_res_list[[i]] <- slope_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = exp(y$Lineage_A$MARGE_Preds$marge_link_fit))
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -533,6 +570,7 @@ run_scLANE_GEE <- function(sim.data = NULL,
   res_list$testDynamic_results_raw <- td_res_raw_list
   res_list$testDynamic_results_tidy <- td_res_tidy_list
   res_list$testSlope_results <- ts_res_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
 
@@ -548,8 +586,8 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
   
   # prepare results objects & sub-lists
-  res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results")
+  res_list <- vector("list", length = 9)
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -558,9 +596,10 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
   td_res_raw_list <- vector("list", length = n.iter)
   td_res_tidy_list <- vector("list", length = n.iter)
   ts_res_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
   
   # prepare subsampled (preserves % dynamic genes) counts matrix & cell-ordering dataframe (no need to set seed b/c targets takes care of reproducibility)
-  p_dynamic <- SingleCellExperiment::rowData(sim.data) %>%
+  p_dynamic <- rowData(sim.data) %>%
                as.data.frame() %>% 
                dplyr::select(dplyr::contains("geneStatus_P")) %>%
                tidyr::pivot_longer(cols = tidyselect::everything(), values_to = "geneStatus") %>%
@@ -568,12 +607,12 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
                dplyr::pull(P)
   n_dyn_genes <- ceiling(p_dynamic * n.genes.sample)
   n_norm_genes <- n.genes.sample - n_dyn_genes
-  samp_dyn_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_dyn_genes <- rowData(sim.data) %>%
                     as.data.frame() %>%
                     dplyr::filter(geneStatus_overall == "Dynamic") %>%
                     dplyr::slice_sample(n = n_dyn_genes) %>%
                     rownames(.)
-  samp_norm_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_norm_genes <- rowData(sim.data) %>%
                      as.data.frame() %>%
                      dplyr::filter(geneStatus_overall == "NotDynamic") %>%
                      dplyr::slice_sample(n = n_norm_genes) %>%
@@ -583,7 +622,7 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
   
   # prepare counts matrix & cell-ordering dataframe
   sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -606,7 +645,7 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
                                   log.file = scLANE.log,
                                   log.iter = scLANE.log.iter)
         global_test_results <- getResultsDE(gene_stats, p.adj.method = "bonferroni", fdr.cutoff = 0.01) %>%
-                               dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                               dplyr::inner_join((rowData(sim.data) %>%
                                                   as.data.frame() %>%
                                                   dplyr::select(geneStatus_overall) %>% 
                                                   dplyr::mutate(gene = rownames(.))), 
@@ -614,7 +653,7 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
         slope_test_results <- testSlope(test.dyn.results = gene_stats,
                                         p.adj.method = "bonferroni",
                                         fdr.cutoff = 0.01) %>%
-                              dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                              dplyr::inner_join((rowData(sim.data) %>%
                                                  as.data.frame() %>%
                                                  dplyr::select(geneStatus_overall) %>% 
                                                  dplyr::mutate(gene = rownames(.))), 
@@ -630,6 +669,14 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
     td_res_tidy_list[[i]] <- global_test_results
     ts_res_list[[i]] <- slope_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = exp(y$Lineage_A$MARGE_Preds$marge_link_fit))
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -641,6 +688,7 @@ run_scLANE_reduced_GEE <- function(sim.data = NULL,
   res_list$testDynamic_results_raw <- td_res_raw_list
   res_list$testDynamic_results_tidy <- td_res_tidy_list
   res_list$testSlope_results <- ts_res_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
 
@@ -648,9 +696,7 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
                                      n.genes.sample = 1000,
                                      n.iter = 3,
                                      param.list = NULL,
-                                     n.cores = NULL,
-                                     scLANE.log = FALSE,
-                                     scLANE.log.iter = 1000) {
+                                     n.cores = NULL) {
   # check inputs
   if (is.null(sim.data) | is.null(param.list) | is.null(n.cores)) { stop("You failed to provide necessary parameters to run_tradeSeq_reduced().") }
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
@@ -658,7 +704,7 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
   
   # prepare results objects & sub-lists
   res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "tradeSeq_results_raw", "tradeSeq_results_tidy")
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "tradeSeq_results_raw", "tradeSeq_results_tidy", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -666,9 +712,10 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
   mem_usage_list <- vector("list", length = n.iter)
   ts_res_raw_list <- vector("list", length = n.iter)
   ts_res_tidy_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
   
   # prepare subsampled (preserves % dynamic genes) counts matrix & cell-ordering dataframe (no need to set seed b/c targets takes care of reproducibility)
-  p_dynamic <- SingleCellExperiment::rowData(sim.data) %>%
+  p_dynamic <- rowData(sim.data) %>%
                as.data.frame() %>% 
                dplyr::select(dplyr::contains("geneStatus_P")) %>%
                tidyr::pivot_longer(cols = tidyselect::everything(), values_to = "geneStatus") %>%
@@ -676,12 +723,12 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
                dplyr::pull(P)
   n_dyn_genes <- ceiling(p_dynamic * n.genes.sample)
   n_norm_genes <- n.genes.sample - n_dyn_genes
-  samp_dyn_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_dyn_genes <- rowData(sim.data) %>%
                     as.data.frame() %>%
                     dplyr::filter(geneStatus_overall == "Dynamic") %>%
                     dplyr::slice_sample(n = n_dyn_genes) %>%
                     rownames(.)
-  samp_norm_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_norm_genes <- rowData(sim.data) %>%
                      as.data.frame() %>%
                      dplyr::filter(geneStatus_overall == "NotDynamic") %>%
                      dplyr::slice_sample(n = n_norm_genes) %>%
@@ -690,8 +737,8 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
   sim.data <- sim.data[rownames(sim.data) %in% samp_genes, ]
   
   # prepare counts matrix & cell-ordering dataframe
-  sim_counts <- as.matrix(t(counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -717,7 +764,7 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
                                              pvalue_adj = p.adjust(pvalue, method = "bonferroni"), 
                                              gene_dynamic_overall = dplyr::case_when(pvalue_adj < 0.01 ~ 1, TRUE ~ 0)) %>% 
                                dplyr::relocate(gene) %>% 
-                               dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                               dplyr::inner_join((rowData(sim.data) %>%
                                                   as.data.frame() %>%
                                                   dplyr::select(geneStatus_overall) %>% 
                                                   dplyr::mutate(gene = rownames(.))), by = "gene")
@@ -731,6 +778,14 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
     ts_res_raw_list[[i]] <- gene_stats
     ts_res_tidy_list[[i]] <- global_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = y$fitted.values)
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -741,6 +796,7 @@ run_tradeSeq_reduced_GEE <- function(sim.data = NULL,
   res_list$mem_usage <- mem_usage_list
   res_list$tradeSeq_results_raw <- ts_res_raw_list
   res_list$tradeSeq_results_tidy <- ts_res_tidy_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
 
@@ -756,8 +812,8 @@ run_scLANE_GLMM <- function(sim.data = NULL,
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
   
   # prepare results objects & sub-lists
-  res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results")
+  res_list <- vector("list", length = 9)
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -766,10 +822,11 @@ run_scLANE_GLMM <- function(sim.data = NULL,
   td_res_raw_list <- vector("list", length = n.iter)
   td_res_tidy_list <- vector("list", length = n.iter)
   ts_res_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
   
   # prepare counts matrix & cell-ordering dataframe
   sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -783,7 +840,7 @@ run_scLANE_GLMM <- function(sim.data = NULL,
                                   pt = pt_df,
                                   parallel.exec = TRUE,
                                   n.cores = n.cores,
-                                  n.potential.basis.fns = 5,
+                                  n.potential.basis.fns = 3,
                                   is.glmm = TRUE,
                                   id.vec = sim.data$subject, 
                                   glmm.adaptive = basis.adaptive, 
@@ -792,7 +849,7 @@ run_scLANE_GLMM <- function(sim.data = NULL,
                                   log.file = scLANE.log,
                                   log.iter = scLANE.log.iter)
         global_test_results <- getResultsDE(gene_stats, p.adj.method = "bonferroni", fdr.cutoff = 0.01) %>%
-                               dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                               dplyr::inner_join((rowData(sim.data) %>%
                                                   as.data.frame() %>%
                                                   dplyr::select(geneStatus_overall) %>% 
                                                   dplyr::mutate(gene = rownames(.))), 
@@ -800,7 +857,7 @@ run_scLANE_GLMM <- function(sim.data = NULL,
         slope_test_results <- testSlope(test.dyn.results = gene_stats,
                                         p.adj.method = "bonferroni",
                                         fdr.cutoff = 0.01) %>%
-                              dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                              dplyr::inner_join((rowData(sim.data) %>%
                                                  as.data.frame() %>%
                                                  dplyr::select(geneStatus_overall) %>% 
                                                  dplyr::mutate(gene = rownames(.))), 
@@ -816,6 +873,14 @@ run_scLANE_GLMM <- function(sim.data = NULL,
     td_res_tidy_list[[i]] <- global_test_results
     ts_res_list[[i]] <- slope_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = exp(y$Lineage_A$MARGE_Preds$marge_link_fit))
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -827,6 +892,7 @@ run_scLANE_GLMM <- function(sim.data = NULL,
   res_list$testDynamic_results_raw <- td_res_raw_list
   res_list$testDynamic_results_tidy <- td_res_tidy_list
   res_list$testSlope_results <- ts_res_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
 
@@ -843,8 +909,8 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }
   
   # prepare results objects & sub-lists
-  res_list <- vector("list", length = 8)
-  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results")
+  res_list <- vector("list", length = 9)
+  names(res_list) <- c("sim_parameters", "start_time", "end_time", "time_diff", "mem_usage", "testDynamic_results_raw", "testDynamic_results_tidy", "testSlope_results", "RMSE_estimates")
   param_list <- vector("list", length = n.iter)
   start_time_list <- vector("list", length = n.iter)
   end_time_list <- vector("list", length = n.iter)
@@ -853,9 +919,10 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
   td_res_raw_list <- vector("list", length = n.iter)
   td_res_tidy_list <- vector("list", length = n.iter)
   ts_res_list <- vector("list", length = n.iter)
+  rmse_list <- vector("list", length = n.iter)
   
   # prepare subsampled (preserves % dynamic genes) counts matrix & cell-ordering dataframe (no need to set seed b/c targets takes care of reproducibility)
-  p_dynamic <- SingleCellExperiment::rowData(sim.data) %>%
+  p_dynamic <- rowData(sim.data) %>%
                as.data.frame() %>% 
                dplyr::select(dplyr::contains("geneStatus_P")) %>%
                tidyr::pivot_longer(cols = tidyselect::everything(), values_to = "geneStatus") %>%
@@ -863,12 +930,12 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
                dplyr::pull(P)
   n_dyn_genes <- ceiling(p_dynamic * n.genes.sample)
   n_norm_genes <- n.genes.sample - n_dyn_genes
-  samp_dyn_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_dyn_genes <- rowData(sim.data) %>%
                     as.data.frame() %>%
                     dplyr::filter(geneStatus_overall == "Dynamic") %>%
                     dplyr::slice_sample(n = n_dyn_genes) %>%
                     rownames(.)
-  samp_norm_genes <- SingleCellExperiment::rowData(sim.data) %>%
+  samp_norm_genes <- rowData(sim.data) %>%
                      as.data.frame() %>%
                      dplyr::filter(geneStatus_overall == "NotDynamic") %>%
                      dplyr::slice_sample(n = n_norm_genes) %>%
@@ -878,7 +945,7 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
   
   # prepare counts matrix & cell-ordering dataframe
   sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
-  pt_df <- SingleCellExperiment::colData(sim.data) %>%
+  pt_df <- colData(sim.data) %>%
            as.data.frame() %>%
            dplyr::select(cell_time_normed) %>%
            dplyr::rename(PT = cell_time_normed)
@@ -892,7 +959,7 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
                                   pt = pt_df,
                                   parallel.exec = TRUE,
                                   n.cores = n.cores,
-                                  n.potential.basis.fns = 5,
+                                  n.potential.basis.fns = 3,
                                   is.glmm = TRUE,
                                   id.vec = sim.data$subject, 
                                   glmm.adaptive = basis.adaptive, 
@@ -903,7 +970,7 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
         global_test_results <- getResultsDE(gene_stats, 
                                             p.adj.method = "bonferroni", 
                                             fdr.cutoff = 0.01) %>%
-                               dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                               dplyr::inner_join((rowData(sim.data) %>%
                                                   as.data.frame() %>%
                                                   dplyr::select(geneStatus_overall) %>% 
                                                   dplyr::mutate(gene = rownames(.))), 
@@ -911,7 +978,7 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
         slope_test_results <- testSlope(test.dyn.results = gene_stats,
                                         p.adj.method = "bonferroni",
                                         fdr.cutoff = 0.01) %>%
-                              dplyr::inner_join((SingleCellExperiment::rowData(sim.data) %>%
+                              dplyr::inner_join((rowData(sim.data) %>%
                                                  as.data.frame() %>%
                                                  dplyr::select(geneStatus_overall) %>% 
                                                  dplyr::mutate(gene = rownames(.))), 
@@ -927,6 +994,14 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
     td_res_tidy_list[[i]] <- global_test_results
     ts_res_list[[i]] <- slope_test_results
     param_list[[i]] <- param.list
+    rmse_list[[i]] <- purrr::map2(colnames(sim_counts), 
+                                  gene_stats, 
+                                  function(x, y) {
+                                    rmse <- try({ 
+                                      yardstick::rmse_vec(truth = sim_counts[, x], estimate = exp(y$Lineage_A$MARGE_Preds$marge_link_fit))
+                                    }, silent = TRUE) 
+                                  })
+    names(rmse_list[[i]]) <- colnames(sim_counts)
   }
   
   # set up results list & return
@@ -938,5 +1013,6 @@ run_scLANE_reduced_GLMM <- function(sim.data = NULL,
   res_list$testDynamic_results_raw <- td_res_raw_list
   res_list$testDynamic_results_tidy <- td_res_tidy_list
   res_list$testSlope_results <- ts_res_list
+  res_list$RMSE_estimates <- rmse_list
   return(res_list)
 }
