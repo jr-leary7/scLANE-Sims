@@ -36,45 +36,44 @@ Because `targets` won't recognize the dependencies of this document unless we ex
 
 ### `scLANE`
 
-First, we need to load in all the output from our pipeline for runs of `scLANE` on single subject datasets. 
+#### Lung
 
 ```{r, results='hide'}
 # 100 cells
-tar_load(scLANE_res_DEG_01_CELLS_100)
-tar_load(scLANE_res_DEG_05_CELLS_100)
-tar_load(scLANE_res_DEG_10_CELLS_100)
-tar_load(scLANE_res_DEG_20_CELLS_100)
+tar_load(scLANE_res_lung_DEG_01_CELLS_100)
+tar_load(scLANE_res_lung_DEG_05_CELLS_100)
+tar_load(scLANE_res_lung_DEG_10_CELLS_100)
+tar_load(scLANE_res_lung_DEG_20_CELLS_100)
 # 500 cells
-tar_load(scLANE_res_DEG_01_CELLS_500)
-tar_load(scLANE_res_DEG_05_CELLS_500)
-tar_load(scLANE_res_DEG_10_CELLS_500)
-tar_load(scLANE_res_DEG_20_CELLS_500)
+tar_load(scLANE_res_lung_DEG_01_CELLS_500)
+tar_load(scLANE_res_lung_DEG_05_CELLS_500)
+tar_load(scLANE_res_lung_DEG_10_CELLS_500)
+tar_load(scLANE_res_lung_DEG_20_CELLS_500)
 # 1,000 cells
-tar_load(scLANE_res_DEG_01_CELLS_1000)
-tar_load(scLANE_res_DEG_05_CELLS_1000)
-tar_load(scLANE_res_DEG_10_CELLS_1000)
-tar_load(scLANE_res_DEG_20_CELLS_1000)
+tar_load(scLANE_res_lung_DEG_01_CELLS_1000)
+tar_load(scLANE_res_lung_DEG_05_CELLS_1000)
+tar_load(scLANE_res_lung_DEG_10_CELLS_1000)
+tar_load(scLANE_res_lung_DEG_20_CELLS_1000)
 # 2,500 cells
-tar_load(scLANE_res_DEG_01_CELLS_2500)
-tar_load(scLANE_res_DEG_05_CELLS_2500)
-tar_load(scLANE_res_DEG_10_CELLS_2500)
-tar_load(scLANE_res_DEG_20_CELLS_2500)
+tar_load(scLANE_res_lung_DEG_01_CELLS_2500)
+tar_load(scLANE_res_lung_DEG_05_CELLS_2500)
+tar_load(scLANE_res_lung_DEG_10_CELLS_2500)
+tar_load(scLANE_res_lung_DEG_20_CELLS_2500)
 # 5,000 cells
-tar_load(scLANE_res_DEG_01_CELLS_5000)
-tar_load(scLANE_res_DEG_05_CELLS_5000)
-tar_load(scLANE_res_DEG_10_CELLS_5000)
-tar_load(scLANE_res_DEG_20_CELLS_5000)
+tar_load(scLANE_res_lung_DEG_01_CELLS_5000)
+tar_load(scLANE_res_lung_DEG_05_CELLS_5000)
+tar_load(scLANE_res_lung_DEG_10_CELLS_5000)
+tar_load(scLANE_res_lung_DEG_20_CELLS_5000)
 # coerce to list
-scLANE_single_subj_list <- purrr::map(ls(pattern = "scLANE_res*"), function(x) { eval(as.symbol(x)) })
-names(scLANE_single_subj_list) <- ls(pattern = "scLANE_res*")
-rm(list = ls(pattern = "scLANE_res*")); gc(verbose = FALSE, full = TRUE)
+scLANE_single_subj_lung_list <- purrr::map(ls(pattern = "scLANE_res_lung*"), \(x) eval(as.symbol(x)))
+names(scLANE_single_subj_lung_list) <- ls(pattern = "scLANE_res_lung*")
+rm(list = ls(pattern = "scLANE_res_lung*")); gc(verbose = FALSE, full = TRUE)
 ```
 
-Next, we process the data, landing it in a `tibble`. 
+Next, we process the lung simulation data, landing it in a `tibble`. 
 
 ```{r}
-purrr::map2(scLANE_single_subj_list, 
-            names(scLANE_single_subj_list), 
+purrr::imap(scLANE_single_subj_lung_list, 
             function(x, y) {
   tibble(
     DATASET_NAME = y, 
@@ -119,40 +118,74 @@ purrr::map2(scLANE_single_subj_list,
   mutate(DATASET_TYPE = "Single subject", .before = 2) -> scLANE_single_subj_metrics
 ```
 
-### `tradeSeq`
-
-Once again, we load in the pipeline output, this time for runs of `tradeSeq` on single subject datasets. 
+#### Pancreas
 
 ```{r, results='hide'}
 # 100 cells
-tar_load(tradeSeq_res_DEG_01_CELLS_100)
-tar_load(tradeSeq_res_DEG_05_CELLS_100)
-tar_load(tradeSeq_res_DEG_10_CELLS_100)
-tar_load(tradeSeq_res_DEG_20_CELLS_100)
+tar_load(scLANE_res_panc_DEG_01_CELLS_100)
+tar_load(scLANE_res_panc_DEG_05_CELLS_100)
+tar_load(scLANE_res_panc_DEG_10_CELLS_100)
+tar_load(scLANE_res_panc_DEG_20_CELLS_100)
 # 500 cells
-tar_load(tradeSeq_res_DEG_01_CELLS_500)
-tar_load(tradeSeq_res_DEG_05_CELLS_500)
-tar_load(tradeSeq_res_DEG_10_CELLS_500)
-tar_load(tradeSeq_res_DEG_20_CELLS_500)
+tar_load(scLANE_res_panc_DEG_01_CELLS_500)
+tar_load(scLANE_res_panc_DEG_05_CELLS_500)
+tar_load(scLANE_res_panc_DEG_10_CELLS_500)
+tar_load(scLANE_res_panc_DEG_20_CELLS_500)
 # 1,000 cells
-tar_load(tradeSeq_res_DEG_01_CELLS_1000)
-tar_load(tradeSeq_res_DEG_05_CELLS_1000)
-tar_load(tradeSeq_res_DEG_10_CELLS_1000)
-tar_load(tradeSeq_res_DEG_20_CELLS_1000)
+tar_load(scLANE_res_panc_DEG_01_CELLS_1000)
+tar_load(scLANE_res_panc_DEG_05_CELLS_1000)
+tar_load(scLANE_res_panc_DEG_10_CELLS_1000)
+tar_load(scLANE_res_panc_DEG_20_CELLS_1000)
 # 2,500 cells
-tar_load(tradeSeq_res_DEG_01_CELLS_2500)
-tar_load(tradeSeq_res_DEG_05_CELLS_2500)
-tar_load(tradeSeq_res_DEG_10_CELLS_2500)
-tar_load(tradeSeq_res_DEG_20_CELLS_2500)
+tar_load(scLANE_res_panc_DEG_01_CELLS_2500)
+tar_load(scLANE_res_panc_DEG_05_CELLS_2500)
+tar_load(scLANE_res_panc_DEG_10_CELLS_2500)
+tar_load(scLANE_res_panc_DEG_20_CELLS_2500)
 # 5,000 cells
-tar_load(tradeSeq_res_DEG_01_CELLS_5000)
-tar_load(tradeSeq_res_DEG_05_CELLS_5000)
-tar_load(tradeSeq_res_DEG_10_CELLS_5000)
-tar_load(tradeSeq_res_DEG_20_CELLS_5000)
+tar_load(scLANE_res_panc_DEG_01_CELLS_5000)
+tar_load(scLANE_res_panc_DEG_05_CELLS_5000)
+tar_load(scLANE_res_panc_DEG_10_CELLS_5000)
+tar_load(scLANE_res_panc_DEG_20_CELLS_5000)
+# coerce to list
+scLANE_single_subj_panc_list <- purrr::map(ls(pattern = "scLANE_res_panc*"), \(x) eval(as.symbol(x)))
+names(scLANE_single_subj_panc_list) <- ls(pattern = "scLANE_res_panc*")
+rm(list = ls(pattern = "scLANE_res_panc*")); gc(verbose = FALSE, full = TRUE)
+```
+
+### `tradeSeq`
+
+#### Lung
+
+```{r, results='hide'}
+# 100 cells
+tar_load(tradeSeq_res_lung_DEG_01_CELLS_100)
+tar_load(tradeSeq_res_lung_DEG_05_CELLS_100)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_100)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_100)
+# 500 cells
+tar_load(tradeSeq_res_lung_DEG_01_CELLS_500)
+tar_load(tradeSeq_res_lung_DEG_05_CELLS_500)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_500)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_500)
+# 1,000 cells
+tar_load(tradeSeq_res_lung_DEG_01_CELLS_1000)
+tar_load(tradeSeq_res_lung_DEG_05_CELLS_1000)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_1000)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_1000)
+# 2,500 cells
+tar_load(tradeSeq_res_lung_DEG_01_CELLS_2500)
+tar_load(tradeSeq_res_lung_DEG_05_CELLS_2500)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_2500)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_2500)
+# 5,000 cells
+tar_load(tradeSeq_res_lung_DEG_01_CELLS_5000)
+tar_load(tradeSeq_res_lung_DEG_05_CELLS_5000)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_5000)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_5000)
 # coerce to list 
-tradeSeq_single_subj_list <- purrr::map(ls(pattern = "tradeSeq_res*"), \(x) { eval(as.symbol(x)) })
-names(tradeSeq_single_subj_list) <- ls(pattern = "tradeSeq_res*")
-rm(list = ls(pattern = "tradeSeq_res*")); gc(verbose = FALSE, full = TRUE)
+tradeSeq_single_subj_lung_list <- purrr::map(ls(pattern = "tradeSeq_res_lung*"), \(x) eval(as.symbol(x)))
+names(tradeSeq_single_subj_lung_list) <- ls(pattern = "tradeSeq_res_lung*")
+rm(list = ls(pattern = "tradeSeq_res_lung*")); gc(verbose = FALSE, full = TRUE)
 ```
 
 We process the list of outputs in the same way as we did above. 
@@ -206,6 +239,13 @@ purrr::map2(tradeSeq_single_subj_list,
          .before = 7)  %>% 
   mutate(DATASET_TYPE = "Single subject", .before = 2) -> tradeSeq_single_subj_metrics
 ```
+
+#### Pancreas 
+
+```{r}
+
+```
+
 
 ```{r, echo=FALSE, results='hide'}
 rm(scLANE_single_subj_list, tradeSeq_single_subj_list); gc(verbose = FALSE, full = TRUE)
