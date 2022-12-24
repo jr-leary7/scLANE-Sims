@@ -49,7 +49,7 @@ list(
   tar_target(lung_data, scRNAseq::ZilionisLungData(which = "human", filter = TRUE), cue = tar_cue(mode = "always")), 
   tar_target(lung_data_clean, lung_data[rowSums(SingleCellExperiment::counts(lung_data) > 0) >= 3, ]),  # genes detected in at least 3 cells 
   
-  ##### LUNG GLM SIMS #####
+  ##### LUNG SINGLE-SUBJECT SIMS #####
   
   # simulate 1-population datasets with 100 cells
   tar_target(lung_sim_DEG_01_CELLS_100, simulate_scaffold(ref.dataset = lung_data_clean, 
@@ -335,7 +335,7 @@ list(
                                                                         param.list = list(Prop_Dyn_Gene = 0.20, Cells = 5000, Method = "GAM"), 
                                                                         n.cores = 4)),
   
-  ##### LUNG GEE SIMS #####
+  ##### LUNG MULTI-SUBJECT SIMS #####
   
   # simulate 6-subject datasets with 100 cells
   tar_target(lung_sim_DEG_10_CELLS_100_balanced, simulate_scaffold_GEE(ref.dataset = lung_data_clean,
@@ -926,7 +926,7 @@ list(
   tar_target(panc_data, scRNAseq::BaronPancreasData(which = "human"), cue = tar_cue(mode = "always")), 
   tar_target(panc_data_clean, panc_data[rowSums(SingleCellExperiment::counts(panc_data) > 0) >= 3, ]),  # genes detected in at least 3 cells 
   
-  ##### PANC GLM SIMS #####
+  ##### PANC SINGLE-SUBJECT SIMS #####
   
   # simulate 1-population datasets with 100 cells
   tar_target(panc_sim_DEG_01_CELLS_100, simulate_scaffold(ref.dataset = panc_data_clean, 
@@ -1212,7 +1212,7 @@ list(
                                                                        param.list = list(Prop_Dyn_Gene = 0.20, Cells = 5000, Method = "GAM"), 
                                                                        n.cores = 4)),
   
-  ##### PANC GEE SIMS #####
+  ##### PANC MULTI-SUBJECT SIMS #####
   
   # simulate 6-subject datasets with 100 cells
   tar_target(panc_sim_DEG_10_CELLS_100_balanced, simulate_scaffold_GEE(ref.dataset = panc_data_clean,

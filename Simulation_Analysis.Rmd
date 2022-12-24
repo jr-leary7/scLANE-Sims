@@ -1,5 +1,5 @@
 ---
-title: "`scLANE` Simulation Study Results Analysis"
+title: "`scLANE` Simulation Study - Results Analysis"
 subtitle: "University of Florida - Dept. of Biostatistics - Bacher Group"
 author: "Jack Leary"
 date: "`r Sys.Date()`"
@@ -68,11 +68,7 @@ tar_load(scLANE_res_lung_DEG_20_CELLS_5000)
 scLANE_single_subj_lung_list <- purrr::map(ls(pattern = "scLANE_res_lung*"), \(x) eval(as.symbol(x)))
 names(scLANE_single_subj_lung_list) <- ls(pattern = "scLANE_res_lung*")
 rm(list = ls(pattern = "scLANE_res_lung*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_single_subj_lung_list, 
             function(x, y) {
   tibble(
@@ -87,7 +83,7 @@ purrr::imap(scLANE_single_subj_lung_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
                                    truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
@@ -107,7 +103,7 @@ purrr::imap(scLANE_single_subj_lung_list,
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -154,11 +150,7 @@ tar_load(scLANE_res_panc_DEG_20_CELLS_5000)
 scLANE_single_subj_panc_list <- purrr::map(ls(pattern = "scLANE_res_panc*"), \(x) eval(as.symbol(x)))
 names(scLANE_single_subj_panc_list) <- ls(pattern = "scLANE_res_panc*")
 rm(list = ls(pattern = "scLANE_res_panc*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_single_subj_panc_list, 
             function(x, y) {
   tibble(
@@ -173,7 +165,7 @@ purrr::imap(scLANE_single_subj_panc_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
                                    truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
@@ -193,7 +185,7 @@ purrr::imap(scLANE_single_subj_panc_list,
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -242,11 +234,7 @@ tar_load(tradeSeq_res_lung_DEG_20_CELLS_5000)
 tradeSeq_single_subj_lung_list <- purrr::map(ls(pattern = "tradeSeq_res_lung*"), \(x) eval(as.symbol(x)))
 names(tradeSeq_single_subj_lung_list) <- ls(pattern = "tradeSeq_res_lung*")
 rm(list = ls(pattern = "tradeSeq_res_lung*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(tradeSeq_single_subj_lung_list, 
             function(x, y) {
   tibble(
@@ -261,7 +249,7 @@ purrr::imap(tradeSeq_single_subj_lung_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$tradeSeq_results_tidy[[1]], 
                                  truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = pvalue_adj, 
+                                 .estimate = pvalue, 
                                  event_level = "second") %>% pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$tradeSeq_results_tidy[[1]], 
                                    truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
@@ -281,7 +269,7 @@ purrr::imap(tradeSeq_single_subj_lung_list,
     NIR = mean(x$tradeSeq_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
                                           truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = pvalue_adj, 
+                                          .estimate = pvalue, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -328,11 +316,7 @@ tar_load(tradeSeq_res_panc_DEG_20_CELLS_5000)
 tradeSeq_single_subj_panc_list <- purrr::map(ls(pattern = "tradeSeq_res_panc*"), \(x) eval(as.symbol(x)))
 names(tradeSeq_single_subj_panc_list) <- ls(pattern = "tradeSeq_res_panc*")
 rm(list = ls(pattern = "tradeSeq_res_panc*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(tradeSeq_single_subj_panc_list, 
             function(x, y) {
   tibble(
@@ -347,7 +331,7 @@ purrr::imap(tradeSeq_single_subj_panc_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$tradeSeq_results_tidy[[1]], 
                                  truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = pvalue_adj, 
+                                 .estimate = pvalue, 
                                  event_level = "second") %>% pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$tradeSeq_results_tidy[[1]], 
                                    truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
@@ -367,7 +351,7 @@ purrr::imap(tradeSeq_single_subj_panc_list,
     NIR = mean(x$tradeSeq_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
                                           truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = pvalue_adj, 
+                                          .estimate = pvalue, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -382,8 +366,12 @@ purrr::imap(tradeSeq_single_subj_panc_list,
   mutate(DATASET_TYPE = "Single subject", .before = 2) -> tradeSeq_single_subj_panc_metrics
 ```
 
-```{r, echo=FALSE, results='hide'}
-rm(scLANE_single_subj_lung_list, scLANE_single_subj_panc_list, tradeSeq_single_subj_lung_list, tradeSeq_single_subj_panc_list); gc(verbose = FALSE, full = TRUE)
+```{r, echo=FALSE, results='hide', eval=TRUE}
+rm(scLANE_single_subj_lung_list, 
+   scLANE_single_subj_panc_list, 
+   tradeSeq_single_subj_lung_list, 
+   tradeSeq_single_subj_panc_list)
+gc(verbose = FALSE, full = TRUE)
 ```
 
 ## Multiple Subjects
@@ -391,8 +379,6 @@ rm(scLANE_single_subj_lung_list, scLANE_single_subj_panc_list, tradeSeq_single_s
 ### `scLANE` - GEE
 
 #### Lung 
-
-
 
 ```{r, results='hide'}
 # 100 cells
@@ -424,11 +410,7 @@ tar_load(scLANE_res_lung_DEG_20_CELLS_5000_unbalanced)
 scLANE_multi_subj_lung_GEE_list <- purrr::map(ls(pattern = "scLANE_res_lung*"), \(x) eval(as.symbol(x)))
 names(scLANE_multi_subj_lung_GEE_list) <- ls(pattern = "scLANE_res_lung*")
 rm(list = ls(pattern = "scLANE_res_lung*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_multi_subj_lung_GEE_list, 
             function(x, y) {
   tibble(
@@ -443,7 +425,7 @@ purrr::imap(scLANE_multi_subj_lung_GEE_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% 
               pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
@@ -464,7 +446,7 @@ purrr::imap(scLANE_multi_subj_lung_GEE_list,
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -511,11 +493,7 @@ tar_load(scLANE_res_panc_DEG_20_CELLS_5000_unbalanced)
 scLANE_multi_subj_panc_GEE_list <- purrr::map(ls(pattern = "scLANE_res_panc*"), \(x) eval(as.symbol(x)))
 names(scLANE_multi_subj_panc_GEE_list) <- ls(pattern = "scLANE_res_panc*")
 rm(list = ls(pattern = "scLANE_res_panc*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_multi_subj_panc_GEE_list, 
             function(x, y) {
   tibble(
@@ -530,7 +508,7 @@ purrr::imap(scLANE_multi_subj_panc_GEE_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% 
               pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
@@ -551,7 +529,7 @@ purrr::imap(scLANE_multi_subj_panc_GEE_list,
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -600,11 +578,7 @@ tar_load(scLANE_res_lung_DEG_20_CELLS_5000_unbalanced_GLMM_even)
 scLANE_multi_subj_lung_even_GLMM_list <- purrr::map(ls(pattern = "scLANE_res_lung*"), \(x) eval(as.symbol(x)))
 names(scLANE_multi_subj_lung_even_GLMM_list) <- ls(pattern = "scLANE_res_lung*")
 rm(list = ls(pattern = "scLANE_res_lung*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_multi_subj_lung_even_GLMM_list, 
             function(x, y) {
   tibble(
@@ -619,7 +593,7 @@ purrr::imap(scLANE_multi_subj_lung_even_GLMM_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% 
               pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
@@ -640,7 +614,7 @@ purrr::imap(scLANE_multi_subj_lung_even_GLMM_list,
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -687,11 +661,7 @@ tar_load(scLANE_res_panc_DEG_20_CELLS_5000_unbalanced_GLMM_even)
 scLANE_multi_subj_panc_even_GLMM_list <- purrr::map(ls(pattern = "scLANE_res_panc*"), \(x) eval(as.symbol(x)))
 names(scLANE_multi_subj_panc_even_GLMM_list) <- ls(pattern = "scLANE_res_panc*")
 rm(list = ls(pattern = "scLANE_res_panc*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_multi_subj_panc_even_GLMM_list, 
             function(x, y) {
   tibble(
@@ -706,7 +676,7 @@ purrr::imap(scLANE_multi_subj_panc_even_GLMM_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% 
               pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
@@ -727,7 +697,7 @@ purrr::imap(scLANE_multi_subj_panc_even_GLMM_list,
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -776,11 +746,7 @@ tar_load(scLANE_res_lung_DEG_20_CELLS_5000_unbalanced_GLMM_adaptive)
 scLANE_multi_subj_lung_adaptive_GLMM_list <- purrr::map(ls(pattern = "scLANE_res_lung*"), \(x) eval(as.symbol(x)))
 names(scLANE_multi_subj_lung_adaptive_GLMM_list) <- ls(pattern = "scLANE_res_lung*")
 rm(list = ls(pattern = "scLANE_res_lung*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_multi_subj_lung_adaptive_GLMM_list, 
             function(x, y) {
   tibble(
@@ -795,7 +761,7 @@ purrr::imap(scLANE_multi_subj_lung_adaptive_GLMM_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% 
               pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
@@ -816,7 +782,7 @@ purrr::imap(scLANE_multi_subj_lung_adaptive_GLMM_list,
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -863,11 +829,7 @@ tar_load(scLANE_res_panc_DEG_20_CELLS_5000_unbalanced_GLMM_adaptive)
 scLANE_multi_subj_panc_adaptive_GLMM_list <- purrr::map(ls(pattern = "scLANE_res_panc*"), \(x) eval(as.symbol(x)))
 names(scLANE_multi_subj_panc_adaptive_GLMM_list) <- ls(pattern = "scLANE_res_panc*")
 rm(list = ls(pattern = "scLANE_res_panc*")); gc(verbose = FALSE, full = TRUE)
-```
-
-
-
-```{r}
+# coerce to tibble
 purrr::imap(scLANE_multi_subj_panc_adaptive_GLMM_list, 
             function(x, y) {
   tibble(
@@ -882,7 +844,7 @@ purrr::imap(scLANE_multi_subj_panc_adaptive_GLMM_list,
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                 .estimate = P_Val_Adj, 
+                                 .estimate = P_Val, 
                                  event_level = "second") %>% 
               pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
@@ -897,13 +859,13 @@ purrr::imap(scLANE_multi_subj_panc_adaptive_GLMM_list,
                   pull(.estimate), 
     SPECIFICITY = yardstick::spec(x$testDynamic_results_tidy[[1]], 
                                   truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                   estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
-                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+                                  estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                    levels = c("Dynamic", "NotDynamic"))) %>% 
                   pull(.estimate), 
     NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                          .estimate = P_Val_Adj, 
+                                          .estimate = P_Val, 
                                           event_level = "second") %>% 
                        mutate(dataset = y))
   )
@@ -922,43 +884,38 @@ purrr::imap(scLANE_multi_subj_panc_adaptive_GLMM_list,
 
 #### Lung
 
-
-
 ```{r, results='hide'}
 # 100 cells
-tar_load(tradeSeq_res_DEG_10_CELLS_100_balanced)
-tar_load(tradeSeq_res_DEG_10_CELLS_100_unbalanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_100_balanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_100_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_100_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_100_unbalanced)
 # 250 cells
-tar_load(tradeSeq_res_DEG_10_CELLS_250_balanced)
-tar_load(tradeSeq_res_DEG_10_CELLS_250_unbalanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_250_balanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_250_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_250_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_250_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_250_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_250_unbalanced)
 # 1,000 cells
-tar_load(tradeSeq_res_DEG_10_CELLS_1000_balanced)
-tar_load(tradeSeq_res_DEG_10_CELLS_1000_unbalanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_1000_balanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_1000_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_1000_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_1000_unbalanced)
 # 2,500 cells
-tar_load(tradeSeq_res_DEG_10_CELLS_2500_balanced)
-tar_load(tradeSeq_res_DEG_10_CELLS_2500_unbalanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_2500_balanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_2500_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_2500_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_2500_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_2500_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_2500_unbalanced)
 # 5,000 cells
-tar_load(tradeSeq_res_DEG_10_CELLS_5000_balanced)
-tar_load(tradeSeq_res_DEG_10_CELLS_5000_unbalanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_5000_balanced)
-tar_load(tradeSeq_res_DEG_20_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_5000_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_5000_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_5000_unbalanced)
 # coerce to list 
-tradeSeq_multi_subj_list <- purrr::map(ls(pattern = "tradeSeq_res*"), function(x) { eval(as.symbol(x)) })
-names(tradeSeq_multi_subj_list) <- ls(pattern = "tradeSeq_res*")
+tradeSeq_multi_subj_lung_list <- purrr::map(ls(pattern = "tradeSeq_res*"), \(x) eval(as.symbol(x)))
+names(tradeSeq_multi_subj_lung_list) <- ls(pattern = "tradeSeq_res*")
 rm(list = ls(pattern = "tradeSeq_res*")); gc(verbose = FALSE, full = TRUE)
-```
-
-```{r}
-purrr::map2(tradeSeq_multi_subj_list, 
-            names(tradeSeq_multi_subj_list), 
+# coerce to tibble
+purrr::imap(tradeSeq_multi_subj_lung_list, 
             function(x, y) {
   tibble(
     DATASET_NAME = y, 
@@ -971,28 +928,28 @@ purrr::map2(tradeSeq_multi_subj_list,
     MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
     MEM_UNITS = "MB", 
     ROC_AUC = yardstick::roc_auc(x$tradeSeq_results_tidy[[1]], 
-                                 truth = as.factor(geneStatus), 
-                                 .estimate = pvalue_adj, 
+                                 truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                 .estimate = pvalue, 
                                  event_level = "second") %>% pull(.estimate), 
     ACCURACY = yardstick::accuracy(x$tradeSeq_results_tidy[[1]], 
-                                   truth = as.factor(geneStatus), 
+                                   truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
                                    estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
                                                      levels = c("Dynamic", "NotDynamic"))) %>% 
                pull(.estimate), 
     SENSITIVITY = yardstick::sens(x$tradeSeq_results_tidy[[1]], 
-                                  truth = as.factor(geneStatus), 
-                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                  estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                    levels = c("Dynamic", "NotDynamic"))) %>% 
                   pull(.estimate), 
     SPECIFICITY = yardstick::spec(x$tradeSeq_results_tidy[[1]], 
-                                  truth = as.factor(geneStatus), 
-                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                  estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                    levels = c("Dynamic", "NotDynamic"))) %>% 
                   pull(.estimate), 
     NIR = mean(x$tradeSeq_results_tidy[[1]]$geneStatus == "NotDynamic"), 
     ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
-                                          truth = as.factor(geneStatus), 
-                                          .estimate = pvalue_adj, 
+                                          truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                          .estimate = pvalue, 
                                           event_level = "second"))
   )
 }) %>% 
@@ -1002,25 +959,107 @@ purrr::map2(tradeSeq_multi_subj_list,
                                    RUNTIME_UNITS == "hours" ~ RUNTIME, 
                                    RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
                                    TRUE ~ NA_real_), 
-         .before = 7)  %>% 
-  mutate(DATASET_TYPE = "Multiple subjects", .before = 2) -> tradeSeq_multi_subj_metrics
+         .before = 8)  %>% 
+  mutate(DATASET_TYPE = "Multiple subjects", .before = 2) -> tradeSeq_multi_subj_lung_metrics
 ```
 
 #### Pancreas 
 
-```{r}
-
+```{r, results='hide'}
+# 100 cells
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_100_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_100_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_100_unbalanced)
+# 250 cells
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_250_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_250_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_250_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_250_unbalanced)
+# 1,000 cells
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_1000_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_1000_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_1000_unbalanced)
+# 2,500 cells
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_2500_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_2500_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_2500_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_2500_unbalanced)
+# 5,000 cells
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_5000_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_5000_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_5000_unbalanced)
+# coerce to list 
+tradeSeq_multi_subj_panc_list <- purrr::map(ls(pattern = "tradeSeq_res*"), \(x) eval(as.symbol(x)))
+names(tradeSeq_multi_subj_panc_list) <- ls(pattern = "tradeSeq_res*")
+rm(list = ls(pattern = "tradeSeq_res*")); gc(verbose = FALSE, full = TRUE)
+# coerce to tibble
+purrr::imap(tradeSeq_multi_subj_panc_list, 
+            function(x, y) {
+  tibble(
+    DATASET_NAME = y, 
+    MODEL_TYPE = "tradeSeq GAM", 
+    PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+    N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+    N_GENES = length(unique(names(x$tradeSeq_results_raw[[1]]))), 
+    RUNTIME = as.numeric(x$time_diff[[1]]), 
+    RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+    MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+    MEM_UNITS = "MB", 
+    ROC_AUC = yardstick::roc_auc(x$tradeSeq_results_tidy[[1]], 
+                                 truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                 .estimate = pvalue, 
+                                 event_level = "second") %>% pull(.estimate), 
+    ACCURACY = yardstick::accuracy(x$tradeSeq_results_tidy[[1]], 
+                                   truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+               pull(.estimate), 
+    SENSITIVITY = yardstick::sens(x$tradeSeq_results_tidy[[1]], 
+                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                  estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                    levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    SPECIFICITY = yardstick::spec(x$tradeSeq_results_tidy[[1]], 
+                                  truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                  estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                    levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    NIR = mean(x$tradeSeq_results_tidy[[1]]$geneStatus == "NotDynamic"), 
+    ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
+                                          truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                          .estimate = pvalue, 
+                                          event_level = "second"))
+  )
+}) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = 8)  %>% 
+  mutate(DATASET_TYPE = "Multiple subjects", .before = 2) -> tradeSeq_multi_subj_panc_metrics
 ```
 
 
-```{r}
 
+```{r, echo=FALSE, results='hide', eval=TRUE}
+# cleanup
+rm(scLANE_multi_subj_lung_GEE_list, 
+   scLANE_multi_subj_panc_GEE_list, 
+   scLANE_multiple_subj_lung_even_GLMM_list, 
+   scLANE_multiple_subj_panc_even_GLMM_list, 
+   scLANE_multiple_subj_lung_adaptive_GLMM_list, 
+   scLANE_multiple_subj_panc_adaptive_GLMM_list, 
+   tradeSeq_multi_subj_lung_list, 
+   tradeSeq_multi_subj_panc_list)
+gc(verbose = FALSE, full = TRUE)
 ```
 
-
-```{r, echo=FALSE, results='hide'}
-rm(scLANE_multi_subj_lung_list, scLANE_multi_subj_panc_list, tradeSeq_multi_subj_lung_list, tradeSeq_multi_subj_panc_list); gc(verbose = FALSE, full = TRUE)
-```
+Lastly, we combine all all the individual metric table into a single overall table and save it as a compressed `.Rds` file. 
 
 ```{r}
 metric_table <- purrr::map_dfr(ls(pattern = "*_metrics"), \(x) eval(as.symbol(x)))
