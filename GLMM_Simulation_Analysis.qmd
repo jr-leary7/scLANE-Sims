@@ -1,0 +1,444 @@
+---
+title: "Analying GLMM Simulation Results from `scLANE`"
+subtitle: "University of Florida - Department of Biostatistics"
+author: "Jack Leary"
+date: "`r Sys.Date()`"
+format:
+  html:
+    code-download: true
+    code-fold: show
+    code-tools: true
+    code-copy: hover
+    toc: true
+    theme: paper
+    highlight-style: tango
+    self-contained: true
+execute: 
+  cache: true
+---
+
+```{r setup}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = TRUE); set.seed(312)  # lucky seed
+```
+
+# Libraries
+
+```{r}
+library(dplyr)
+library(scLANE)
+library(ggplot2)
+library(targets)
+```
+
+# Data 
+
+## Multi-subject 
+
+### `scLANE` - Adaptive GLMM
+
+```{r, results='hide'}
+# 100 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_100_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_100_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_10_CELLS_100_unbalanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_100_unbalanced_GLMM_adaptive)
+# 500 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_500_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_500_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_10_CELLS_500_unbalanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_500_unbalanced_GLMM_adaptive)
+# 1,000 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_1000_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_1000_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_10_CELLS_1000_unbalanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_1000_unbalanced_GLMM_adaptive)
+# 2,500 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_2500_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_2500_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_10_CELLS_2500_unbalanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_2500_unbalanced_GLMM_adaptive)
+# 5,000 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_5000_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_5000_balanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_10_CELLS_5000_unbalanced_GLMM_adaptive)
+tar_load(scLANE_res_lung_DEG_20_CELLS_5000_unbalanced_GLMM_adaptive)
+# coerce to list
+scLANE_GLMM_adaptive_list <- purrr::map(ls(pattern = "scLANE_res*"), \(x) eval(as.symbol(x)))
+names(scLANE_GLMM_adaptive_list) <- ls(pattern = "scLANE_res*")
+rm(list = ls(pattern = "scLANE_res*")); gc(verbose = FALSE, full = TRUE)
+```
+
+### `scLANE` - Evenly-spaced GLMM
+
+```{r, results='hide'}
+# 100 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_100_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_100_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_10_CELLS_100_unbalanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_100_unbalanced_GLMM_even)
+# 500 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_500_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_500_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_10_CELLS_500_unbalanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_500_unbalanced_GLMM_even)
+# 1,000 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_1000_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_1000_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_10_CELLS_1000_unbalanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_1000_unbalanced_GLMM_even)
+# 2,500 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_2500_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_2500_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_10_CELLS_2500_unbalanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_2500_unbalanced_GLMM_even)
+# 5,000 cells
+tar_load(scLANE_res_lung_DEG_10_CELLS_5000_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_5000_balanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_10_CELLS_5000_unbalanced_GLMM_even)
+tar_load(scLANE_res_lung_DEG_20_CELLS_5000_unbalanced_GLMM_even)
+# coerce to list
+scLANE_GLMM_even_list <- purrr::map(ls(pattern = "scLANE_res*"), \(x) eval(as.symbol(x)))
+names(scLANE_GLMM_even_list) <- ls(pattern = "scLANE_res*")
+rm(list = ls(pattern = "scLANE_res*")); gc(verbose = FALSE, full = TRUE)
+```
+
+### `tradeSeq`
+
+```{r, results='hide'}
+# 100 cells
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_100_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_100_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_100_unbalanced)
+# 500 cells
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_500_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_500_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_500_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_500_unbalanced)
+# 1,000 cells
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_1000_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_1000_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_1000_unbalanced)
+# 2,500 cells
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_2500_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_2500_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_2500_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_2500_unbalanced)
+# 5,000 cells
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_5000_balanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_5000_balanced)
+tar_load(tradeSeq_res_lung_DEG_10_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_lung_DEG_20_CELLS_5000_unbalanced)
+# coerce to list
+tradeSeq_multi_subj_list <- purrr::map(ls(pattern = "tradeSeq_res*"), \(x) eval(as.symbol(x)))
+names(tradeSeq_multi_subj_list) <- ls(pattern = "tradeSeq_res*")
+rm(list = ls(pattern = "tradeSeq_res*")); gc(verbose = FALSE, full = TRUE)
+```
+
+## Pre-processing 
+
+### `scLANE` - Adaptive GLMM
+
+```{r}
+x = scLANE_GLMM_adaptive_list[[8]] 
+y = names(scLANE_GLMM_adaptive_list)[8]
+a = try({
+      tibble(
+        MODEL_TYPE = x$sim_parameters[[1]]$Method, 
+        DATASET_NAME = y, 
+        PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+        N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+        N_GENES = length(unique(names(x$testDynamic_results_raw[[1]]))), 
+        N_DYNAMIC_GENES = sum(x$testDynamic_results_tidy[[1]]$geneStatus_overall == "Dynamic"), 
+        N_NONDYNAMIC_GENES = length(unique(names(x$testDynamic_results_raw[[1]]))) - sum(x$testDynamic_results_tidy[[1]]$geneStatus_overall == "Dynamic"), 
+        N_PRED_DYNAMIC_GENES = sum(x$testDynamic_results_tidy[[1]]$Gene_Dynamic_Overall == 1), 
+        N_PRED_NONDYNAMIC_GENES = sum(x$testDynamic_results_tidy[[1]]$Gene_Dynamic_Overall == 0), 
+        N_MARGE_MODEL_ERRORS = sum(grepl("marge model error", tolower(x$testDynamic_results_tidy[[1]]$Model_Status))), 
+        RUNTIME = as.numeric(x$time_diff[[1]]), 
+        RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+        MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+        MEM_UNITS = "MB", 
+        MEAN_RMSE = mean(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+        SD_RMSE = sd(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+        RMSE_TABLE = list(tibble(GENE = names(x$RMSE_estimates[[1]]), 
+                                 RMSE = as.numeric(x$RMSE_estimates[[1]]))), 
+        ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
+                                     truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                     .estimate = P_Val_Adj, 
+                                     event_level = "second") %>% 
+                  pull(.estimate), 
+        ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
+                                       truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                       estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                         levels = c("Dynamic", "NotDynamic"))) %>% 
+                   pull(.estimate), 
+        SENSITIVITY = yardstick::sens(x$testDynamic_results_tidy[[1]], 
+                                      truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                      estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                        levels = c("Dynamic", "NotDynamic"))) %>% 
+                      pull(.estimate), 
+        SPECIFICITY = yardstick::spec(x$testDynamic_results_tidy[[1]], 
+                                      truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                      estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                        levels = c("Dynamic", "NotDynamic"))) %>% 
+                      pull(.estimate), 
+        NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
+        ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
+                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                              .estimate = P_Val_Adj, 
+                                              event_level = "second"))
+    )}, silent = TRUE)
+```
+
+
+```{r}
+purrr::imap(scLANE_GLMM_adaptive_list, 
+            function(x, y) {
+              try({
+                tibble(
+                  MODEL_TYPE = x$sim_parameters[[1]]$Method, 
+                  DATASET_NAME = y, 
+                  PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+                  N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+                  N_GENES = length(unique(names(x$testDynamic_results_raw[[1]]))), 
+                  N_DYNAMIC_GENES = sum(x$testDynamic_results_tidy[[1]]$geneStatus_overall == "Dynamic"), 
+                  N_NONDYNAMIC_GENES = length(unique(names(x$testDynamic_results_raw[[1]]))) - sum(x$testDynamic_results_tidy[[1]]$geneStatus_overall == "Dynamic"), 
+                  N_PRED_DYNAMIC_GENES = sum(x$testDynamic_results_tidy[[1]]$Gene_Dynamic_Overall == 1), 
+                  N_PRED_NONDYNAMIC_GENES = sum(x$testDynamic_results_tidy[[1]]$Gene_Dynamic_Overall == 0), 
+                  N_MARGE_MODEL_ERRORS = sum(grepl("marge model error", tolower(x$testDynamic_results_tidy[[1]]$Model_Status))), 
+                  RUNTIME = as.numeric(x$time_diff[[1]]), 
+                  RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+                  MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+                  MEM_UNITS = "MB", 
+                  MEAN_RMSE = mean(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+                  SD_RMSE = sd(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+                  RMSE_TABLE = list(tibble(GENE = names(x$RMSE_estimates[[1]]), 
+                                           RMSE = as.numeric(x$RMSE_estimates[[1]]))), 
+                  ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
+                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                               .estimate = P_Val_Adj, 
+                                               event_level = "second") %>% 
+                            pull(.estimate), 
+                  ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
+                                                 truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                 estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                                   levels = c("Dynamic", "NotDynamic"))) %>% 
+                             pull(.estimate), 
+                  SENSITIVITY = yardstick::sens(x$testDynamic_results_tidy[[1]], 
+                                                truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                                  levels = c("Dynamic", "NotDynamic"))) %>% 
+                                pull(.estimate), 
+                  SPECIFICITY = yardstick::spec(x$testDynamic_results_tidy[[1]], 
+                                                truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                                  levels = c("Dynamic", "NotDynamic"))) %>% 
+                                pull(.estimate), 
+                  NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
+                  ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
+                                                        truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                        .estimate = P_Val_Adj, 
+                                                        event_level = "second"))
+              )}, silent = TRUE)
+}) %>% 
+  purrr::discard(\(x) all(class(x) == "try-error")) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "secs" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = which(colnames(.) == "MEM_USED")) %>% 
+  mutate(DATASET_TYPE = "Multi-subject", .before = 2) -> scLANE_GLMM_adaptive_metrics
+```
+
+### `scLANE` - Evenly-spaced GLMM
+
+```{r}
+purrr::imap(scLANE_GLMM_even_list, 
+            function(x, y) {
+              try({
+                tibble(
+                MODEL_TYPE = x$sim_parameters[[1]]$Method, 
+                DATASET_NAME = y, 
+                PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+                N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+                N_GENES = length(unique(names(x$testDynamic_results_raw[[1]]))), 
+                RUNTIME = as.numeric(x$time_diff[[1]]), 
+                RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+                MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+                MEM_UNITS = "MB", 
+                MEAN_RMSE = mean(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+                SD_RMSE = sd(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+                RMSE_TABLE = list(tibble(GENE = names(x$RMSE_estimates[[1]]), 
+                                         RMSE = as.numeric(x$RMSE_estimates[[1]]))), 
+                ROC_AUC = yardstick::roc_auc(x$testDynamic_results_tidy[[1]], 
+                                             truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                             .estimate = P_Val_Adj, 
+                                             event_level = "second") %>% pull(.estimate), 
+                ACCURACY = yardstick::accuracy(x$testDynamic_results_tidy[[1]], 
+                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                               estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
+                           pull(.estimate), 
+                SENSITIVITY = yardstick::sens(x$testDynamic_results_tidy[[1]], 
+                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                              estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                                levels = c("Dynamic", "NotDynamic"))) %>% 
+                              pull(.estimate), 
+                SPECIFICITY = yardstick::spec(x$testDynamic_results_tidy[[1]], 
+                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                              estimate = factor(ifelse(Gene_Dynamic_Overall == 1, "Dynamic", "NotDynamic"), 
+                                                                levels = c("Dynamic", "NotDynamic"))) %>% 
+                              pull(.estimate), 
+                NIR = mean(x$testDynamic_results_tidy[[1]]$geneStatus == "NotDynamic"), 
+                ROC_CURVE = list(yardstick::roc_curve(x$testDynamic_results_tidy[[1]], 
+                                                      truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                      .estimate = P_Val_Adj, 
+                                                      event_level = "second"))
+              )
+              }, silent = TRUE)
+}) %>% 
+  purrr::discard(\(x) all(class(x) == "try-error")) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "secs" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = 7) %>% 
+  mutate(DATASET_TYPE = "Multi-subject", .before = 2) -> scLANE_GLMM_even_metrics
+```
+
+### `tradeSeq`
+
+```{r}
+purrr::imap(tradeSeq_multi_subj_list, 
+            function(x, y) {
+  tibble(
+    MODEL_TYPE = x$sim_parameters[[1]]$Method, 
+    DATASET_NAME = y, 
+    PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+    N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+    N_GENES = length(unique(names(x$tradeSeq_results_raw[[1]]))), 
+    RUNTIME = as.numeric(x$time_diff[[1]]), 
+    RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+    MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+    MEM_UNITS = "MB", 
+    MEAN_RMSE = mean(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+    SD_RMSE = sd(as.numeric(unlist(x$RMSE_estimates[[1]])), na.rm = TRUE), 
+    RMSE_TABLE = list(tibble(GENE = names(x$RMSE_estimates[[1]]), 
+                             RMSE = as.numeric(x$RMSE_estimates[[1]]))), 
+    ROC_AUC = yardstick::roc_auc(x$tradeSeq_results_tidy[[1]], 
+                                 truth = as.factor(geneStatus_overall), 
+                                 .estimate = pvalue_adj, 
+                                 event_level = "second") %>% pull(.estimate), 
+    ACCURACY = yardstick::accuracy(x$tradeSeq_results_tidy[[1]], 
+                                   truth = as.factor(geneStatus_overall), 
+                                   estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                     levels = c("Dynamic", "NotDynamic"))) %>% 
+               pull(.estimate), 
+    SENSITIVITY = yardstick::sens(x$tradeSeq_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus_overall), 
+                                  estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                    levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    SPECIFICITY = yardstick::spec(x$tradeSeq_results_tidy[[1]], 
+                                  truth = as.factor(geneStatus_overall), 
+                                  estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                    levels = c("Dynamic", "NotDynamic"))) %>% 
+                  pull(.estimate), 
+    NIR = mean(x$tradeSeq_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
+    ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
+                                          truth = as.factor(geneStatus_overall), 
+                                          .estimate = pvalue_adj, 
+                                          event_level = "second"))
+  )
+}) %>% 
+  purrr::reduce(rbind) %>% 
+  mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
+                                   RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
+                                   RUNTIME_UNITS == "hours" ~ RUNTIME, 
+                                   RUNTIME_UNITS == "days" ~ RUNTIME * 24, 
+                                   TRUE ~ NA_real_), 
+         .before = 7)  %>% 
+  mutate(MODELDATASET_TYPE = "Multi-subjects", .before = 1) -> tradeSeq_multi_subj_metrics
+```
+
+Lastly, we combine all three result lists into a single dataframe. 
+
+```{r}
+multi_subj_res_all <- list(scLANE_GLMM_adaptive_metrics, scLANE_GLMM_even_metrics, tradeSeq_multi_subj_metrics) %>% 
+                      purrr::reduce(rbind) %>% 
+                      mutate(MODEL = case_when(MODEL_TYPE == "GAM" ~ "tradeSeq", 
+                                               grepl("adaptive", tolower(DATASET_NAME)) ~ "Adaptive scLANE", 
+                                               TRUE ~ "Evenly-spaced scLANE"))
+```
+
+# Analysis 
+
+```{r}
+p0 <- ggplot(multi_subj_res_all, aes(x = MODEL, y = ROC_AUC, fill = MODEL)) + 
+      facet_wrap(~MODEL, scales = "free_x") + 
+      geom_violin(draw_quantiles = 0.5, 
+                  scale = "width", 
+                  size = 1, 
+                  color = "black", 
+                  show.legend = FALSE) + 
+      scale_y_continuous(labels = scales::label_percent()) + 
+      paletteer::scale_fill_paletteer_d("MetBrewer::Juarez") + 
+      labs(x = "Model", 
+           y = "AUC-ROC", 
+           fill = "Model") + 
+      theme_classic(base_size = 14) + 
+      theme(axis.text.x = element_blank(), 
+            axis.ticks.x = element_blank())
+p0
+```
+
+
+```{r}
+p1 <- ggplot(multi_subj_res_all, aes(x = MODEL, y = ACCURACY, fill = MODEL)) + 
+      facet_wrap(~MODEL, scales = "free_x") + 
+      geom_violin(draw_quantiles = 0.5, 
+                  scale = "width", 
+                  size = 1, 
+                  color = "black", 
+                  show.legend = FALSE) + 
+      scale_y_continuous(labels = scales::label_percent()) + 
+      paletteer::scale_fill_paletteer_d("MetBrewer::Juarez") + 
+      labs(x = "Model", 
+           y = "Classification Accuracy", 
+           fill = "Model") + 
+      theme_classic(base_size = 14) + 
+      theme(axis.text.x = element_blank(), 
+            axis.ticks.x = element_blank())
+p1
+```
+
+# Save Figures 
+
+```{r}
+fig_save <- function(plot.obj, plot.name = "", dims = c(9, 5)) {
+  ggplot2::ggsave(filename = plot.name, 
+                  path = "./Figures", 
+                  plot = plot.obj, 
+                  device = "pdf", 
+                  width = dims[1], 
+                  height = dims[2], 
+                  units = "in", 
+                  dpi = "retina")
+}
+```
+
+```{r}
+fig_save(p0, plot.name = "GLMM_AUC_Comp.pdf")
+fig_save(p1, plot.name = "GLMM_Accuracy_Comp.pdf")
+```
+
+# Session Info 
+
+```{r}
+sessioninfo::session_info()
+```

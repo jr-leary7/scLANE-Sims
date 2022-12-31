@@ -1,0 +1,211 @@
+---
+title: "`scLANE` Simulation Study - Simulated Data Quality Control"
+subtitle: "Jack Leary" 
+author: "UF Dept. of Biostatistics - Bacher Group"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: journal
+    highlight: tango
+    code_folding: show
+    code_download: true 
+    toc: false
+    toc_float: false
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE); set.seed(312)  # lucky seed
+```
+
+# Libraries 
+
+First we'll load in the packages we need to tidy & analyze our simulation results. 
+
+```{r, results='hide'}
+library(dplyr)      # data manipulation 
+library(Seurat)     # scRNA methods & data structures
+library(ggplot2)    # plots
+library(targets)    # pipeline tools
+library(paletteer)  # plot colors 
+library(patchwork)  # plot combination
+```
+
+# Data 
+
+## Lung 
+
+### Single-subject
+
+```{r, results='hide'}
+# 100 cells 
+tar_load(lung_sim_DEG_01_CELLS_100)
+tar_load(lung_sim_DEG_05_CELLS_100)
+tar_load(lung_sim_DEG_10_CELLS_100)
+tar_load(lung_sim_DEG_20_CELLS_100)
+# 500 cells 
+tar_load(lung_sim_DEG_01_CELLS_500)
+tar_load(lung_sim_DEG_05_CELLS_500)
+tar_load(lung_sim_DEG_10_CELLS_500)
+tar_load(lung_sim_DEG_20_CELLS_500)
+# 1,000 cells 
+tar_load(lung_sim_DEG_01_CELLS_1000)
+tar_load(lung_sim_DEG_05_CELLS_1000)
+tar_load(lung_sim_DEG_10_CELLS_1000)
+tar_load(lung_sim_DEG_20_CELLS_1000)
+# 2,500 cells
+tar_load(lung_sim_DEG_01_CELLS_2500)
+tar_load(lung_sim_DEG_05_CELLS_2500)
+tar_load(lung_sim_DEG_10_CELLS_2500)
+tar_load(lung_sim_DEG_20_CELLS_2500)
+# 5,000 cells 
+tar_load(lung_sim_DEG_01_CELLS_5000)
+tar_load(lung_sim_DEG_05_CELLS_5000)
+tar_load(lung_sim_DEG_10_CELLS_5000)
+tar_load(lung_sim_DEG_20_CELLS_5000)
+```
+
+### Multi-subject 
+
+```{r, results='hide'}
+# 100 cells
+tar_load(lung_sim_DEG_10_CELLS_100_balanced)
+tar_load(lung_sim_DEG_20_CELLS_100_balanced)
+tar_load(lung_sim_DEG_10_CELLS_100_unbalanced)
+tar_load(lung_sim_DEG_20_CELLS_100_unbalanced)
+# 250 cells
+tar_load(lung_sim_DEG_10_CELLS_250_balanced)
+tar_load(lung_sim_DEG_20_CELLS_250_balanced)
+tar_load(lung_sim_DEG_10_CELLS_250_unbalanced)
+tar_load(lung_sim_DEG_20_CELLS_250_unbalanced)
+# 1,000 cells 
+tar_load(lung_sim_DEG_10_CELLS_1000_balanced)
+tar_load(lung_sim_DEG_20_CELLS_1000_balanced)
+tar_load(lung_sim_DEG_10_CELLS_1000_unbalanced)
+tar_load(lung_sim_DEG_20_CELLS_1000_unbalanced)
+# 2,500 cells
+tar_load(lung_sim_DEG_10_CELLS_2500_balanced)
+tar_load(lung_sim_DEG_20_CELLS_2500_balanced)
+tar_load(lung_sim_DEG_10_CELLS_2500_unbalanced)
+tar_load(lung_sim_DEG_20_CELLS_2500_unbalanced)
+# 5,000 cells 
+tar_load(lung_sim_DEG_10_CELLS_5000_balanced)
+tar_load(lung_sim_DEG_20_CELLS_5000_balanced)
+tar_load(lung_sim_DEG_10_CELLS_5000_unbalanced)
+tar_load(lung_sim_DEG_20_CELLS_5000_unbalanced)
+```
+
+## Pancreas 
+
+### Single-subject
+
+```{r}
+# 100 cells 
+tar_load(panc_sim_DEG_01_CELLS_100)
+tar_load(panc_sim_DEG_05_CELLS_100)
+tar_load(panc_sim_DEG_10_CELLS_100)
+tar_load(panc_sim_DEG_20_CELLS_100)
+# 500 cells 
+tar_load(panc_sim_DEG_01_CELLS_500)
+tar_load(panc_sim_DEG_05_CELLS_500)
+tar_load(panc_sim_DEG_10_CELLS_500)
+tar_load(panc_sim_DEG_20_CELLS_500)
+# 1,000 cells 
+tar_load(panc_sim_DEG_01_CELLS_1000)
+tar_load(panc_sim_DEG_05_CELLS_1000)
+tar_load(panc_sim_DEG_10_CELLS_1000)
+tar_load(panc_sim_DEG_20_CELLS_1000)
+# 2,500 cells
+tar_load(panc_sim_DEG_01_CELLS_2500)
+tar_load(panc_sim_DEG_05_CELLS_2500)
+tar_load(panc_sim_DEG_10_CELLS_2500)
+tar_load(panc_sim_DEG_20_CELLS_2500)
+# 5,000 cells 
+tar_load(panc_sim_DEG_01_CELLS_5000)
+tar_load(panc_sim_DEG_05_CELLS_5000)
+tar_load(panc_sim_DEG_10_CELLS_5000)
+tar_load(panc_sim_DEG_20_CELLS_5000)
+```
+
+### Multi-subject 
+
+```{r}
+# 100 cells
+tar_load(panc_sim_DEG_10_CELLS_100_balanced)
+tar_load(panc_sim_DEG_20_CELLS_100_balanced)
+tar_load(panc_sim_DEG_10_CELLS_100_unbalanced)
+tar_load(panc_sim_DEG_20_CELLS_100_unbalanced)
+# 250 cells
+tar_load(panc_sim_DEG_10_CELLS_250_balanced)
+tar_load(panc_sim_DEG_20_CELLS_250_balanced)
+tar_load(panc_sim_DEG_10_CELLS_250_unbalanced)
+tar_load(panc_sim_DEG_20_CELLS_250_unbalanced)
+# 1,000 cells 
+tar_load(panc_sim_DEG_10_CELLS_1000_balanced)
+tar_load(panc_sim_DEG_20_CELLS_1000_balanced)
+tar_load(panc_sim_DEG_10_CELLS_1000_unbalanced)
+tar_load(panc_sim_DEG_20_CELLS_1000_unbalanced)
+# 2,500 cells
+tar_load(panc_sim_DEG_10_CELLS_2500_balanced)
+tar_load(panc_sim_DEG_20_CELLS_2500_balanced)
+tar_load(panc_sim_DEG_10_CELLS_2500_unbalanced)
+tar_load(panc_sim_DEG_20_CELLS_2500_unbalanced)
+# 5,000 cells 
+tar_load(panc_sim_DEG_10_CELLS_5000_balanced)
+tar_load(panc_sim_DEG_20_CELLS_5000_balanced)
+tar_load(panc_sim_DEG_10_CELLS_5000_unbalanced)
+tar_load(panc_sim_DEG_20_CELLS_5000_unbalanced)
+```
+
+# Quality Control Plots
+
+We'll make a UMAP of the ground truth cell ordering and subject labels for each dataset to make sure our data look relatively realistic. 
+
+```{r, results='hide'}
+qc_plots <- purrr::map(ls()[grepl("sim_", ls())], function(w) {
+  seu <- eval(as.symbol(w))
+  seu <- as.Seurat(seu)
+  if (!grepl("balanced", w)) {
+    seu$subject <- "P1"
+  }
+  p1 <- DimPlot(seu, 
+                group.by = "subject", 
+                cols = alpha(paletteer::paletteer_d("ggsci::nrc_npg"), alpha = 0.5), 
+                pt.size = 1.5) + 
+        labs(x = "UMAP 1", 
+             y = "UMAP 2",
+             title = NULL, 
+             color = "Subject") + 
+        theme_classic(base_size = 14) + 
+        theme(axis.text = element_blank(), 
+              axis.ticks = element_blank()) + 
+        guides(color = guide_legend(override.aes = list(alpha = 1, size = 3)))
+  p2 <- FeaturePlot(seu, 
+                    features = "cell_time_normed",
+                    pt.size = 1.5) + 
+        scale_color_gradientn(colours = paletteer_d("wesanderson::Zissou1")) + 
+        labs(x = "UMAP 1", 
+             y = "UMAP 2",
+             title = NULL, 
+             color = "True Ordering") + 
+        theme_classic(base_size = 14) + 
+        theme(axis.text = element_blank(), 
+              axis.ticks = element_blank())
+  p3 <- p1 | p2 + plot_annotation(title = w)
+  return(p3)
+})
+```
+
+Let's check out each plot. 
+
+```{r, results='hold', fig.width=6, fig.height=3}
+for (p in qc_plots) {
+  print(p)
+}
+```
+
+# Session Info 
+
+```{r}
+sessioninfo::session_info()
+```
