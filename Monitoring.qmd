@@ -28,8 +28,10 @@ tar_watch(level_separation = 1200, seconds = 120, seconds_max = 360)
 ```{r}
 tar_manifest() %>% 
   left_join((tar_progress()), by = "name") %>% 
-  mutate(progress = if_else(is.na(progress), "unstarted", progress), 
-         progress = factor(progress, levels = c("unstarted", "skipped", "started", "built", "errored"))) %>% 
+  mutate(progress = case_when(is.na(progress) ~ "unstarted", 
+                              progress %in% c("skipped", "built") ~ "finished", 
+                              TRUE ~ progress), 
+         progress = factor(progress, levels = c("unstarted", "finished", "started", "errored"))) %>% 
   dplyr::count(progress) %>% 
   arrange(progress) %>% 
   mutate(p = round(n/sum(n), 4)) %>% 
@@ -42,8 +44,10 @@ tar_manifest() %>%
 ```{r}
 tar_manifest() %>% 
   left_join((tar_progress()), by = "name") %>% 
-  mutate(progress = if_else(is.na(progress), "unstarted", progress), 
-         progress = factor(progress, levels = c("unstarted", "skipped", "started", "built", "errored")), 
+  mutate(progress = case_when(is.na(progress) ~ "unstarted", 
+                              progress %in% c("skipped", "built") ~ "finished", 
+                              TRUE ~ progress), 
+         progress = factor(progress, levels = c("unstarted", "finished", "started", "errored")), 
          type = case_when(grepl("sim_", name) ~ "Simulation", 
                           grepl("scLANE.*balance.*GLMM.*", name) ~ "scLANE - GLMM", 
                           grepl("scLANE.*balance.*", name) ~ "scLANE - GEE", 
