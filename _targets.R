@@ -2010,10 +2010,10 @@ list(
                                                                                              n.genes.sample = 1400, 
                                                                                              n.iter = 1,
                                                                                              param.list = list(Prop_Dyn_Genes = 0.2, Cells = 5000, Allocation = "unbalanced", Method = "GLMM", Model = "Evenly-spaced"),
-                                                                                             n.cores = 4))
+                                                                                             n.cores = 4)), 
   
   ##### OUTPUT #####
   
-  # tar_render(quality_control_report, "Simulation_QC.Rmd", cue = tar_cue(mode = "never")), 
+  tar_render(quality_control_report, "Simulation_QC.Rmd")
   # tar_render(performance_report, "Simulation_Analysis.Rmd", cue = tar_cue(mode = "never"))
 )
