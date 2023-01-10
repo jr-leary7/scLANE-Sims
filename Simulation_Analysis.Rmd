@@ -961,7 +961,8 @@ purrr::imap(tradeSeq_multi_subj_lung_list,
     ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
                                           .estimate = pvalue, 
-                                          event_level = "second"))
+                                          event_level = "second") %>% 
+                       mutate(dataset = y))
   )
 }) %>% 
   purrr::reduce(rbind) %>% 
@@ -1043,7 +1044,8 @@ purrr::imap(tradeSeq_multi_subj_panc_list,
     ROC_CURVE = list(yardstick::roc_curve(x$tradeSeq_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
                                           .estimate = pvalue, 
-                                          event_level = "second"))
+                                          event_level = "second") %>% 
+                       mutate(dataset = y))
   )
 }) %>% 
   purrr::reduce(rbind) %>% 
@@ -1093,44 +1095,45 @@ rm(list = ls(pattern = "Lamian_res*")); gc(verbose = FALSE, full = TRUE)
 # coerce to tibble
 purrr::imap(Lamian_multi_subj_lung_list, 
             function(x, y) {
-              tibble(
-                DATASET_NAME = y, 
-                MODEL_TYPE = "Lamian", 
-                PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
-                N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
-                N_GENES = nrow(x$Lamian_results_tidy[[1]]), 
-                N_PRED_DYNAMIC_GENES = sum(x$Lamian_results_tidy[[1]]$gene_dynamic_overall),
-                RUNTIME = as.numeric(x$time_diff[[1]]), 
-                RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
-                MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
-                MEM_UNITS = "MB", 
-                ROC_AUC = yardstick::roc_auc(x$Lamian_results_tidy[[1]], 
-                                             truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                             .estimate = pvalue, 
-                                             event_level = "second") %>% 
-                  pull(.estimate), 
-                ACCURACY = yardstick::accuracy(x$Lamian_results_tidy[[1]], 
-                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                               estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
-                  pull(.estimate), 
-                SENSITIVITY = yardstick::sens(x$Lamian_results_tidy[[1]], 
-                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                              estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                levels = c("Dynamic", "NotDynamic"))) %>% 
-                  pull(.estimate), 
-                SPECIFICITY = yardstick::spec(x$Lamian_results_tidy[[1]], 
-                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                              estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                levels = c("Dynamic", "NotDynamic"))) %>% 
-                  pull(.estimate), 
-                NIR = mean(x$Lamian_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
-                ROC_CURVE = list(yardstick::roc_curve(x$Lamian_results_tidy[[1]], 
-                                                      truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                                      .estimate = pvalue, 
-                                                      event_level = "second"))
-              )
-            }) %>% 
+    tibble(
+      DATASET_NAME = y, 
+      MODEL_TYPE = "Lamian", 
+      PERCENT_DEG = as.numeric(stringr::str_match(y, "_DEG_[0-9]*") %>% stringr::str_remove("_DEG_")) / 100, 
+      N_CELLS = as.numeric(stringr::str_match(y, "_CELLS_[0-9]*") %>% stringr::str_remove("_CELLS_")), 
+      N_GENES = nrow(x$Lamian_results_tidy[[1]]), 
+      N_PRED_DYNAMIC_GENES = sum(x$Lamian_results_tidy[[1]]$gene_dynamic_overall),
+      RUNTIME = as.numeric(x$time_diff[[1]]), 
+      RUNTIME_UNITS = attributes(x$time_diff[[1]])$units, 
+      MEM_USED = x$mem_usage[[1]][1] / 1000^2,  # convert to megabytes
+      MEM_UNITS = "MB", 
+      ROC_AUC = yardstick::roc_auc(x$Lamian_results_tidy[[1]], 
+                                   truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                   .estimate = pvalue, 
+                                   event_level = "second") %>% 
+        pull(.estimate), 
+      ACCURACY = yardstick::accuracy(x$Lamian_results_tidy[[1]], 
+                                     truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                     estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                       levels = c("Dynamic", "NotDynamic"))) %>% 
+        pull(.estimate), 
+      SENSITIVITY = yardstick::sens(x$Lamian_results_tidy[[1]], 
+                                    truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                    estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                      levels = c("Dynamic", "NotDynamic"))) %>% 
+        pull(.estimate), 
+      SPECIFICITY = yardstick::spec(x$Lamian_results_tidy[[1]], 
+                                    truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                    estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                      levels = c("Dynamic", "NotDynamic"))) %>% 
+        pull(.estimate), 
+      NIR = mean(x$Lamian_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
+      ROC_CURVE = list(yardstick::roc_curve(x$Lamian_results_tidy[[1]], 
+                                            truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                            .estimate = pvalue, 
+                                            event_level = "second") %>% 
+                         mutate(dataset = y))
+    )
+  }) %>% 
   purrr::reduce(rbind) %>% 
   mutate(RUNTIME_HOURS = case_when(RUNTIME_UNITS == "seconds" ~ RUNTIME / 60^2, 
                                    RUNTIME_UNITS == "mins" ~ RUNTIME / 60, 
@@ -1211,7 +1214,8 @@ purrr::imap(Lamian_multi_subj_panc_list,
     ROC_CURVE = list(yardstick::roc_curve(x$Lamian_results_tidy[[1]], 
                                           truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
                                           .estimate = pvalue, 
-                                          event_level = "second"))
+                                          event_level = "second") %>% 
+                       mutate(dataset = y))
   )
 }) %>% 
   purrr::reduce(rbind) %>% 
@@ -1631,4 +1635,92 @@ if (!dir.exists("./results/plots/MultiSubject")) {
 
 ### `scLANE`
 
+```{r}
+p <- metric_table %>% 
+     filter(stringr::str_detect(DATASET_NAME, "scLANE_")) %>% 
+     pull(ROC_CURVE) %>% 
+     purrr::reduce(rbind) %>% 
+     mutate(P_DEG = paste0(as.numeric(substr(stringr::str_extract(dataset, "DEG_[0-9][0-9]"), 5, 6)), "%"), 
+            N_CELLS = stringr::str_replace(stringr::str_extract(dataset, "CELLS_.*"), "CELLS_", ""), 
+            P_DEG = factor(P_DEG, levels = c("1%", "5%", "10%", "20%")), 
+            N_CELLS = factor(N_CELLS, levels = as.character(sort(as.numeric(unique(N_CELLS)))))) %>% 
+     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
+     facet_wrap(~P_DEG) + 
+     geom_line(size = 1, alpha = 0.8) + 
+     geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+     scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     labs(x = "1 - Specificity", 
+          y = "Sensitivity", 
+          title = "ROC-AUC", 
+          color = "Number of Cells", 
+          subtitle = "scLANE on Single-Subject Simulated Data") + 
+     theme_classic(base_size = 15) + 
+     theme(plot.title = element_text(hjust = 0.5), 
+           plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
+           plot.title.position = "panel")
+p
+```
+
+
 ### `tradeSeq`
+
+```{r}
+p <- metric_table %>% 
+     filter(stringr::str_detect(DATASET_NAME, "scLANE_")) %>% 
+     pull(ROC_CURVE) %>% 
+     purrr::reduce(rbind) %>% 
+     mutate(P_DEG = paste0(as.numeric(substr(stringr::str_extract(dataset, "DEG_[0-9][0-9]"), 5, 6)), "%"), 
+            N_CELLS = stringr::str_replace(stringr::str_extract(dataset, "CELLS_.*"), "CELLS_", ""), 
+            P_DEG = factor(P_DEG, levels = c("1%", "5%", "10%", "20%")), 
+            N_CELLS = factor(N_CELLS, levels = as.character(sort(as.numeric(unique(N_CELLS)))))) %>% 
+     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
+     facet_wrap(~P_DEG) + 
+     geom_line(size = 1, alpha = 0.8) + 
+     geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+     scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     labs(x = "1 - Specificity", 
+          y = "Sensitivity", 
+          title = "ROC-AUC", 
+          color = "Number of Cells", 
+          subtitle = "scLANE on Single-Subject Simulated Data") + 
+     theme_classic(base_size = 15) + 
+     theme(plot.title = element_text(hjust = 0.5), 
+           plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
+           plot.title.position = "panel")
+p
+```
+
+### `Lamian`
+
+```{r, fig.width=5}
+p <- metric_table %>% 
+     filter(stringr::str_detect(DATASET_NAME, "Lamian_")) %>% 
+     pull(ROC_CURVE) %>% 
+     purrr::reduce(rbind) %>% 
+     mutate(P_DEG = paste0(as.numeric(substr(stringr::str_extract(dataset, "DEG_[0-9][0-9]"), 5, 6)), "%"), 
+            N_CELLS = stringr::str_replace(stringr::str_extract(dataset, "CELLS_.*"), "CELLS_", ""), 
+            N_CELLS = stringr::str_replace(N_CELLS, "_balanced", ""), 
+            P_DEG = factor(P_DEG, levels = c("1%", "5%", "10%", "20%")), 
+            N_CELLS = factor(N_CELLS, levels = as.character(sort(as.numeric(unique(N_CELLS))))), 
+            REF = case_when(grepl("panc", dataset) ~ "Pancreas", 
+                            TRUE ~ "Lung")) %>% 
+     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = REF)) + 
+     facet_wrap(~P_DEG) + 
+     geom_line(size = 1, alpha = 0.8) + 
+     geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+     scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+     labs(x = "1 - Specificity", 
+          y = "Sensitivity", 
+          title = "ROC-AUC", 
+          color = "Number of Cells", 
+          subtitle = "Lamian on Multi-subject Simulated Data") + 
+     theme_classic(base_size = 15) + 
+     theme(plot.title = element_text(hjust = 0.5), 
+           plot.subtitle = element_text(hjust = 0.5, face = "italic", size = 13), 
+           plot.title.position = "panel")
+p
+```
+
