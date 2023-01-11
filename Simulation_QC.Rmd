@@ -23,19 +23,131 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE); set.seed(3
 First we'll load in the packages we need to tidy & analyze our simulation results. 
 
 ```{r, results='hide'}
-library(dplyr)      # data manipulation 
-library(Seurat)     # scRNA methods & data structures
-library(ggplot2)    # plots
-library(targets)    # pipeline tools
-library(paletteer)  # plot colors 
-library(patchwork)  # plot combination
+library(dplyr)                 # data manipulation 
+library(scran)                 # scRNA tools 
+library(scater)                # more scRNA tools
+library(Seurat)                # scRNA methods & data structures
+library(ggplot2)               # plots
+library(targets)               # pipeline tools
+library(paletteer)             # plot colors 
+library(patchwork)             # plot combination
+library(SingleCellExperiment)  # scRNA data structures 
 ```
 
-# Data 
 
-## Lung 
+```{r}
+data.frame(x = x) %>% 
+  ggplot(aes(x = x)) + 
+  geom_histogram(bins = 8)
+```
 
-### Single-subject
+```{r}
+x <- rpois(5000, 30)
+x[sample(1:length(x), 300)] <- 0
+data.frame(x = x) %>% 
+  mutate(bin = cut_interval(x, n = 8), 
+         bin = stringr::str_replace(bin, ",.*", ""), 
+         bin = stringr::str_replace(bin, ",", ""), 
+         bin = stringr::str_replace(bin, "\\(", ""), 
+         bin = stringr::str_replace(bin, "\\[", "")) %>% 
+  dplyr::count(bin) %>% 
+  mutate(bin = as.numeric(bin)) %>% 
+  ggplot(aes(x = bin, y = n)) + 
+  geom_bar(stat = "identity") + 
+  scale_x_continuous()
+```
+
+
+# Lung Reference 
+
+First we'll load in the processed lung reference dataset & process it like we would our simulated datasets. 
+
+```{r}
+tar_load(lung_data_clean)
+colnames(lung_data_clean) <- make.unique(colnames(lung_data_clean))
+# process 
+lung_data_clean <- logNormCounts(lung_data_clean)
+var_decomp <- modelGeneVar(lung_data_clean)
+top2k_hvgs <- getTopHVGs(var_decomp, n = 2000)
+lung_data_clean <- runPCA(lung_data_clean, subset_row = top2k_hvgs)
+reducedDim(lung_data_clean, "PCAsub") <- reducedDim(lung_data_clean, "PCA")[, 1:10, drop = FALSE]
+lung_data_clean <- runUMAP(lung_data_clean, dimred = "PCAsub", n_dimred = 1:10)
+g <- buildSNNGraph(lung_data_clean, use.dimred = "PCAsub", k = 30)
+clusters <- igraph::cluster_louvain(graph = g)$membership
+colLabels(lung_data_clean) <- factor(clusters)
+lung_data_clean <- as.Seurat(lung_data_clean, counts = "counts", data = "logcounts")
+gc(full = TRUE)
+# gather metadata 
+n_cells <- ncol(lung_data_clean)
+n_genes <- nrow(lung_data_clean)
+# summary stat table 
+mean_count <- mean(lung_data_clean@assays$originalexp@counts)
+sd_count <- sd(lung_data_clean@assays$originalexp@counts)
+var_count <- sd_count^2
+range_count <- range(lung_data_clean@assays$originalexp@counts)
+sparsity_count <- mean(lung_data_clean@assays$originalexp@counts == 0)
+summary_df <- data.frame(metric = c("Mean", "S.D.", "Variance", "Range", "Sparsity"), 
+                         value = c(round(mean_count, 2), 
+                                   round(sd_count, 2), 
+                                   round(var_count, 2),
+                                   paste0("(", range_count[1], ", ", range_count[2], ")"), 
+                                   paste0(round(sparsity_count, 4) * 100, "%")))
+# create counts histogram
+p0 <- data.frame(x = as.numeric(lung_data_clean@assays$originalexp@counts)) %>% 
+       mutate(bin = cut_interval(x, n = 30), 
+              bin = stringr::str_replace(bin, ",.*", ""), 
+              bin = stringr::str_replace(bin, ",", ""), 
+              bin = stringr::str_replace(bin, "\\(", ""), 
+              bin = stringr::str_replace(bin, "\\[", "")) %>% 
+      dplyr::count(bin) %>% 
+      mutate(bin = as.numeric(bin)) %>% 
+      ggplot(aes(x = bin, y = n)) + 
+      geom_bar(stat = "identity") + 
+      scale_x_continuous(labels = scales::label_comma()) + 
+      labs(x = "Raw Expression", y = "Frequency") + 
+      theme_classic(base_size = 14)
+# create log counts histogram
+p1 <- data.frame(x = as.numeric(lung_data_clean@assays$originalexp@data)) %>% 
+      ggplot(aes(x = x)) + 
+      geom_histogram(fill = "forestgreen") + 
+      scale_y_continuous(labels = scales::label_scientific()) + 
+      labs(x = "Normalized Expression", y = "Frequency") + 
+      theme_classic(base_size = 14)
+# create UMAP by cluster 
+p2 <- data.frame(UMAP1 = lung_data_clean@reductions$UMAP@cell.embeddings[, 1], 
+                 UMAP2 = lung_data_clean@reductions$UMAP@cell.embeddings[, 2], 
+                 cluster = lung_data_clean$label) %>% 
+      ggplot(aes(x = UMAP1, y = UMAP2, color = cluster)) + 
+      geom_point() + 
+      #scale_color_manual(values = paletteer_d("ggsci::nrc_npg")) + 
+      labs(x = "UMAP 1", y = "UMAP 2", color = "Louvain Cluster") + 
+      theme_classic(base_size = 14) + 
+      guides(color = guide_legend(override.aes = list(size = 2)))
+# create PCA by cluster 
+p3 <- data.frame(PC1 = lung_data_clean@reductions$PCA@cell.embeddings[, 1], 
+                 PC2 = lung_data_clean@reductions$PCA@cell.embeddings[, 2], 
+                 cluster = lung_data_clean$label) %>% 
+      ggplot(aes(x = PC1, y = PC2, color = cluster)) + 
+      geom_point() + 
+      #scale_color_manual(values = paletteer_d("ggsci::nrc_npg")) + 
+      labs(x = "PC 1", y = "PC 2", color = "Louvain Cluster") + 
+      theme_classic(base_size = 14)
+# table of simulation parameters 
+param_df <- data.frame(metric = c("Number of Cells", "Number of Genes"), 
+                       value = c(as.character(n_cells), as.character(n_genes)))
+plot_table <- rbind(summary_df, param_df) %>% 
+              gridExtra::tableGrob(rows = NULL, cols = c("Metric", "Value"))
+# align everything 
+p4a <- (p0 | p1) / (p2 | p3) + 
+       plot_layout(guides = "collect")
+p4b <- (p4a | plot_table) + 
+       plot_layout(ncol = 2, widths = c(3, 1)) + 
+       plot_annotation(title = paste0("Metrics for Lung Reference Dataset"))
+p4b
+p1
+```
+
+## Single-subject
 
 ```{r, results='hide'}
 # 100 cells 
@@ -63,9 +175,102 @@ tar_load(lung_sim_DEG_01_CELLS_5000)
 tar_load(lung_sim_DEG_05_CELLS_5000)
 tar_load(lung_sim_DEG_10_CELLS_5000)
 tar_load(lung_sim_DEG_20_CELLS_5000)
+# coerce to list & process
+sim <- "lung_sim_DEG_01_CELLS_500"
+obj_list <- purrr::map(ls(pattern = "lung_sim"), function(sim) {
+  obj <- eval(as.symbol(sim))
+  obj <- as.Seurat(obj, counts = "counts", data = "logcounts")
+  obj@meta.data <- mutate(obj@meta.data, 
+                          perc_deg = paste0(as.numeric(stringr::str_remove(stringr::str_extract(sim, "lung_sim_DEG_.."), "lung_sim_DEG_")), "%"), 
+                          n_cells = as.character(ncol(obj)), 
+                          n_genes = as.character(nrow(obj)), 
+                          sce_name = sim)
+  return(obj)
+})
+rm(list = ls(pattern = "lung_sim")); gc(full = TRUE)
 ```
 
-### Multi-subject 
+
+```{r}
+DimPlot(obj, group.by = "label")
+FeaturePlot(obj, features = "cell_time_normed")
+```
+
+```{r, fig.width=6.25}
+z <- obj_list[[1]]
+purrr::walk(obj_list, function(z) {
+  # gather metadata 
+  obj_name <- z@meta.data$sce_name[1]
+  n_cells <- z@meta.data$n_cells[1]
+  n_genes <- z@meta.data$n_genes[1]
+  perc_deg <- z@meta.data$perc_deg[1]
+  # summary stat table 
+  mean_count <- mean(as.numeric(GetAssayData(z, slot = "counts")))
+  med_count <- median(as.numeric(GetAssayData(z, slot = "counts")))
+  sd_count <- sd(as.numeric(GetAssayData(z, slot = "counts")))
+  var_count <- var(as.numeric(GetAssayData(z, slot = "counts")))
+  range_count <- range(as.numeric(GetAssayData(z, slot = "counts")))
+  sparsity_count <- mean(as.numeric(GetAssayData(z, slot = "counts")) == 0)
+  summary_df <- data.frame(metric = c("Mean", "Median", "S.D.", "Variance", "Range", "Sparsity"), 
+                           value = c(round(mean_count, 2), 
+                                     round(med_count, 2), 
+                                     round(sd_count, 2), 
+                                     round(var_count, 2),
+                                     paste0("(", range_count[1], ", ", range_count[2], ")"), 
+                                     paste0(round(sparsity_count, 4) * 100, "%")))
+  summary_table <- gridExtra::tableGrob(summary_df, rows = NULL, cols = c("Metric", "Value"))
+  # create counts histogram
+  p0 <- data.frame(x = as.numeric(GetAssayData(z, slot = "counts"))) %>% 
+        ggplot(aes(x = x)) + 
+        geom_histogram(fill = "dodgerblue") + 
+        scale_y_continuous(labels = scales::label_scientific()) + 
+        scale_x_continuous(labels = scales::label_comma()) + 
+        labs(x = "Raw Expression", y = "Frequency") + 
+        theme_classic(base_size = 14)
+  # create log counts histogram
+  p1 <- data.frame(x = log1p(as.numeric(GetAssayData(z, slot = "counts")))) %>% 
+        ggplot(aes(x = x)) + 
+        geom_histogram(fill = "forestgreen") + 
+        scale_y_continuous(labels = scales::label_scientific()) + 
+        labs(x = "Log1p Expression", y = "Frequency") + 
+        theme_classic(base_size = 14)
+  # create UMAP by cluster 
+  p2 <- data.frame(UMAP1 = z@reductions$UMAP@cell.embeddings[, 1], 
+                   UMAP2 = z@reductions$UMAP@cell.embeddings[, 2], 
+                   cluster = z$label) %>% 
+        ggplot(aes(x = UMAP1, y = UMAP2, color = cluster)) + 
+        geom_point() + 
+        scale_color_manual(values = paletteer_d("ggsci::nrc_npg")) + 
+        labs(x = "UMAP 1", y = "UMAP 2", color = "Louvain Cluster") + 
+        theme_classic(base_size = 14) + 
+        guides(color = guide_legend(override.aes = list(size = 2)))
+  # create PCA of cell ordering 
+  p3 <- data.frame(PC1 = z@reductions$PCA@cell.embeddings[, 1], 
+                   PC2 = z@reductions$PCA@cell.embeddings[, 2], 
+                   cell_time = z$cell_time_normed) %>% 
+        ggplot(aes(x = PC1, y = PC2, color = cell_time)) + 
+        geom_point() + 
+        scale_color_gradientn(colors = paletteer_d("wesanderson::Zissou1")) + 
+        labs(x = "PC 1", y = "PC 2", color = "True Ordering") + 
+        theme_classic(base_size = 14)
+  # table of simulation parameters 
+  param_df <- data.frame(metric = c("Number of Cells", "Number of Genes", "% Dynamic Genes"), 
+                         value = c(as.character(n_cells), as.character(n_genes), perc_deg))
+  plot_table <- rbind(summary_df, param_df) %>% 
+                gridExtra::tableGrob(rows = NULL, cols = c("Metric", "Value"))
+  # align everything 
+  p4a <- (p0 | p1) / (p2 | p3) + 
+         plot_layout(guides = "collect")
+  p4b <- (p4a | plot_table) + 
+         plot_layout(ncol = 2, widths = c(3, 1)) + 
+         plot_annotation(title = paste0("Metrics for dataset: ", obj_name))
+  p4b
+})
+```
+
+
+
+## Multi-subject 
 
 ```{r, results='hide'}
 # 100 cells
@@ -95,9 +300,9 @@ tar_load(lung_sim_DEG_10_CELLS_5000_unbalanced)
 tar_load(lung_sim_DEG_20_CELLS_5000_unbalanced)
 ```
 
-## Pancreas 
+# Pancreas Reference 
 
-### Single-subject
+## Single-subject
 
 ```{r}
 # 100 cells 
@@ -127,7 +332,7 @@ tar_load(panc_sim_DEG_10_CELLS_5000)
 tar_load(panc_sim_DEG_20_CELLS_5000)
 ```
 
-### Multi-subject 
+## Multi-subject 
 
 ```{r}
 # 100 cells

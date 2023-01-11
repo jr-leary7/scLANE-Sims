@@ -1706,8 +1706,8 @@ p <- metric_table %>%
             N_CELLS = factor(N_CELLS, levels = as.character(sort(as.numeric(unique(N_CELLS))))), 
             REF = case_when(grepl("panc", dataset) ~ "Pancreas", 
                             TRUE ~ "Lung")) %>% 
-     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = REF)) + 
-     facet_wrap(~P_DEG) + 
+     ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = P_DEG)) + 
+     # facet_wrap(~P_DEG) + 
      geom_line(size = 1, alpha = 0.8) + 
      geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
      scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
