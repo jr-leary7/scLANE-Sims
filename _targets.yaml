@@ -1,0 +1,17 @@
+simulation:
+  reporter_make: verbose
+  script: script_simulation.R
+  shortcut: no
+  store: store_simulation
+scLANE_GLM_models:
+  inherits: simulation
+  script: script_scLANE_GLM.R
+  store: store_scLANE_GLM
+tradeSeq_models:
+  inherits: simulation
+  script: script_tradeSeq.R
+  store: store_tradeSeq
+Lamian_models:
+  inherits: simulation
+  script: script_Lamian.R
+  store: store_Lamian
