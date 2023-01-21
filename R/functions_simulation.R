@@ -46,11 +46,12 @@ simulate_single_subject <- function(ref.dataset = NULL,
   # set up simulation parameters
   n_dyn_genes <- ceiling(perc.dyn.genes * nrow(ref.dataset))
   n_possible_dyn_genes <- ceiling((perc.dyn.genes / 0.8) * nrow(ref.dataset))  # make dynamic genes an 80% sample of the total pool of possible dynamic genes
-  Q80 <- unname(stats::quantile(rowMeans(SingleCellExperiment::counts(ref.dataset)), 0.8))
-  high_exp_genes <- rownames(ref.dataset)[rowMeans(SingleCellExperiment::counts(ref.dataset)) > Q80]
+  gene_means <- rowMeans(SingleCellExperiment::counts(ref.dataset))
+  Q80 <- unname(stats::quantile(gene_means, 0.8))
+  high_exp_genes <- rownames(ref.dataset)[gene_means > Q80]
   if (length(high_exp_genes) < n_possible_dyn_genes) {
-    Q70 <- unname(stats::quantile(rowMeans(SingleCellExperiment::counts(ref.dataset)), 0.7))
-    high_exp_genes <- rownames(ref.dataset)[rowMeans(SingleCellExperiment::counts(ref.dataset)) > Q70]
+    Q70 <- unname(stats::quantile(gene_means, 0.7))
+    high_exp_genes <- rownames(ref.dataset)[gene_means > Q70]
     if (length(high_exp_genes) < n_possible_dyn_genes) {
       stop("Your dataset has too few highly expressed genes to support the number of dynamic genes you want. Please reduce the % dynamic genes parameter.")
     }
@@ -143,7 +144,8 @@ simulate_multi_subject <- function(ref.dataset = NULL,
                                    n.subjects = 6, 
                                    gene.dyn.threshold = 4, 
                                    n.knots = 2, 
-                                   spline.degree = 2) {
+                                   spline.degree = 2, 
+                                   perc.overlap = 0.8) {
   # check inputs
   if (is.null(ref.dataset) || is.null(perc.dyn.genes) || is.null(n.cells)) { stop("You're missing vital parameters for simulate_scaffold().") }
   if (perc.dyn.genes <= 0) { stop("% dynamic genes need to be greater than zero.") }
@@ -154,12 +156,13 @@ simulate_multi_subject <- function(ref.dataset = NULL,
   # set up simulation parameters -- common across subjects
   obj_list <- vector("list", length = n.subjects)
   n_dyn_genes <- ceiling(perc.dyn.genes * nrow(ref.dataset))
-  n_possible_dyn_genes <- ceiling((perc.dyn.genes / 0.8) * nrow(ref.dataset))  # make dynamic genes an 80% sample of the total pool of possible dynamic genes
-  Q80 <- unname(stats::quantile(rowMeans(SingleCellExperiment::counts(ref.dataset)), 0.8))
-  high_exp_genes <- rownames(ref.dataset)[rowMeans(SingleCellExperiment::counts(ref.dataset)) > Q80]
+  n_possible_dyn_genes <- ceiling((perc.dyn.genes / perc.overlap) * nrow(ref.dataset))  # make dynamic genes overlap by perc.overlap % between subject -- higher values -> more overlap
+  gene_means <- rowMeans(SingleCellExperiment::counts(ref.dataset))
+  Q80 <- unname(stats::quantile(gene_means, 0.8))
+  high_exp_genes <- rownames(ref.dataset)[gene_means > Q80]
   if (length(high_exp_genes) < n_possible_dyn_genes) {
-    Q70 <- unname(stats::quantile(rowMeans(SingleCellExperiment::counts(ref.dataset)), 0.7))
-    high_exp_genes <- rownames(ref.dataset)[rowMeans(SingleCellExperiment::counts(ref.dataset)) > Q70]
+    Q70 <- unname(stats::quantile(gene_means, 0.7))
+    high_exp_genes <- rownames(ref.dataset)[gene_means > Q70]
     if (length(high_exp_genes) < n_possible_dyn_genes) {
       stop("Your dataset has too few highly expressed genes to support the number of dynamic genes you want. Please reduce the % dynamic genes parameter.")
     }

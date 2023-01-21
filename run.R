@@ -38,20 +38,20 @@ tar_make_future(workers = 6)
 
 # run tradeSeq
 Sys.setenv(TAR_PROJECT = "tradeSeq_models")
-tar_make_future(workers = 6)
+tar_make_future(workers = 4)
 
 # run Lamian
 Sys.setenv(TAR_PROJECT = "Lamian_models")
-tar_make_future(workers = 6)
+tar_make_future(workers = 4)
 
 # run scLANE (w/ GLM backend)
 Sys.setenv(TAR_PROJECT = "scLANE_GLM_models")
-tar_make_future(workers = 6)
+tar_make_future(workers = 4)
 
 # run scLANE (w/ GEE backend)
 # Sys.setenv(TAR_PROJECT = "scLANE_GEE_models")
-# tar_make_future(workers = 6)
+# tar_make_future(workers = 4)
 
 # run scLANE (w/ GLMM backend)
 # Sys.setenv(TAR_PROJECT = "scLANE_GLMM_models")
-# tar_make_future(workers = 6)
+# tar_make_future(workers = 4)
