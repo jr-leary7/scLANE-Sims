@@ -1,4 +1,4 @@
-##### setup #####
+##### SETUP #####
 
 library(future)
 library(targets)
@@ -14,7 +14,7 @@ tar_option_set(packages = c("stats",
                             "scran", 
                             "scater", 
                             "igraph", 
-                            "quarto", 
+                            "Matrix", 
                             "scRNAseq", 
                             "scaffold", 
                             "S4Vectors", 
@@ -99,7 +99,7 @@ list(
   tar_target(brain_sim_DEG_20_CELLS_5000, simulate_single_subject(ref.dataset = brain_data_clean, 
                                                                   perc.dyn.genes = 0.20, 
                                                                   n.cells = 5000)), 
-  ### MULTI-SUBJECT
+  ### MULTI-SUBJECT -- homogeneous
   # 100 cells
   tar_target(brain_sim_DEG_10_CELLS_100_balanced, simulate_multi_subject(ref.dataset = brain_data_clean,
                                                                          perc.dyn.genes = 0.1,
@@ -206,7 +206,7 @@ list(
                                                                             perc.allocation = c(0.25, 0.15, 0.2, 0.2, 0.1, 0.1),
                                                                             n.subjects = 6)), 
   
-  ##### PANCREAS
+  ##### PANCREAS #####
   # reference data 
   tar_target(panc_data_clean, fetch_baron_pancreas_data()), 
   ### SINGLE-SUBJECT 
@@ -275,7 +275,7 @@ list(
   tar_target(panc_sim_DEG_20_CELLS_5000, simulate_single_subject(ref.dataset = panc_data_clean, 
                                                                  perc.dyn.genes = 0.20, 
                                                                  n.cells = 5000)), 
-  ### MULTI-SUBJECT
+  ### MULTI-SUBJECT -- homogeneous
   # 100 cells
   tar_target(panc_sim_DEG_10_CELLS_100_balanced, simulate_multi_subject(ref.dataset = panc_data_clean,
                                                                         perc.dyn.genes = 0.1,
@@ -382,7 +382,7 @@ list(
                                                                            perc.allocation = c(0.25, 0.15, 0.2, 0.2, 0.1, 0.1),
                                                                            n.subjects = 6)), 
   
-  ##### ENDOCRINOGENESIS 
+  ##### ENDOCRINOGENESIS #####
   # reference data 
   tar_target(endo_data_clean, fetch_bastidas_ponce_pancreas_data()), 
   ### SINGLE-SUBJECT 
@@ -451,7 +451,7 @@ list(
   tar_target(endo_sim_DEG_20_CELLS_5000, simulate_single_subject(ref.dataset = endo_data_clean, 
                                                                  perc.dyn.genes = 0.20, 
                                                                  n.cells = 5000)), 
-  ### MULTI-SUBJECT
+  ### MULTI-SUBJECT -- homogeneous
   # 100 cells
   tar_target(endo_sim_DEG_10_CELLS_100_balanced, simulate_multi_subject(ref.dataset = endo_data_clean,
                                                                         perc.dyn.genes = 0.1,
@@ -559,5 +559,5 @@ list(
                                                                            n.subjects = 6)), 
   
   ##### QC
-  tar_render(quality_control_report, "Simulation_QC.Rmd")
+  tar_render(QC_report, "Reports/Simulation_QC.Rmd")
 )

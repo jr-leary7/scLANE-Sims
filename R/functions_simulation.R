@@ -105,8 +105,7 @@ simulate_single_subject <- function(ref.dataset = NULL,
                                                           popHet = c(1, 1),
                                                           useDynamic = dynamic_params)
   sim_data <- scaffold::simulateScaffold(scaffoldParams = scaffold_params, originalSCE = ref.dataset)
-  sim_data@assays@data$read_counts <- sim_data@assays@data$counts
-  sim_data@assays@data$counts <- sim_data@assays@data$umi_counts
+  sim_data@assays@data$counts <- Matrix::Matrix(sim_data@assays@data$umi_counts, sparse = TRUE)
   sim_data@assays@data$umi_counts <- NULL
   sim_data <- sim_data[rownames(ref.dataset), ]  # original ordering
   
@@ -121,7 +120,6 @@ simulate_single_subject <- function(ref.dataset = NULL,
   SingleCellExperiment::reducedDim(sim_data, "PCAsub") <- SingleCellExperiment::reducedDim(sim_data, "PCA")[, 1:30]
   sim_data <- scater::runUMAP(sim_data, 
                               dimred = "PCAsub", 
-                              n_dimred = 1:30, 
                               ncomponents = 2)
   g <- scran::buildSNNGraph(sim_data, 
                             use.dimred = "PCAsub", 
@@ -222,16 +220,14 @@ simulate_multi_subject <- function(ref.dataset = NULL,
                                                             popHet = c(1, 1),
                                                             useDynamic = dynamic_params)
     sim_data <- scaffold::simulateScaffold(scaffoldParams = scaffold_params, originalSCE = ref.dataset)
-    sim_data@assays@data$read_counts <- sim_data@assays@data$counts
-    sim_data@assays@data$counts <- sim_data@assays@data$umi_counts
+    sim_data@assays@data$counts <- Matrix::Matrix(sim_data@assays@data$umi_counts, sparse = TRUE)
     sim_data@assays@data$umi_counts <- NULL
     sim_data <- sim_data[rownames(ref.dataset), ]  # original ordering
     obj_list[[s]] <- sim_data
   }
   # combine & clean counts / metadata
   counts_mat <- purrr::map(obj_list, SingleCellExperiment::counts) %>%
-                purrr::reduce(cbind) %>%
-                as.matrix() 
+                purrr::reduce(cbind)
   col_names <- purrr::map(seq(obj_list), \(i) paste0("P", i, "_", colnames(obj_list[[i]]))) %>% 
                purrr::reduce(c)
   row_names <- rownames(obj_list[[1]])  # common to all sims
@@ -260,6 +256,7 @@ simulate_multi_subject <- function(ref.dataset = NULL,
   sim_data <- SingleCellExperiment::SingleCellExperiment(list(counts = counts_mat))
   SummarizedExperiment::colData(sim_data) <- col_data
   SummarizedExperiment::rowData(sim_data) <- row_data
+  sim_data <- sim_data[rownames(ref.dataset), ]  # original ordering -- just in case
   
   # process data w/ typical pipeline
   sim_data <- sim_data[rowSums(SingleCellExperiment::counts(sim_data) > 0) >= 3, colSums(SingleCellExperiment::counts(sim_data)) > 0] 
@@ -272,7 +269,6 @@ simulate_multi_subject <- function(ref.dataset = NULL,
   SingleCellExperiment::reducedDim(sim_data, "PCAsub") <- SingleCellExperiment::reducedDim(sim_data, "PCA")[, 1:30]
   sim_data <- scater::runUMAP(sim_data, 
                               dimred = "PCAsub", 
-                              n_dimred = 1:30, 
                               ncomponents = 2)
   g <- scran::buildSNNGraph(sim_data, 
                             use.dimred = "PCAsub", 
