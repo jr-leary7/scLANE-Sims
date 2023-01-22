@@ -23,3 +23,11 @@ Lamian_models_multi:
   inherits: simulation
   script: script_Lamian_multi.R
   store: store_Lamian_multi
+monocle3_models_single:
+  inherits: simulation
+  script: script_monocle3_single.R
+  store: store_monocle3_single
+monocle3_models_multi:
+  inherits: simulation
+  script: script_monocle3_multi.R
+  store: store_monocle3_multi

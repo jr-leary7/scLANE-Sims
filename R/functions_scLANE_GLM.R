@@ -41,6 +41,7 @@ run_scLANE_GLM <- function(sim.data = NULL,
                      rownames(.)
   samp_genes <- c(samp_dyn_genes, samp_norm_genes)
   sim.data <- sim.data[rownames(sim.data) %in% samp_genes, ]
+  sim.data <- sim.data[, colSums(SingleCellExperiment::counts(sim.data)) > 0]
   sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
   pt_df <- SummarizedExperiment::colData(sim.data) %>%
            as.data.frame() %>%
@@ -158,6 +159,7 @@ run_scLANE_GLM_multi <- function(sim.data = NULL,
                      rownames(.)
   samp_genes <- c(samp_dyn_genes, samp_norm_genes)
   sim.data <- sim.data[rownames(sim.data) %in% samp_genes, ]
+  sim.data <- sim.data[, colSums(SingleCellExperiment::counts(sim.data)) > 0]
   
   # prepare counts matrix & cell-ordering dataframe
   sim_counts <- as.matrix(t(SingleCellExperiment::counts(sim.data)))
