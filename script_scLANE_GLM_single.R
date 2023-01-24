@@ -386,5 +386,8 @@ list(
   tar_target(scLANE_GLM_endo_DEG_20_CELLS_5000, run_scLANE_GLM(sim.data = endo_sim_DEG_20_CELLS_5000,
                                                                n.genes.sample = 3000,
                                                                param.list = list(Prop_Dyn_Genes = 0.20, Cells = 5000, Method = "GLM"),
-                                                               n.cores = 4))
+                                                               n.cores = 4)), 
+  
+  ##### QC #####
+  tar_render(QC_report, "Reports/Model_Results_scLANE_Single.Rmd")
 )

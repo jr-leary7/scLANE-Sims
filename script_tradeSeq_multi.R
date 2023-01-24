@@ -384,5 +384,8 @@ list(
   tar_target(tradeSeq_res_endo_DEG_20_CELLS_5000_unbalanced, run_tradeSeq_multi(sim.data = endo_sim_DEG_20_CELLS_5000_unbalanced,
                                                                                 n.genes.sample = 2400, 
                                                                                 param.list = list(Prop_Dyn_Genes = 0.2, Cells = 5000, Allocation = "unbalanced", Method = "GAM"),
-                                                                                n.cores = 4))
+                                                                                n.cores = 4)), 
+  
+  ##### QC #####
+  tar_render(QC_report, "Reports/Model_Results_tradeSeq_Multi.Rmd")
 )

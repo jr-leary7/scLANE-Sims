@@ -558,6 +558,6 @@ list(
                                                                            perc.allocation = c(0.25, 0.15, 0.2, 0.2, 0.1, 0.1),
                                                                            n.subjects = 6)), 
   
-  ##### QC
+  ##### QC #####
   tar_render(QC_report, "Reports/Simulation_QC.Rmd")
 )

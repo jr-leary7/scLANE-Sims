@@ -1,11 +1,11 @@
 # run GEE scLANE on subsampled multi-subject data 
-run_scLANE_GEE_multi <- function(sim.data = NULL,
-                                 n.genes.sample = 1000,
-                                 n.iter = 1,
-                                 param.list = NULL,
-                                 n.cores = 4,
-                                 scLANE.log = FALSE,
-                                 scLANE.log.iter = 1000) {
+run_scLANE_GEE <- function(sim.data = NULL,
+                           n.genes.sample = 1000,
+                           n.iter = 1,
+                           param.list = NULL,
+                           n.cores = 4,
+                           scLANE.log = FALSE,
+                           scLANE.log.iter = 1000) {
   # check inputs
   if (is.null(sim.data) || is.null(param.list)) { stop("You failed to provide necessary parameters to run_scLANE_GEE_multi().") }
   if (n.iter <= 0) { stop("n.iter HAS to be positive, come on.") }

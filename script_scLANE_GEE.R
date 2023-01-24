@@ -41,91 +41,32 @@ tar_option_set(packages = c("glm2",
                format = "qs")
 
 ##### UPSTREAM TARGETS #####
-### LUNG -- SINGLE-SUBJECT 
-# 100 cells
-lung_sim_DEG_01_CELLS_100 <- tar_read(lung_sim_DEG_01_CELLS_100, store = "store_simulation")
-lung_sim_DEG_05_CELLS_100 <- tar_read(lung_sim_DEG_05_CELLS_100, store = "store_simulation")
-lung_sim_DEG_10_CELLS_100 <- tar_read(lung_sim_DEG_10_CELLS_100, store = "store_simulation")
-lung_sim_DEG_20_CELLS_100 <- tar_read(lung_sim_DEG_20_CELLS_100, store = "store_simulation")
-# 500 cells
-lung_sim_DEG_01_CELLS_500 <- tar_read(lung_sim_DEG_01_CELLS_500, store = "store_simulation")
-lung_sim_DEG_05_CELLS_500 <- tar_read(lung_sim_DEG_05_CELLS_500, store = "store_simulation")
-lung_sim_DEG_10_CELLS_500 <- tar_read(lung_sim_DEG_10_CELLS_500, store = "store_simulation")
-lung_sim_DEG_20_CELLS_500 <- tar_read(lung_sim_DEG_20_CELLS_500, store = "store_simulation")
-# 1000 cells
-lung_sim_DEG_01_CELLS_1000 <- tar_read(lung_sim_DEG_01_CELLS_1000, store = "store_simulation")
-lung_sim_DEG_05_CELLS_1000 <- tar_read(lung_sim_DEG_05_CELLS_1000, store = "store_simulation")
-lung_sim_DEG_10_CELLS_1000 <- tar_read(lung_sim_DEG_10_CELLS_1000, store = "store_simulation")
-lung_sim_DEG_20_CELLS_1000 <- tar_read(lung_sim_DEG_20_CELLS_1000, store = "store_simulation")
-# 2500 cells
-lung_sim_DEG_01_CELLS_2500 <- tar_read(lung_sim_DEG_01_CELLS_2500, store = "store_simulation")
-lung_sim_DEG_05_CELLS_2500 <- tar_read(lung_sim_DEG_05_CELLS_2500, store = "store_simulation")
-lung_sim_DEG_10_CELLS_2500 <- tar_read(lung_sim_DEG_10_CELLS_2500, store = "store_simulation")
-lung_sim_DEG_20_CELLS_2500 <- tar_read(lung_sim_DEG_20_CELLS_2500, store = "store_simulation")
-# 1000 cells
-lung_sim_DEG_01_CELLS_5000 <- tar_read(lung_sim_DEG_01_CELLS_5000, store = "store_simulation")
-lung_sim_DEG_05_CELLS_5000 <- tar_read(lung_sim_DEG_05_CELLS_5000, store = "store_simulation")
-lung_sim_DEG_10_CELLS_5000 <- tar_read(lung_sim_DEG_10_CELLS_5000, store = "store_simulation")
-lung_sim_DEG_20_CELLS_5000 <- tar_read(lung_sim_DEG_20_CELLS_5000, store = "store_simulation")
-
-### LUNG -- MULTI-SUBJECT 
+### BRAIN -- MULTI-SUBJECT 
 # 100 cells 
-lung_sim_DEG_10_CELLS_100_balanced <- tar_read(lung_sim_DEG_10_CELLS_100_balanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_100_balanced <- tar_read(lung_sim_DEG_20_CELLS_100_balanced, store = "store_simulation")
-lung_sim_DEG_10_CELLS_100_unbalanced <- tar_read(lung_sim_DEG_10_CELLS_100_unbalanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_100_unbalanced <- tar_read(lung_sim_DEG_20_CELLS_100_unbalanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_100_balanced <- tar_read(brain_sim_DEG_10_CELLS_100_balanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_100_balanced <- tar_read(brain_sim_DEG_20_CELLS_100_balanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_100_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_100_unbalanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_100_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_100_unbalanced, store = "store_simulation")
 # 500 cells 
-lung_sim_DEG_10_CELLS_500_balanced <- tar_read(lung_sim_DEG_10_CELLS_500_balanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_500_balanced <- tar_read(lung_sim_DEG_20_CELLS_500_balanced, store = "store_simulation")
-lung_sim_DEG_10_CELLS_500_unbalanced <- tar_read(lung_sim_DEG_10_CELLS_500_unbalanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_500_unbalanced <- tar_read(lung_sim_DEG_20_CELLS_500_unbalanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_500_balanced <- tar_read(brain_sim_DEG_10_CELLS_500_balanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_500_balanced <- tar_read(brain_sim_DEG_20_CELLS_500_balanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_500_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_500_unbalanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_500_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_500_unbalanced, store = "store_simulation")
 # 1000 cells 
-lung_sim_DEG_10_CELLS_1000_balanced <- tar_read(lung_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_1000_balanced <- tar_read(lung_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
-lung_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(lung_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(lung_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
-# 1000 cells 
-lung_sim_DEG_10_CELLS_1000_balanced <- tar_read(lung_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_1000_balanced <- tar_read(lung_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
-lung_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(lung_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(lung_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_1000_balanced <- tar_read(brain_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_1000_balanced <- tar_read(brain_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
 # 2500 cells 
-lung_sim_DEG_10_CELLS_2500_balanced <- tar_read(lung_sim_DEG_10_CELLS_2500_balanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_2500_balanced <- tar_read(lung_sim_DEG_20_CELLS_2500_balanced, store = "store_simulation")
-lung_sim_DEG_10_CELLS_2500_unbalanced <- tar_read(lung_sim_DEG_10_CELLS_2500_unbalanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_2500_unbalanced <- tar_read(lung_sim_DEG_20_CELLS_2500_unbalanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_2500_balanced <- tar_read(brain_sim_DEG_10_CELLS_2500_balanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_2500_balanced <- tar_read(brain_sim_DEG_20_CELLS_2500_balanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_2500_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_2500_unbalanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_2500_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_2500_unbalanced, store = "store_simulation")
 # 5000 cells 
-lung_sim_DEG_10_CELLS_5000_balanced <- tar_read(lung_sim_DEG_10_CELLS_5000_balanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_5000_balanced <- tar_read(lung_sim_DEG_20_CELLS_5000_balanced, store = "store_simulation")
-lung_sim_DEG_10_CELLS_5000_unbalanced <- tar_read(lung_sim_DEG_10_CELLS_5000_unbalanced, store = "store_simulation")
-lung_sim_DEG_20_CELLS_5000_unbalanced <- tar_read(lung_sim_DEG_20_CELLS_5000_unbalanced, store = "store_simulation")
-
-### PANCREAS -- SINGLE-SUBJECT 
-# 100 cells
-panc_sim_DEG_01_CELLS_100 <- tar_read(panc_sim_DEG_01_CELLS_100, store = "store_simulation")
-panc_sim_DEG_05_CELLS_100 <- tar_read(panc_sim_DEG_05_CELLS_100, store = "store_simulation")
-panc_sim_DEG_10_CELLS_100 <- tar_read(panc_sim_DEG_10_CELLS_100, store = "store_simulation")
-panc_sim_DEG_20_CELLS_100 <- tar_read(panc_sim_DEG_20_CELLS_100, store = "store_simulation")
-# 500 cells
-panc_sim_DEG_01_CELLS_500 <- tar_read(panc_sim_DEG_01_CELLS_500, store = "store_simulation")
-panc_sim_DEG_05_CELLS_500 <- tar_read(panc_sim_DEG_05_CELLS_500, store = "store_simulation")
-panc_sim_DEG_10_CELLS_500 <- tar_read(panc_sim_DEG_10_CELLS_500, store = "store_simulation")
-panc_sim_DEG_20_CELLS_500 <- tar_read(panc_sim_DEG_20_CELLS_500, store = "store_simulation")
-# 1000 cells
-panc_sim_DEG_01_CELLS_1000 <- tar_read(panc_sim_DEG_01_CELLS_1000, store = "store_simulation")
-panc_sim_DEG_05_CELLS_1000 <- tar_read(panc_sim_DEG_05_CELLS_1000, store = "store_simulation")
-panc_sim_DEG_10_CELLS_1000 <- tar_read(panc_sim_DEG_10_CELLS_1000, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000 <- tar_read(panc_sim_DEG_20_CELLS_1000, store = "store_simulation")
-# 2500 cells
-panc_sim_DEG_01_CELLS_2500 <- tar_read(panc_sim_DEG_01_CELLS_2500, store = "store_simulation")
-panc_sim_DEG_05_CELLS_2500 <- tar_read(panc_sim_DEG_05_CELLS_2500, store = "store_simulation")
-panc_sim_DEG_10_CELLS_2500 <- tar_read(panc_sim_DEG_10_CELLS_2500, store = "store_simulation")
-panc_sim_DEG_20_CELLS_2500 <- tar_read(panc_sim_DEG_20_CELLS_2500, store = "store_simulation")
-# 1000 cells
-panc_sim_DEG_01_CELLS_5000 <- tar_read(panc_sim_DEG_01_CELLS_5000, store = "store_simulation")
-panc_sim_DEG_05_CELLS_5000 <- tar_read(panc_sim_DEG_05_CELLS_5000, store = "store_simulation")
-panc_sim_DEG_10_CELLS_5000 <- tar_read(panc_sim_DEG_10_CELLS_5000, store = "store_simulation")
-panc_sim_DEG_20_CELLS_5000 <- tar_read(panc_sim_DEG_20_CELLS_5000, store = "store_simulation")
+brain_sim_DEG_10_CELLS_5000_balanced <- tar_read(brain_sim_DEG_10_CELLS_5000_balanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_5000_balanced <- tar_read(brain_sim_DEG_20_CELLS_5000_balanced, store = "store_simulation")
+brain_sim_DEG_10_CELLS_5000_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_5000_unbalanced, store = "store_simulation")
+brain_sim_DEG_20_CELLS_5000_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_5000_unbalanced, store = "store_simulation")
 
 ### PANCREAS -- MULTI-SUBJECT 
 # 100 cells 
@@ -143,11 +84,6 @@ panc_sim_DEG_10_CELLS_1000_balanced <- tar_read(panc_sim_DEG_10_CELLS_1000_balan
 panc_sim_DEG_20_CELLS_1000_balanced <- tar_read(panc_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
 panc_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
 panc_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
-# 1000 cells 
-panc_sim_DEG_10_CELLS_1000_balanced <- tar_read(panc_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000_balanced <- tar_read(panc_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
-panc_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
 # 2500 cells 
 panc_sim_DEG_10_CELLS_2500_balanced <- tar_read(panc_sim_DEG_10_CELLS_2500_balanced, store = "store_simulation")
 panc_sim_DEG_20_CELLS_2500_balanced <- tar_read(panc_sim_DEG_20_CELLS_2500_balanced, store = "store_simulation")
@@ -158,33 +94,6 @@ panc_sim_DEG_10_CELLS_5000_balanced <- tar_read(panc_sim_DEG_10_CELLS_5000_balan
 panc_sim_DEG_20_CELLS_5000_balanced <- tar_read(panc_sim_DEG_20_CELLS_5000_balanced, store = "store_simulation")
 panc_sim_DEG_10_CELLS_5000_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_5000_unbalanced, store = "store_simulation")
 panc_sim_DEG_20_CELLS_5000_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_5000_unbalanced, store = "store_simulation")
-
-### ENDOCRINOGENESIS -- SINGLE-SUBJECT 
-# 100 cells
-endo_sim_DEG_01_CELLS_100 <- tar_read(endo_sim_DEG_01_CELLS_100, store = "store_simulation")
-endo_sim_DEG_05_CELLS_100 <- tar_read(endo_sim_DEG_05_CELLS_100, store = "store_simulation")
-endo_sim_DEG_10_CELLS_100 <- tar_read(endo_sim_DEG_10_CELLS_100, store = "store_simulation")
-endo_sim_DEG_20_CELLS_100 <- tar_read(endo_sim_DEG_20_CELLS_100, store = "store_simulation")
-# 500 cells
-endo_sim_DEG_01_CELLS_500 <- tar_read(endo_sim_DEG_01_CELLS_500, store = "store_simulation")
-endo_sim_DEG_05_CELLS_500 <- tar_read(endo_sim_DEG_05_CELLS_500, store = "store_simulation")
-endo_sim_DEG_10_CELLS_500 <- tar_read(endo_sim_DEG_10_CELLS_500, store = "store_simulation")
-endo_sim_DEG_20_CELLS_500 <- tar_read(endo_sim_DEG_20_CELLS_500, store = "store_simulation")
-# 1000 cells
-endo_sim_DEG_01_CELLS_1000 <- tar_read(endo_sim_DEG_01_CELLS_1000, store = "store_simulation")
-endo_sim_DEG_05_CELLS_1000 <- tar_read(endo_sim_DEG_05_CELLS_1000, store = "store_simulation")
-endo_sim_DEG_10_CELLS_1000 <- tar_read(endo_sim_DEG_10_CELLS_1000, store = "store_simulation")
-endo_sim_DEG_20_CELLS_1000 <- tar_read(endo_sim_DEG_20_CELLS_1000, store = "store_simulation")
-# 2500 cells
-endo_sim_DEG_01_CELLS_2500 <- tar_read(endo_sim_DEG_01_CELLS_2500, store = "store_simulation")
-endo_sim_DEG_05_CELLS_2500 <- tar_read(endo_sim_DEG_05_CELLS_2500, store = "store_simulation")
-endo_sim_DEG_10_CELLS_2500 <- tar_read(endo_sim_DEG_10_CELLS_2500, store = "store_simulation")
-endo_sim_DEG_20_CELLS_2500 <- tar_read(endo_sim_DEG_20_CELLS_2500, store = "store_simulation")
-# 1000 cells
-endo_sim_DEG_01_CELLS_5000 <- tar_read(endo_sim_DEG_01_CELLS_5000, store = "store_simulation")
-endo_sim_DEG_05_CELLS_5000 <- tar_read(endo_sim_DEG_05_CELLS_5000, store = "store_simulation")
-endo_sim_DEG_10_CELLS_5000 <- tar_read(endo_sim_DEG_10_CELLS_5000, store = "store_simulation")
-endo_sim_DEG_20_CELLS_5000 <- tar_read(endo_sim_DEG_20_CELLS_5000, store = "store_simulation")
 
 ### ENDOCRINOGENESIS -- MULTI-SUBJECT 
 # 100 cells 
@@ -213,95 +122,95 @@ endo_sim_DEG_20_CELLS_5000_balanced <- tar_read(endo_sim_DEG_20_CELLS_5000_balan
 endo_sim_DEG_10_CELLS_5000_unbalanced <- tar_read(endo_sim_DEG_10_CELLS_5000_unbalanced, store = "store_simulation")
 endo_sim_DEG_20_CELLS_5000_unbalanced <- tar_read(endo_sim_DEG_20_CELLS_5000_unbalanced, store = "store_simulation")
 
-# scLANE (GLM backend) model targets 
+# scLANE (GEE backend) model targets 
 list(
-  ##### LUNG 
+  ##### BRAIN 
   ### MULTI-SUBJECT
   # 100 cells
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_100_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_100_balanced, 
-                                                                       n.genes.sample = 1100, 
-                                                                       param.list = list(Prop_Dyn_Genes = 0.10, Cells = 100, Allocation = "Balanced", Method = "GEE"),
-                                                                       n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_100_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_100_balanced, 
-                                                                       n.genes.sample = 2900, 
-                                                                       param.list = list(Prop_Dyn_Genes = 0.20, Cells = 100, Allocation = "Balanced", Method = "GEE"),
-                                                                       n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_100_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_100_unbalanced,
-                                                                         n.genes.sample = 1900, 
-                                                                         param.list = list(Prop_Dyn_Genes = 0.10, Cells = 100, Allocation = "Unbalanced", Method = "GEE"),
-                                                                         n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_100_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_100_unbalanced,
-                                                                         n.genes.sample = 2200, 
-                                                                         param.list = list(Prop_Dyn_Genes = 0.20, Cells = 100, Allocation = "Unbalanced", Method = "GEE"),
-                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_100_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_100_balanced, 
+                                                                        n.genes.sample = 1100, 
+                                                                        param.list = list(Prop_Dyn_Genes = 0.10, Cells = 100, Allocation = "Balanced", Method = "GEE"),
+                                                                        n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_100_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_100_balanced, 
+                                                                        n.genes.sample = 2900, 
+                                                                        param.list = list(Prop_Dyn_Genes = 0.20, Cells = 100, Allocation = "Balanced", Method = "GEE"),
+                                                                        n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_100_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_100_unbalanced,
+                                                                          n.genes.sample = 1900, 
+                                                                          param.list = list(Prop_Dyn_Genes = 0.10, Cells = 100, Allocation = "Unbalanced", Method = "GEE"),
+                                                                          n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_100_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_100_unbalanced,
+                                                                          n.genes.sample = 2200, 
+                                                                          param.list = list(Prop_Dyn_Genes = 0.20, Cells = 100, Allocation = "Unbalanced", Method = "GEE"),
+                                                                          n.cores = 4)),
   # 500 cells
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_500_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_500_balanced, 
-                                                                       n.genes.sample = 3200, 
-                                                                       param.list = list(Prop_Dyn_Genes = 0.10, Cells = 500, Allocation = "Balanced", Method = "GEE"),
-                                                                       n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_500_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_500_balanced, 
-                                                                       n.genes.sample = 2200, 
-                                                                       param.list = list(Prop_Dyn_Genes = 0.20, Cells = 500, Allocation = "Balanced", Method = "GEE"),
-                                                                       n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_500_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_500_unbalanced,
-                                                                         n.genes.sample = 2200, 
-                                                                         param.list = list(Prop_Dyn_Genes = 0.10, Cells = 500, Allocation = "Unbalanced", Method = "GEE"),
-                                                                         n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_500_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_500_unbalanced,
-                                                                         n.genes.sample = 1200, 
-                                                                         param.list = list(Prop_Dyn_Genes = 0.20, Cells = 500, Allocation = "Unbalanced", Method = "GEE"),
-                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_500_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_500_balanced, 
+                                                                        n.genes.sample = 3200, 
+                                                                        param.list = list(Prop_Dyn_Genes = 0.10, Cells = 500, Allocation = "Balanced", Method = "GEE"),
+                                                                        n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_500_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_500_balanced, 
+                                                                        n.genes.sample = 2200, 
+                                                                        param.list = list(Prop_Dyn_Genes = 0.20, Cells = 500, Allocation = "Balanced", Method = "GEE"),
+                                                                        n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_500_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_500_unbalanced,
+                                                                          n.genes.sample = 2200, 
+                                                                          param.list = list(Prop_Dyn_Genes = 0.10, Cells = 500, Allocation = "Unbalanced", Method = "GEE"),
+                                                                          n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_500_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_500_unbalanced,
+                                                                          n.genes.sample = 1200, 
+                                                                          param.list = list(Prop_Dyn_Genes = 0.20, Cells = 500, Allocation = "Unbalanced", Method = "GEE"),
+                                                                          n.cores = 4)),
   # 1000 cells
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_1000_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_1000_balanced, 
-                                                                        n.genes.sample = 2500, 
-                                                                        param.list = list(Prop_Dyn_Genes = 0.10, Cells = 1000, Allocation = "Balanced", Method = "GEE"),
-                                                                        n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_1000_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_1000_balanced, 
-                                                                        n.genes.sample = 2800, 
-                                                                        param.list = list(Prop_Dyn_Genes = 0.20, Cells = 1000, Allocation = "Balanced", Method = "GEE"),
-                                                                        n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_1000_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_1000_unbalanced,
-                                                                          n.genes.sample = 1700, 
-                                                                          param.list = list(Prop_Dyn_Genes = 0.10, Cells = 1000, Allocation = "Unbalanced", Method = "GEE"),
-                                                                          n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_1000_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_1000_unbalanced,
-                                                                          n.genes.sample = 2800, 
-                                                                          param.list = list(Prop_Dyn_Genes = 0.20, Cells = 1000, Allocation = "Unbalanced", Method = "GEE"),
-                                                                          n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_1000_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_1000_balanced, 
+                                                                         n.genes.sample = 2500, 
+                                                                         param.list = list(Prop_Dyn_Genes = 0.10, Cells = 1000, Allocation = "Balanced", Method = "GEE"),
+                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_1000_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_1000_balanced, 
+                                                                         n.genes.sample = 2800, 
+                                                                         param.list = list(Prop_Dyn_Genes = 0.20, Cells = 1000, Allocation = "Balanced", Method = "GEE"),
+                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_1000_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_1000_unbalanced,
+                                                                           n.genes.sample = 1700, 
+                                                                           param.list = list(Prop_Dyn_Genes = 0.10, Cells = 1000, Allocation = "Unbalanced", Method = "GEE"),
+                                                                           n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_1000_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_1000_unbalanced,
+                                                                           n.genes.sample = 2800, 
+                                                                           param.list = list(Prop_Dyn_Genes = 0.20, Cells = 1000, Allocation = "Unbalanced", Method = "GEE"),
+                                                                           n.cores = 4)),
   # 2500 cells
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_2500_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_2500_balanced, 
-                                                                        n.genes.sample = 1600, 
-                                                                        param.list = list(Prop_Dyn_Genes = 0.10, Cells = 2500, Allocation = "Balanced", Method = "GEE"),
-                                                                        n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_2500_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_2500_balanced, 
-                                                                        n.genes.sample = 2300, 
-                                                                        param.list = list(Prop_Dyn_Genes = 0.20, Cells = 2500, Allocation = "Balanced", Method = "GEE"),
-                                                                        n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_2500_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_2500_unbalanced,
-                                                                          n.genes.sample = 1500, 
-                                                                          param.list = list(Prop_Dyn_Genes = 0.10, Cells = 2500, Allocation = "Unbalanced", Method = "GEE"),
-                                                                          n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_2500_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_2500_unbalanced,
-                                                                          n.genes.sample = 3000, 
-                                                                          param.list = list(Prop_Dyn_Genes = 0.20, Cells = 2500, Allocation = "Unbalanced", Method = "GEE"),
-                                                                          n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_2500_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_2500_balanced, 
+                                                                         n.genes.sample = 1600, 
+                                                                         param.list = list(Prop_Dyn_Genes = 0.10, Cells = 2500, Allocation = "Balanced", Method = "GEE"),
+                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_2500_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_2500_balanced, 
+                                                                         n.genes.sample = 2300, 
+                                                                         param.list = list(Prop_Dyn_Genes = 0.20, Cells = 2500, Allocation = "Balanced", Method = "GEE"),
+                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_2500_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_2500_unbalanced,
+                                                                           n.genes.sample = 1500, 
+                                                                           param.list = list(Prop_Dyn_Genes = 0.10, Cells = 2500, Allocation = "Unbalanced", Method = "GEE"),
+                                                                           n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_2500_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_2500_unbalanced,
+                                                                           n.genes.sample = 3000, 
+                                                                           param.list = list(Prop_Dyn_Genes = 0.20, Cells = 2500, Allocation = "Unbalanced", Method = "GEE"),
+                                                                           n.cores = 4)),
   # 5000 cells
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_5000_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_5000_balanced, 
-                                                                        n.genes.sample = 1800, 
-                                                                        param.list = list(Prop_Dyn_Genes = 0.10, Cells = 5000, Allocation = "Balanced", Method = "GEE"),
-                                                                        n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_5000_balanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_5000_balanced, 
-                                                                        n.genes.sample = 2000, 
-                                                                        param.list = list(Prop_Dyn_Genes = 0.20, Cells = 5000, Allocation = "Balanced", Method = "GEE"),
-                                                                        n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_10_CELLS_5000_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_10_CELLS_5000_unbalanced,
-                                                                          n.genes.sample = 2500, 
-                                                                          param.list = list(Prop_Dyn_Genes = 0.10, Cells = 5000, Allocation = "Unbalanced", Method = "GEE"),
-                                                                          n.cores = 4)),
-  tar_target(scLANE_GEE_lung_DEG_20_CELLS_5000_unbalanced, run_scLANE_GEE(sim.data = lung_sim_DEG_20_CELLS_5000_unbalanced,
-                                                                          n.genes.sample = 1300, 
-                                                                          param.list = list(Prop_Dyn_Genes = 0.20, Cells = 5000, Allocation = "Unbalanced", Method = "GEE"),
-                                                                          n.cores = 4)), 
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_5000_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_5000_balanced, 
+                                                                         n.genes.sample = 1800, 
+                                                                         param.list = list(Prop_Dyn_Genes = 0.10, Cells = 5000, Allocation = "Balanced", Method = "GEE"),
+                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_5000_balanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_5000_balanced, 
+                                                                         n.genes.sample = 2000, 
+                                                                         param.list = list(Prop_Dyn_Genes = 0.20, Cells = 5000, Allocation = "Balanced", Method = "GEE"),
+                                                                         n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_10_CELLS_5000_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_10_CELLS_5000_unbalanced,
+                                                                           n.genes.sample = 2500, 
+                                                                           param.list = list(Prop_Dyn_Genes = 0.10, Cells = 5000, Allocation = "Unbalanced", Method = "GEE"),
+                                                                           n.cores = 4)),
+  tar_target(scLANE_GEE_brain_DEG_20_CELLS_5000_unbalanced, run_scLANE_GEE(sim.data = brain_sim_DEG_20_CELLS_5000_unbalanced,
+                                                                           n.genes.sample = 1300, 
+                                                                           param.list = list(Prop_Dyn_Genes = 0.20, Cells = 5000, Allocation = "Unbalanced", Method = "GEE"),
+                                                                           n.cores = 4)), 
   
   ##### PANCREAS
   ### MULTI-SUBJECT

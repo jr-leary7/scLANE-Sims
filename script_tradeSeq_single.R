@@ -382,5 +382,8 @@ list(
   tar_target(tradeSeq_res_endo_DEG_20_CELLS_5000, run_tradeSeq(sim.data = endo_sim_DEG_20_CELLS_5000, 
                                                                n.genes.sample = 1700, 
                                                                param.list = list(Prop_Dyn_Gene = 0.20, Cells = 5000, Method = "GAM"), 
-                                                               n.cores = 4))
+                                                               n.cores = 4)), 
+  
+  ##### QC #####
+  tar_render(QC_report, "Reports/Model_Results_tradeSeq_Single.Rmd")
 )

@@ -15,7 +15,7 @@ brain_sim_DEG_10_CELLS_100|stem|ad02b8318dbfd4d2|8c40176d07d41131|fadb8c26ea589a
 brain_sim_DEG_10_CELLS_100_balanced|stem|ef7de91a54dde927|78a8e71d1281bd7f|ec20f4409efa4c37|-1530600608||t19378.9622337963s|72fbcdde8a8359b2|3790590|qs|local|vector|||72.811||
 brain_sim_DEG_10_CELLS_100_unbalanced|stem|01da8795616957dc|3a9ebfb7285f08e3|d87333f711a40c80|-576289835||t19378.9182291667s|9dc46266f14dda7e|3751023|qs|local|vector|||73.841|Youre computing too large a percentage of total singular values, use a standard svd instead.|
 brain_sim_DEG_10_CELLS_1000|stem|cc68ff02c8deeb71|1667f43722febc39|fadb8c26ea589a21|1157321930||t19378.8481134259s|301fb78b107d6e4d|31951182|qs|local|vector|||126.311||
-brain_sim_DEG_10_CELLS_1000_balanced|stem|dac79d8b7f31d1bb|bd09d60b8faa2195|ec20f4409efa4c37|-1083346534||t19378.2275462963s||50293817|qs|local|vector|||53.227||data must be of a vector type, was NULL
+brain_sim_DEG_10_CELLS_1000_balanced|stem|b8e4ade76bef322a|bd09d60b8faa2195|ec20f4409efa4c37|-1083346534||t19379.0243402778s|9fd8f7cbdabb7766|28749573|qs|local|vector|||241.813||
 brain_sim_DEG_10_CELLS_1000_unbalanced|stem|7ef586fc02977021|914ae56fb49ec650|d87333f711a40c80|-1801418605||t19378.9821296296s|0d4f99e1d39b7c2b|28392926|qs|local|vector|||154.148||
 brain_sim_DEG_10_CELLS_2500|stem|170458e16671cfd1|9bd6d7efb7d4c10a|fadb8c26ea589a21|84868486||t19378.985775463s|d37f2cdf4cc8728e|60066257|qs|local|vector|||299.281||
 brain_sim_DEG_10_CELLS_2500_balanced|stem|48f07ec03ccac01e|2b3d35d1735e6c7a|ec20f4409efa4c37|2068261019||t19378.9231365741s|2383c995fc6d664d|63690662|qs|local|vector|||310.301||
@@ -176,7 +176,7 @@ panc_sim_DEG_20_CELLS_500_unbalanced|stem|018f951e5a243678|4504a68523be6011|eac1
 panc_sim_DEG_20_CELLS_5000|stem|728c798832048183|9591594c05023722|79d8abc5891b603b|1001151523||t19378.8667013889s|69483f848e3254e4|125596497|qs|local|vector|||628.742||
 panc_sim_DEG_20_CELLS_5000_balanced|stem|e381bfa42042cd12|3102da38dca81c10|58b98b52e1c1daa0|-656316284||t19378.8657986111s|d2f9fd4bc39241e1|114972615|qs|local|vector|||530.464||
 panc_sim_DEG_20_CELLS_5000_unbalanced|stem|96e6e5efa72ac798|a748a04294853678|eac17935c484efe4|-648112460||t19378.8776967593s|d313fa59b18846e8|113825660|qs|local|vector|||577.068||
-QC_report|stem|303ba4feb1543ac0|bca2d81a8801d84b|118b5e3f88303557|268687371|Reports/Simulation_QC.html*Reports/Simulation_QC.Rmd|t19378.7622222222s||61599444|file|local|vector|||0.002||could not load dependencies of target QC_report. Expecting a single string value typecharacter extent0.
+QC_report|stem|2389ccb6ee06f403|bca2d81a8801d84b|99c0f53d09e046d5|268687371|Reports/Simulation_QC.html*Reports/Simulation_QC.Rmd|t19379.0896759259s|9af0ec029bccc42f|61642949|file|local|vector|||5350.552||
 quality_control_report|stem|bf0d3a92fd93c95b|9221c014249125f4|11a2c483cfc49394|-1626089861|Simulation_QC.html*Simulation_QC.Rmd|t19372.1339467593s||24925812|file|local|vector|||0.002||could not load dependencies of target quality_control_report. Expecting a single string value typecharacter extent0.
 scaffold_test_1|stem|81e646e1a16f9530|00bb8414bbca8fdd|1a956372de8813f4|31109595||t19370.9053587963s|63b8d2735b77e129|8533|rds|local|vector|||16.777||
 scaffold_test_2|stem|21bf988b21dc706b|6bc12bddda263141|bcb0f1112d6a920d|-209906400||t19370.905474537s|f68e91be10f087b6|76951|rds|local|vector|||10.012||
@@ -185,9 +185,3 @@ sim_single_subject|function|2fa372f7a220d458|||||||||||||||
 simulate_multi_subject|function|aa515e6e8edc3ebf|||||||||||||||
 simulate_multi_subject_debug|function|12df7beb3f1c25ba|||||||||||||||
 simulate_single_subject|function|682fab0a05aabcc2|||||||||||||||
-fetch_lamanno_brain_data|function|b65fafd72d1a181e
-simulate_multi_subject|function|aa515e6e8edc3ebf
-simulate_single_subject|function|682fab0a05aabcc2
-fetch_bastidas_ponce_pancreas_data|function|154dd58ad62e81de
-fetch_baron_pancreas_data|function|bce5936c4ab91a46
-brain_sim_DEG_10_CELLS_1000_balanced|stem|b8e4ade76bef322a|bd09d60b8faa2195|ec20f4409efa4c37|-1083346534||t19379.0243402778s|9fd8f7cbdabb7766|28749573|qs|local|vector|||241.813||
