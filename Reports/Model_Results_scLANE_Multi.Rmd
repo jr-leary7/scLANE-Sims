@@ -49,30 +49,30 @@ First the simulations from the brain reference.
 
 ```{r}
 # 100 cells 
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_100_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_100_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_100_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_100_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_100_balanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_100_balanced)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_100_unbalanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_100_unbalanced)
 # 500 cells 
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_500_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_500_balanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_500_balanced)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_500_unbalanced)
 # 1000 cells 
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_1000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_1000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_1000_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_1000_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_1000_balanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_1000_balanced)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_1000_unbalanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_1000_unbalanced)
 # 2500 cells 
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_2500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_2500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_2500_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_2500_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_2500_balanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_2500_balanced)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_2500_unbalanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_2500_unbalanced)
 # 5000 cells 
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_5000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_5000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_5000_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_5000_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_5000_balanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_5000_balanced)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_5000_unbalanced)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_5000_unbalanced)
 ```
 
 We coerce the model results to a table.  
@@ -148,30 +148,30 @@ Next the results from the pancreas reference.
 
 ```{r}
 # 100 cells 
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_100_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_100_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_100_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_100_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_100_balanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_100_balanced)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_100_unbalanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_100_unbalanced)
 # 500 cells 
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_500_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_500_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_500_balanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_500_balanced)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_500_unbalanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_500_unbalanced)
 # 1000 cells 
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_1000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_1000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_1000_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_1000_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_1000_balanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_1000_balanced)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_1000_unbalanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_1000_unbalanced)
 # 2500 cells 
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_2500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_2500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_2500_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_2500_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_2500_balanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_2500_balanced)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_2500_unbalanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_2500_unbalanced)
 # 5000 cells 
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_5000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_5000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_5000_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_5000_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_5000_balanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_5000_balanced)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_5000_unbalanced)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_5000_unbalanced)
 ```
 
 Again we format the model results in a table. 
@@ -247,30 +247,30 @@ Lastly, the models from the pancreatic endocrinogenesis dataset.
 
 ```{r}
 # 100 cells 
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_100_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_100_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_100_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_100_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_100_balanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_100_balanced)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_100_unbalanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_100_unbalanced)
 # 500 cells 
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_500_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_500_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_500_balanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_500_balanced)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_500_unbalanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_500_unbalanced)
 # 1000 cells 
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_1000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_1000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_1000_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_1000_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_1000_balanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_1000_balanced)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_1000_unbalanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_1000_unbalanced)
 # 2500 cells 
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_2500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_2500_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_2500_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_2500_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_2500_balanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_2500_balanced)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_2500_unbalanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_2500_unbalanced)
 # 5000 cells 
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_5000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_5000_balanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_5000_unbalanced, store = "../store_scLANE_GLM_multi")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_5000_unbalanced, store = "../store_scLANE_GLM_multi")
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_5000_balanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_5000_balanced)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_5000_unbalanced)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_5000_unbalanced)
 ```
 
 We collate the results as a table. 

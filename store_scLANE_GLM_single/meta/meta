@@ -1,6 +1,6 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
 _scLANE_eigenMapMatMult|object|20c8babc45766656|||||||||||||||
-.Random.seed|object|1cb2b06adc0227d8|||||||||||||||
+.Random.seed|object|efad9f27aee51e09|||||||||||||||
 backward_sel|function|eaacbefc8d1c5af7|||||||||||||||
 backward_sel_WIC|function|cda36f47cc22c1a0|||||||||||||||
 brain_sim_DEG_01_CELLS_100|object|206237d8bc2f03c7|||||||||||||||
@@ -79,6 +79,7 @@ panc_sim_DEG_20_CELLS_500|object|e90f8805ef7271d7|||||||||||||||
 panc_sim_DEG_20_CELLS_5000|object|21879f4012eb5035|||||||||||||||
 plotClusteredGenes|function|185a0133bf8127d1|||||||||||||||
 plotModels|function|b2564bf2db9d1f9a|||||||||||||||
+QC_report|stem|d1b615981288dc12|acb009a1929c543f|fc414535ffa1b898|268687371|Reports/Model_Results_scLANE_Single.html*Reports/Model_Results_scLANE_Single.Rmd|t19381.8847569444s|30bd6d2207e5d4d8|1685038|file|local|vector|||76.12||
 run_scLANE_GLM|function|271863c867fad7d4|||||||||||||||
 run_scLANE_GLM_multi|function|a25358539acf2395|||||||||||||||
 scLANE_GLM_brain_DEG_01_CELLS_100|stem|abe7c2316243c186|be01641c04580b8d|ad6739f156a05956|1296739148||t19381.0798958333s|552070026f49a179|1663203|qs|local|vector|||467.36|Package version inconsistency detected.TMB was built with Matrix version 1.5.1Current Matrix version is 1.5.3Please reinstall TMB from source using install.packagesTMB, type  source or ask CRAN for a binary version of TMB matching CRANs Matrix package|

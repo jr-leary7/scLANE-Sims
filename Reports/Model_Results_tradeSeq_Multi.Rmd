@@ -49,30 +49,30 @@ First the simulations from the brain reference.
 
 ```{r}
 # 100 cells
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_100_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_100_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_100_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_100_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_100_balanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_100_balanced)
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_100_unbalanced)
 # 500 cells 
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_500_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_500_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_500_balanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_500_balanced)
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_500_unbalanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_500_unbalanced)
 # 1000 cells 
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_1000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_1000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_1000_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_1000_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_1000_balanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_1000_balanced)
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_1000_unbalanced)
 # 2500 cells 
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_2500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_2500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_2500_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_2500_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_2500_balanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_2500_balanced)
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_2500_unbalanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_2500_unbalanced)
 # 5000 cells 
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_5000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_5000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_10_CELLS_5000_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_brain_DEG_20_CELLS_5000_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_5000_balanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_5000_balanced)
+tar_load(tradeSeq_res_brain_DEG_10_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_brain_DEG_20_CELLS_5000_unbalanced)
 ```
 
 We coerce the model results to a table.  
@@ -91,32 +91,41 @@ ts_brain_metrics <- purrr::map(ls(pattern = "tradeSeq_res_brain*"), function(u) 
                  RUNTIME_UNITS = attributes(obj$time_diff[[1]])$units, 
                  MEM_USED = obj$mem_usage[[1]][1] / 1000^2,
                  MEM_UNITS = "MB", 
-                 ROC_AUC = yardstick::roc_auc(obj$tradeSeq_results_tidy[[1]], 
-                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                              .estimate = pvalue, 
-                                              event_level = "second") %>% 
-                           pull(.estimate), 
-                 ACCURACY = yardstick::accuracy(obj$tradeSeq_results_tidy[[1]], 
-                                                truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                                estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                  levels = c("Dynamic", "NotDynamic"))) %>% 
-                            pull(.estimate), 
-                 SENSITIVITY = yardstick::sens(obj$tradeSeq_results_tidy[[1]], 
-                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                               estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
-                               pull(.estimate), 
-                 SPECIFICITY = yardstick::spec(obj$tradeSeq_results_tidy[[1]], 
-                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                               estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
-                               pull(.estimate), 
+                 ROC_AUC = yardstick::roc_auc_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                  estimate = obj$tradeSeq_results_tidy[[1]]$pvalue, 
+                                                  event_level = "second"), 
+                 ACCURACY = yardstick::accuracy_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                    estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                      levels = c("Dynamic", "NotDynamic"))), 
+                 SENSITIVITY = yardstick::sens_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))), 
+                 SPECIFICITY = yardstick::spec_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))), 
+                 RECALL = yardstick::recall_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                  levels = c("Dynamic", "NotDynamic"))), 
+                 PRECISION = yardstick::precision_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                      estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                        levels = c("Dynamic", "NotDynamic"))),
+                 AUC_PR = yardstick::pr_auc_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = obj$tradeSeq_results_tidy[[1]]$pvalue, 
+                                                event_level = "second"),
+                 F_MEASURE = yardstick::f_meas_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))),
                  NIR = mean(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
                  ROC_CURVE = list(yardstick::roc_curve(obj$tradeSeq_results_tidy[[1]], 
                                                        truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
                                                        .estimate = pvalue, 
                                                        event_level = "second") %>% 
-                                  mutate(dataset = u)))
+                                    mutate(dataset = u)), 
+                 PR_CURVE = list(yardstick::pr_curve(obj$tradeSeq_results_tidy[[1]], 
+                                                     truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                     .estimate = pvalue, 
+                                                     event_level = "second") %>% 
+                                   mutate(dataset = u)))
   rm(obj)
   return(perf)
 }) %>% 
@@ -139,30 +148,30 @@ Next the results from the pancreas reference.
 
 ```{r}
 # 100 cells
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_100_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_100_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_100_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_100_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_100_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_100_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_100_unbalanced)
 # 500 cells 
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_500_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_500_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_500_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_500_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_500_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_500_unbalanced)
 # 1000 cells 
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_1000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_1000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_1000_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_1000_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_1000_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_1000_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_1000_unbalanced)
 # 2500 cells 
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_2500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_2500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_2500_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_2500_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_2500_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_2500_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_2500_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_2500_unbalanced)
 # 5000 cells 
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_5000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_5000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_10_CELLS_5000_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_panc_DEG_20_CELLS_5000_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_5000_balanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_5000_balanced)
+tar_load(tradeSeq_res_panc_DEG_10_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_panc_DEG_20_CELLS_5000_unbalanced)
 ```
 
 Again we format the model results in a table. 
@@ -181,32 +190,41 @@ ts_panc_metrics <- purrr::map(ls(pattern = "tradeSeq_res_panc*"), function(u) {
                  RUNTIME_UNITS = attributes(obj$time_diff[[1]])$units, 
                  MEM_USED = obj$mem_usage[[1]][1] / 1000^2,
                  MEM_UNITS = "MB", 
-                 ROC_AUC = yardstick::roc_auc(obj$tradeSeq_results_tidy[[1]], 
-                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                              .estimate = pvalue, 
-                                              event_level = "second") %>% 
-                           pull(.estimate), 
-                 ACCURACY = yardstick::accuracy(obj$tradeSeq_results_tidy[[1]], 
-                                                truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                                estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                  levels = c("Dynamic", "NotDynamic"))) %>% 
-                            pull(.estimate), 
-                 SENSITIVITY = yardstick::sens(obj$tradeSeq_results_tidy[[1]], 
-                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                               estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
-                               pull(.estimate), 
-                 SPECIFICITY = yardstick::spec(obj$tradeSeq_results_tidy[[1]], 
-                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                               estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
-                               pull(.estimate), 
+                 ROC_AUC = yardstick::roc_auc_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                  estimate = obj$tradeSeq_results_tidy[[1]]$pvalue, 
+                                                  event_level = "second"), 
+                 ACCURACY = yardstick::accuracy_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                    estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                      levels = c("Dynamic", "NotDynamic"))), 
+                 SENSITIVITY = yardstick::sens_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))), 
+                 SPECIFICITY = yardstick::spec_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))), 
+                 RECALL = yardstick::recall_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                  levels = c("Dynamic", "NotDynamic"))), 
+                 PRECISION = yardstick::precision_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                      estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                        levels = c("Dynamic", "NotDynamic"))),
+                 AUC_PR = yardstick::pr_auc_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = obj$tradeSeq_results_tidy[[1]]$pvalue, 
+                                                event_level = "second"),
+                 F_MEASURE = yardstick::f_meas_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))),
                  NIR = mean(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
                  ROC_CURVE = list(yardstick::roc_curve(obj$tradeSeq_results_tidy[[1]], 
                                                        truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
                                                        .estimate = pvalue, 
                                                        event_level = "second") %>% 
-                                  mutate(dataset = u)))
+                                    mutate(dataset = u)), 
+                 PR_CURVE = list(yardstick::pr_curve(obj$tradeSeq_results_tidy[[1]], 
+                                                     truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                     .estimate = pvalue, 
+                                                     event_level = "second") %>% 
+                                   mutate(dataset = u)))
   rm(obj)
   return(perf)
 }) %>% 
@@ -229,30 +247,30 @@ Lastly, the models from the pancreatic endocrinogenesis dataset.
 
 ```{r}
 # 100 cells
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_100_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_100_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_100_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_100_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_100_balanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_100_balanced)
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_100_unbalanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_100_unbalanced)
 # 500 cells 
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_500_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_500_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_500_balanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_500_balanced)
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_500_unbalanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_500_unbalanced)
 # 1000 cells 
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_1000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_1000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_1000_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_1000_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_1000_balanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_1000_balanced)
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_1000_unbalanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_1000_unbalanced)
 # 2500 cells 
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_2500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_2500_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_2500_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_2500_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_2500_balanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_2500_balanced)
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_2500_unbalanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_2500_unbalanced)
 # 5000 cells 
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_5000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_5000_balanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_10_CELLS_5000_unbalanced, store = "../store_tradeSeq_multi")
-tar_load(tradeSeq_res_endo_DEG_20_CELLS_5000_unbalanced, store = "../store_tradeSeq_multi")
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_5000_balanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_5000_balanced)
+tar_load(tradeSeq_res_endo_DEG_10_CELLS_5000_unbalanced)
+tar_load(tradeSeq_res_endo_DEG_20_CELLS_5000_unbalanced)
 ```
 
 We collate the results as a table. 
@@ -271,32 +289,41 @@ ts_endo_metrics <- purrr::map(ls(pattern = "tradeSeq_res_endo*"), function(u) {
                  RUNTIME_UNITS = attributes(obj$time_diff[[1]])$units, 
                  MEM_USED = obj$mem_usage[[1]][1] / 1000^2,
                  MEM_UNITS = "MB", 
-                 ROC_AUC = yardstick::roc_auc(obj$tradeSeq_results_tidy[[1]], 
-                                              truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                              .estimate = pvalue, 
-                                              event_level = "second") %>% 
-                           pull(.estimate), 
-                 ACCURACY = yardstick::accuracy(obj$tradeSeq_results_tidy[[1]], 
-                                                truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                                estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                  levels = c("Dynamic", "NotDynamic"))) %>% 
-                            pull(.estimate), 
-                 SENSITIVITY = yardstick::sens(obj$tradeSeq_results_tidy[[1]], 
-                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                               estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
-                               pull(.estimate), 
-                 SPECIFICITY = yardstick::spec(obj$tradeSeq_results_tidy[[1]], 
-                                               truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
-                                               estimate = factor(ifelse(gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
-                                                                 levels = c("Dynamic", "NotDynamic"))) %>% 
-                               pull(.estimate), 
+                 ROC_AUC = yardstick::roc_auc_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                  estimate = obj$tradeSeq_results_tidy[[1]]$pvalue, 
+                                                  event_level = "second"), 
+                 ACCURACY = yardstick::accuracy_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                    estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                      levels = c("Dynamic", "NotDynamic"))), 
+                 SENSITIVITY = yardstick::sens_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))), 
+                 SPECIFICITY = yardstick::spec_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))), 
+                 RECALL = yardstick::recall_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                  levels = c("Dynamic", "NotDynamic"))), 
+                 PRECISION = yardstick::precision_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                      estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                        levels = c("Dynamic", "NotDynamic"))),
+                 AUC_PR = yardstick::pr_auc_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                estimate = obj$tradeSeq_results_tidy[[1]]$pvalue, 
+                                                event_level = "second"),
+                 F_MEASURE = yardstick::f_meas_vec(truth = factor(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                   estimate = factor(ifelse(obj$tradeSeq_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                     levels = c("Dynamic", "NotDynamic"))),
                  NIR = mean(obj$tradeSeq_results_tidy[[1]]$geneStatus_overall == "NotDynamic"), 
                  ROC_CURVE = list(yardstick::roc_curve(obj$tradeSeq_results_tidy[[1]], 
                                                        truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
                                                        .estimate = pvalue, 
                                                        event_level = "second") %>% 
-                                  mutate(dataset = u)))
+                                    mutate(dataset = u)), 
+                 PR_CURVE = list(yardstick::pr_curve(obj$tradeSeq_results_tidy[[1]], 
+                                                     truth = factor(geneStatus_overall, levels = c("Dynamic", "NotDynamic")), 
+                                                     .estimate = pvalue, 
+                                                     event_level = "second") %>% 
+                                   mutate(dataset = u)))
   rm(obj)
   return(perf)
 }) %>% 
@@ -359,7 +386,7 @@ ts_metrics %>%
             by = c("dataset" = "DATASET_NAME")) %>% 
   ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = PERCENT_DEG)) + 
   facet_wrap(~PERCENT_DEG) + 
-  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
   geom_line(size = 1, alpha = 0.8) + 
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
@@ -380,14 +407,14 @@ ts_metrics %>%
   mutate(N_CELLS = factor(N_CELLS)) %>% 
   ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
   facet_wrap(~paste0("Cells: ", N_CELLS)) + 
-  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
   geom_line(size = 1, alpha = 0.8) + 
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
   scale_color_manual(values = model_palette) + 
   labs(x = "1 - Specificity", 
-      y = "Sensitivity", 
-      color = "Cells") + 
+       y = "Sensitivity", 
+       color = "Cells") + 
   theme_classic(base_size = 14) + 
   guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
 ```
@@ -398,17 +425,79 @@ ts_metrics %>%
   purrr::reduce(rbind) %>% 
   left_join((distinct(ts_metrics, DATASET_NAME, ALLOCATION)), 
             by = c("dataset" = "DATASET_NAME")) %>% 
-  mutate(N_CELLS = factor(N_CELLS)) %>% 
-  ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = ALLOCATION)) + 
+  ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
   facet_wrap(~paste0("Sample Allocation: ", ALLOCATION)) + 
-  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
   geom_line(size = 1, alpha = 0.8) + 
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
   scale_color_manual(values = model_palette) + 
   labs(x = "1 - Specificity", 
-      y = "Sensitivity", 
-      color = "Sample Allocation") + 
+       y = "Sensitivity", 
+       color = "Sample Allocation") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
+## Precision-Recall 
+
+```{r, fig.width=9}
+ts_metrics %>% 
+  pull(PR_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(ts_metrics, DATASET_NAME, PERCENT_DEG)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  ggplot(aes(x = recall, y = precision, group = dataset, color = PERCENT_DEG)) + 
+  facet_wrap(~PERCENT_DEG) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) +
+  scale_color_manual(values = model_palette) + 
+  labs(x = "Recall", 
+       y = "Precision", 
+       color = "% Dynamic") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
+```{r, fig.width=9}
+ts_metrics %>% 
+  pull(PR_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(ts_metrics, DATASET_NAME, N_CELLS)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  mutate(N_CELLS = factor(N_CELLS)) %>% 
+  ggplot(aes(x = recall, y = precision, group = dataset, color = N_CELLS)) + 
+  facet_wrap(~paste0("Cells: ", N_CELLS)) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) +
+  scale_color_manual(values = model_palette) + 
+  labs(x = "Recall", 
+       y = "Precision", 
+       color = "Cells") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
+```{r, fig.width=9}
+ts_metrics %>% 
+  pull(PR_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(ts_metrics, DATASET_NAME, ALLOCATION)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  ggplot(aes(x = recall, y = precision, group = dataset, color = N_CELLS)) + 
+  facet_wrap(~paste0("Sample Allocation: ", ALLOCATION)) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) +
+  scale_color_manual(values = model_palette) + 
+  labs(x = "Recall", 
+       y = "Precision", 
+       color = "Sample Allocation") + 
   theme_classic(base_size = 14) + 
   guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
 ```
@@ -419,7 +508,7 @@ When interpreting threshold-based metrics like this, it's important to keep in m
 
 ```{r}
 select(ts_metrics, 
-       DATASET_NAME, ACCURACY, SENSITIVITY, SPECIFICITY, ROC_AUC, NIR) %>% 
+       DATASET_NAME, ACCURACY, SENSITIVITY, SPECIFICITY, ROC_AUC, PRECISION, RECALL, AUC_PR, F_MEASURE, NIR) %>% 
   tidyr::pivot_longer(cols = !DATASET_NAME, names_to = "METRIC", values_to = "VALUE") %>% 
   with_groups(METRIC, 
               summarise, 
@@ -433,6 +522,8 @@ select(ts_metrics,
          METRIC = snakecase::to_title_case(METRIC), 
          METRIC = case_when(METRIC == "Nir" ~ "No Information Rate", 
                             METRIC == "Roc Auc" ~ "AUC-ROC", 
+                            METRIC == "Auc Pr" ~ "AUC-PR", 
+                            METRIC == "F Measure" ~ "F-measure", 
                             TRUE ~ METRIC)) %>% 
   select(-c(min, max)) %>% 
   kableExtra::kbl(col.names = c("Metric", "Mean", "S.D.", "Median", "Range"), 
@@ -446,7 +537,7 @@ select(ts_metrics,
 Lastly, we save the metrics table for further use downstream. This file will be turned into a dependency for the downstream analysis pipeline. 
 
 ```{r}
-saveRDS(ts_metrics, file = "../Data/tradeSeq_Metrics_Multi_Subject.Rds")
+saveRDS(ts_metrics, file = "/blue/rbacher/j.leary/repos/scLANE-Sims/Data/tradeSeq_Metrics_Multi_Subject.Rds")
 ```
 
 # Session Info 

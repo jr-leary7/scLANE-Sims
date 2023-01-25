@@ -340,7 +340,7 @@ list(
                                                                               param.list = list(Prop_Dyn_Genes = 0.2, Cells = 1000, Allocation = "balanced", Method = "GLM"),
                                                                               n.cores = 4)),
   tar_target(monocle3_res_endo_DEG_10_CELLS_1000_unbalanced, run_monocle3_multi(sim.data = endo_sim_DEG_10_CELLS_1000_unbalanced,
-                                                                                n.genes.sample = 1100
+                                                                                n.genes.sample = 1100, 
                                                                                 param.list = list(Prop_Dyn_Genes = 0.1, Cells = 1000, Allocation = "unbalanced", Method = "GLM"),
                                                                                 n.cores = 4)),
   tar_target(monocle3_res_endo_DEG_20_CELLS_1000_unbalanced, run_monocle3_multi(sim.data = endo_sim_DEG_20_CELLS_1000_unbalanced,

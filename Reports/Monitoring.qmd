@@ -20,7 +20,7 @@ setwd("/blue/rbacher/j.leary/repos/scLANE-Sims")
 ## Dashboard
 
 ```{r}
-tar_watch(level_separation = 1200, seconds = 120, seconds_max = 360)
+tar_watch(level_separation = 1200, seconds = 120, seconds_max = 360, project = "monocle3_models_single")
 ```
 
 ## Errored Jobs 

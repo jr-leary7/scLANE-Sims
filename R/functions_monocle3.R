@@ -69,17 +69,23 @@ run_monocle3 <- function(sim.data = NULL,
     mono_res_tidy_list[[i]] <- monocle_coefs
     param_list[[i]] <- param.list
     rmse_list[[i]] <- purrr::map(seq(nrow(gene_stats)), function(i) {
-      model_obj <- gene_stats[i, ]$model[[1]]
-      link_preds <- stats::predict(model_obj, 
-                                   newdata = data.frame(f_expression = SingleCellExperiment::counts(cds)[i, ], 
-                                                        cell_time_normed = SummarizedExperiment::colData(cds)$cell_time_normed, 
-                                                        Size_Factor = SummarizedExperiment::colData(cds)$Size_Factor))
-      rmse <- try({
-        yardstick::rmse_vec(truth = SingleCellExperiment::counts(cds)[i, ], estimate = exp(link_preds))
-      }, silent = TRUE)
+      if (gene_stats[i, ]$status == "OK") {
+        model_obj <- gene_stats[i, ]$model[[1]]
+        link_preds <- try({
+          stats::predict(model_obj, 
+                         newdata = data.frame(f_expression = SingleCellExperiment::counts(cds)[i, ], 
+                                              cell_time_normed = SummarizedExperiment::colData(cds)$cell_time_normed, 
+                                              Size_Factor = SummarizedExperiment::colData(cds)$Size_Factor))
+        }, silent = TRUE)
+        rmse <- try({
+          yardstick::rmse_vec(truth = SingleCellExperiment::counts(cds)[i, ], estimate = exp(link_preds))
+        }, silent = TRUE)
+      } else {
+        rmse <- NA_real_
+      }
       return(rmse)
     })
-    names(rmse_list[[i]]) <- rownames(cds)
+    names(rmse_list[[i]]) <- gene_stats$gene_id
   }
   
   # set up results list & return
@@ -170,20 +176,24 @@ run_monocle3_multi <- function(sim.data = NULL,
     mono_res_tidy_list[[i]] <- monocle_coefs
     param_list[[i]] <- param.list
     rmse_list[[i]] <- purrr::map(seq(nrow(gene_stats)), function(i) {
-      model_obj <- gene_stats[i, ]$model[[1]]
-      link_preds <- try({
-        stats::predict(model_obj, 
-                       newdata = data.frame(f_expression = SingleCellExperiment::counts(cds)[i, ], 
-                                            cell_time_normed = SummarizedExperiment::colData(cds)$cell_time_normed, 
-                                            Size_Factor = SummarizedExperiment::colData(cds)$Size_Factor, 
-                                            subject = SummarizedExperiment::colData(cds)$subject))
-      }, silent = TRUE)
-      rmse <- try({
-        yardstick::rmse_vec(truth = SingleCellExperiment::counts(cds)[i, ], estimate = exp(link_preds))
-      }, silent = TRUE)
+      if (gene_stats[i, ]$status == "OK") {
+        model_obj <- gene_stats[i, ]$model[[1]]
+        link_preds <- try({
+          stats::predict(model_obj, 
+                         newdata = data.frame(f_expression = SingleCellExperiment::counts(cds)[i, ], 
+                                              cell_time_normed = SummarizedExperiment::colData(cds)$cell_time_normed, 
+                                              Size_Factor = SummarizedExperiment::colData(cds)$Size_Factor, 
+                                              subject = SummarizedExperiment::colData(cds)$subject))
+        }, silent = TRUE)
+        rmse <- try({
+          yardstick::rmse_vec(truth = SingleCellExperiment::counts(cds)[i, ], estimate = exp(link_preds))
+        }, silent = TRUE)
+      } else {
+        rmse <- NA_real_
+      }
       return(rmse)
     })
-    names(rmse_list[[i]]) <- rownames(cds)
+    names(rmse_list[[i]]) <- gene_stats$gene_id
   }
   
   # set up results list & return

@@ -59,6 +59,7 @@ panc_sim_DEG_20_CELLS_1000|object|95603d89d5f9b3c1|||||||||||||||
 panc_sim_DEG_20_CELLS_2500|object|6cdc070cfe07e6b7|||||||||||||||
 panc_sim_DEG_20_CELLS_500|object|e90f8805ef7271d7|||||||||||||||
 panc_sim_DEG_20_CELLS_5000|object|21879f4012eb5035|||||||||||||||
+QC_report|stem|18c11e13cf6e497e|c383f69442bec858|6c506c46c187bc49|268687371|Reports/Model_Results_tradeSeq_Single.html*Reports/Model_Results_tradeSeq_Single.Rmd|t19381.9029398148s|fc787f48a1e0b139|1661422|file|local|vector|||267.495||
 run_tradeSeq|function|5692e0c622fd9c83|||||||||||||||
 run_tradeSeq_multi|function|abdf9fb771858601|||||||||||||||
 tradeSeq_res_brain_DEG_01_CELLS_100|stem|e8eba8ac5f79e778|b3cab8924b628389|7cffb2787d4244e4|1219855158||t19379.2157175926s|266386c284f4f1c2|14071832|qs|local|vector|||55.171||

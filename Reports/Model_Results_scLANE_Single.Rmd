@@ -1,5 +1,5 @@
 ---
-title: "`scLANE` Simulation Study - Process `scLANE` (GLM) Single-subject Models"
+title: "`scLANE` Simulation Study - Process `scLANE (GLM)` Single-subject Models"
 subtitle: "UF Dept. of Biostatistics - Bacher Group"
 author: "Jack Leary" 
 date: "`r Sys.Date()`"
@@ -49,30 +49,30 @@ First the simulations from the brain reference.
 
 ```{r}
 # 100 cells 
-tar_load(scLANE_GLM_brain_DEG_01_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_05_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_100, store = "../store_scLANE_GLM_single")
-# 500 cells 
-tar_load(scLANE_GLM_brain_DEG_01_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_05_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_500, store = "../store_scLANE_GLM_single")
-# 1000 cells 
-tar_load(scLANE_GLM_brain_DEG_01_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_05_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_1000, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_brain_DEG_01_CELLS_100)
+tar_load(scLANE_GLM_brain_DEG_05_CELLS_100)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_100)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_100)
+# 500 cells
+tar_load(scLANE_GLM_brain_DEG_01_CELLS_500)
+tar_load(scLANE_GLM_brain_DEG_05_CELLS_500)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_500)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_500)
+# 1000 cells
+tar_load(scLANE_GLM_brain_DEG_01_CELLS_1000)
+tar_load(scLANE_GLM_brain_DEG_05_CELLS_1000)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_1000)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_1000)
 # 2500 cells 
-tar_load(scLANE_GLM_brain_DEG_01_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_05_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_2500, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_brain_DEG_01_CELLS_2500)
+tar_load(scLANE_GLM_brain_DEG_05_CELLS_2500)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_2500)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_2500)
 # 5000 cells 
-tar_load(scLANE_GLM_brain_DEG_01_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_05_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_10_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_brain_DEG_20_CELLS_5000, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_brain_DEG_01_CELLS_5000)
+tar_load(scLANE_GLM_brain_DEG_05_CELLS_5000)
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_5000)
+tar_load(scLANE_GLM_brain_DEG_20_CELLS_5000)
 ```
 
 We coerce the model results to a table.  
@@ -148,30 +148,30 @@ Next the results from the pancreas reference.
 
 ```{r}
 # 100 cells 
-tar_load(scLANE_GLM_panc_DEG_01_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_05_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_100, store = "../store_scLANE_GLM_single")
-# 500 cells 
-tar_load(scLANE_GLM_panc_DEG_01_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_05_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_500, store = "../store_scLANE_GLM_single")
-# 1000 cells 
-tar_load(scLANE_GLM_panc_DEG_01_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_05_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_1000, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_panc_DEG_01_CELLS_100)
+tar_load(scLANE_GLM_panc_DEG_05_CELLS_100)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_100)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_100)
+# 500 cells
+tar_load(scLANE_GLM_panc_DEG_01_CELLS_500)
+tar_load(scLANE_GLM_panc_DEG_05_CELLS_500)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_500)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_500)
+# 1000 cells
+tar_load(scLANE_GLM_panc_DEG_01_CELLS_1000)
+tar_load(scLANE_GLM_panc_DEG_05_CELLS_1000)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_1000)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_1000)
 # 2500 cells 
-tar_load(scLANE_GLM_panc_DEG_01_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_05_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_2500, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_panc_DEG_01_CELLS_2500)
+tar_load(scLANE_GLM_panc_DEG_05_CELLS_2500)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_2500)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_2500)
 # 5000 cells 
-tar_load(scLANE_GLM_panc_DEG_01_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_05_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_10_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_panc_DEG_20_CELLS_5000, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_panc_DEG_01_CELLS_5000)
+tar_load(scLANE_GLM_panc_DEG_05_CELLS_5000)
+tar_load(scLANE_GLM_panc_DEG_10_CELLS_5000)
+tar_load(scLANE_GLM_panc_DEG_20_CELLS_5000)
 ```
 
 Again we format the model results in a table. 
@@ -247,30 +247,30 @@ Lastly, the models from the pancreatic endocrinogenesis dataset.
 
 ```{r}
 # 100 cells 
-tar_load(scLANE_GLM_endo_DEG_01_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_05_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_100, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_100, store = "../store_scLANE_GLM_single")
-# 500 cells 
-tar_load(scLANE_GLM_endo_DEG_01_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_05_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_500, store = "../store_scLANE_GLM_single")
-# 1000 cells 
-tar_load(scLANE_GLM_endo_DEG_01_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_05_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_1000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_1000, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_endo_DEG_01_CELLS_100)
+tar_load(scLANE_GLM_endo_DEG_05_CELLS_100)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_100)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_100)
+# 500 cells
+tar_load(scLANE_GLM_endo_DEG_01_CELLS_500)
+tar_load(scLANE_GLM_endo_DEG_05_CELLS_500)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_500)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_500)
+# 1000 cells
+tar_load(scLANE_GLM_endo_DEG_01_CELLS_1000)
+tar_load(scLANE_GLM_endo_DEG_05_CELLS_1000)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_1000)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_1000)
 # 2500 cells 
-tar_load(scLANE_GLM_endo_DEG_01_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_05_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_2500, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_2500, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_endo_DEG_01_CELLS_2500)
+tar_load(scLANE_GLM_endo_DEG_05_CELLS_2500)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_2500)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_2500)
 # 5000 cells 
-tar_load(scLANE_GLM_endo_DEG_01_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_05_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_10_CELLS_5000, store = "../store_scLANE_GLM_single")
-tar_load(scLANE_GLM_endo_DEG_20_CELLS_5000, store = "../store_scLANE_GLM_single")
+tar_load(scLANE_GLM_endo_DEG_01_CELLS_5000)
+tar_load(scLANE_GLM_endo_DEG_05_CELLS_5000)
+tar_load(scLANE_GLM_endo_DEG_10_CELLS_5000)
+tar_load(scLANE_GLM_endo_DEG_20_CELLS_5000)
 ```
 
 We collate the results as a table. 
@@ -387,7 +387,7 @@ scLANE_metrics %>%
             by = c("dataset" = "DATASET_NAME")) %>% 
   ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = PERCENT_DEG)) + 
   facet_wrap(~PERCENT_DEG) + 
-  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
   geom_line(size = 1, alpha = 0.8) + 
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
@@ -408,7 +408,7 @@ scLANE_metrics %>%
   mutate(N_CELLS = factor(N_CELLS)) %>% 
   ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
   facet_wrap(~paste0("Cells: ", N_CELLS)) + 
-  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
   geom_line(size = 1, alpha = 0.8) + 
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
@@ -430,10 +430,10 @@ scLANE_metrics %>%
             by = c("dataset" = "DATASET_NAME")) %>% 
   ggplot(aes(x = recall, y = precision, group = dataset, color = PERCENT_DEG)) + 
   facet_wrap(~PERCENT_DEG) + 
-  #geom_abline(slope = -0.3, intercept = 1, color = "black", linetype = "dashed", size = 1) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
   geom_line(size = 1, alpha = 0.8) + 
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) + 
   scale_color_manual(values = model_palette) + 
   labs(x = "Recall", 
        y = "Precision", 
@@ -451,10 +451,10 @@ scLANE_metrics %>%
   mutate(N_CELLS = factor(N_CELLS)) %>% 
   ggplot(aes(x = recall, y = precision, group = dataset, color = N_CELLS)) + 
   facet_wrap(~paste0("Cells: ", N_CELLS)) + 
-  geom_abline(intercept = .985, slope = -.265) +  # why is it not slope = -1 intercept = 1 ??
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
   geom_line(size = 1, alpha = 0.8) + 
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) +
   scale_color_manual(values = model_palette) + 
   labs(x = "Recall", 
        y = "Precision", 
@@ -498,7 +498,7 @@ select(scLANE_metrics,
 Lastly, we save the metrics table for further use downstream. This file will be turned into a dependency for the downstream analysis pipeline. 
 
 ```{r}
-saveRDS(scLANE_metrics, file = "../Data/scLANE_GLM_Metrics_Single_Subject.Rds")
+saveRDS(scLANE_metrics, file = "/blue/rbacher/j.leary/repos/scLANE-Sims/Data/scLANE_GLM_Metrics_Single_Subject.Rds")
 ```
 
 # Session Info 
