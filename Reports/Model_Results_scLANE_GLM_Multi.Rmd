@@ -358,14 +358,179 @@ scLANE_metrics <- purrr::map(ls(pattern = "scLANE.*metrics"), \(x) eval(as.symbo
 
 ## Compute Time 
 
+```{r}
+ggplot(scLANE_metrics, aes(x = RUNTIME_HOURS)) + 
+  geom_histogram(color = "forestgreen", size = 0.5, fill = "forestgreen", alpha = 0.5) + 
+  scale_x_continuous(labels = scales::label_number()) + 
+  labs(x = "Runtime (hours)", y = "Frequency") + 
+  theme_classic(base_size = 14)
+```
+
 ## Memory Usage 
+
+```{r}
+ggplot(scLANE_metrics, aes(x = MEM_USED)) + 
+  geom_histogram(color = "forestgreen", size = 0.5, fill = "forestgreen", alpha = 0.5) + 
+  scale_x_continuous(labels = scales::label_comma()) + 
+  labs(x = "Memory Used (MB)", y = "Frequency") + 
+  theme_classic(base_size = 14)
+```
 
 ## AUC-ROC 
 
+```{r, fig.width=9}
+scLANE_metrics %>% 
+  pull(ROC_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(scLANE_metrics, DATASET_NAME, PERCENT_DEG)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = PERCENT_DEG)) + 
+  facet_wrap(~PERCENT_DEG) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_color_manual(values = model_palette) + 
+  labs(x = "1 - Specificity", 
+      y = "Sensitivity", 
+      color = "% Dynamic") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
+```{r, fig.width=9}
+scLANE_metrics %>% 
+  pull(ROC_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(scLANE_metrics, DATASET_NAME, N_CELLS)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  mutate(N_CELLS = factor(N_CELLS)) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = N_CELLS)) + 
+  facet_wrap(~paste0("Cells: ", N_CELLS)) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_color_manual(values = model_palette) + 
+  labs(x = "1 - Specificity", 
+       y = "Sensitivity", 
+       color = "Cells") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
+```{r, fig.width=9}
+scLANE_metrics %>% 
+  pull(ROC_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(scLANE_metrics, DATASET_NAME, ALLOCATION)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity, group = dataset, color = ALLOCATION)) + 
+  facet_wrap(~paste0("Sample Allocation: ", ALLOCATION)) + 
+  geom_segment(x = 0, xend = 0, y = 1, yend = 1, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_color_manual(values = model_palette) + 
+  labs(x = "1 - Specificity", 
+       y = "Sensitivity", 
+       color = "Sample Allocation") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
 ## Precision-Recall 
+
+```{r, fig.width=9}
+scLANE_metrics %>% 
+  pull(PR_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(scLANE_metrics, DATASET_NAME, PERCENT_DEG)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  ggplot(aes(x = recall, y = precision, group = dataset, color = PERCENT_DEG)) + 
+  facet_wrap(~PERCENT_DEG) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) +
+  scale_color_manual(values = model_palette) + 
+  labs(x = "Recall", 
+       y = "Precision", 
+       color = "% Dynamic") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
+```{r, fig.width=9}
+scLANE_metrics %>% 
+  pull(PR_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(scLANE_metrics, DATASET_NAME, N_CELLS)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  mutate(N_CELLS = factor(N_CELLS)) %>% 
+  ggplot(aes(x = recall, y = precision, group = dataset, color = N_CELLS)) + 
+  facet_wrap(~paste0("Cells: ", N_CELLS)) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) +
+  scale_color_manual(values = model_palette) + 
+  labs(x = "Recall", 
+       y = "Precision", 
+       color = "Cells") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
+
+```{r, fig.width=9}
+scLANE_metrics %>% 
+  pull(PR_CURVE) %>% 
+  purrr::reduce(rbind) %>% 
+  left_join((distinct(scLANE_metrics, DATASET_NAME, ALLOCATION)), 
+            by = c("dataset" = "DATASET_NAME")) %>% 
+  ggplot(aes(x = recall, y = precision, group = dataset, color = ALLOCATION)) + 
+  facet_wrap(~paste0("Sample Allocation: ", ALLOCATION)) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 0, color = "black", linetype = "dashed", size = 1) + 
+  geom_line(size = 1, alpha = 0.8) + 
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1)) +
+  scale_color_manual(values = model_palette) + 
+  labs(x = "Recall", 
+       y = "Precision", 
+       color = "Sample Allocation") + 
+  theme_classic(base_size = 14) + 
+  guides(color = guide_legend(override.aes = list(linewidth = 2, alpha = 1)))
+```
 
 ## Other Classification Metrics 
 
+When interpreting threshold-based metrics like this, it's important to keep in mind that the no information rate for many of these datasets is very high. 
+
+```{r}
+select(scLANE_metrics, 
+       DATASET_NAME, ACCURACY, SENSITIVITY, SPECIFICITY, ROC_AUC, PRECISION, RECALL, AUC_PR, F_MEASURE, NIR) %>% 
+  tidyr::pivot_longer(cols = !DATASET_NAME, names_to = "METRIC", values_to = "VALUE") %>% 
+  with_groups(METRIC, 
+              summarise, 
+              mu = mean(VALUE), 
+              sd = sd(VALUE), 
+              med = median(VALUE), 
+              min = min(VALUE), 
+              max = max(VALUE)) %>% 
+  mutate(range = paste0("(", round(min, 2), ", ", round(max, 2), ")"), 
+         across(where(is.numeric), round, digits = 2), 
+         METRIC = snakecase::to_title_case(METRIC), 
+         METRIC = case_when(METRIC == "Nir" ~ "No Information Rate", 
+                            METRIC == "Roc Auc" ~ "AUC-ROC", 
+                            METRIC == "Auc Pr" ~ "AUC-PR", 
+                            METRIC == "F Measure" ~ "F-measure", 
+                            TRUE ~ METRIC)) %>% 
+  select(-c(min, max)) %>% 
+  kableExtra::kbl(col.names = c("Metric", "Mean", "S.D.", "Median", "Range"), 
+                  booktabs = TRUE, 
+                  caption = paste0("n = ", length(unique(scLANE_metrics$DATASET_NAME)))) %>% 
+  kableExtra::kable_classic(full_width = FALSE)
+```
 
 # Save Results
 

@@ -61,30 +61,30 @@ library(tarchetypes)
 Sys.setenv(TAR_PROJECT = "simulation")
 tar_make_future(workers = 6)
 
-# run tradeSeq -- single-subject
-Sys.setenv(TAR_PROJECT = "tradeSeq_models_single")
-tar_make_future(workers = 4)
-
-# run tradeSeq -- multi-subject
-Sys.setenv(TAR_PROJECT = "tradeSeq_models_multi")
-tar_make_future(workers = 4)
-
-# run Lamian -- multi-subject
-Sys.setenv(TAR_PROJECT = "Lamian_models_multi")
-tar_make_future(workers = 4)
-
 # run monocle3 -- single-subject
 Sys.setenv(TAR_PROJECT = "monocle3_models_single")
-tar_make_future(workers = 4)
+tar_make_future(workers = 6)
 
 # run monocle3 -- multi-subject
 Sys.setenv(TAR_PROJECT = "monocle3_models_multi")
-tar_make_future(workers = 4)
+tar_make_future(workers = 6)
+
+# run tradeSeq -- single-subject
+Sys.setenv(TAR_PROJECT = "tradeSeq_models_single")
+tar_make_future(workers = 6)
+
+# run tradeSeq -- multi-subject
+Sys.setenv(TAR_PROJECT = "tradeSeq_models_multi")
+tar_make_future(workers = 6)
+
+# run Lamian -- multi-subject
+Sys.setenv(TAR_PROJECT = "Lamian_models_multi")
+tar_make_future(workers = 6)
 
 # run scLANE (GLM backend) -- single-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GLM_models_single")
-tar_make_future(workers = 4)
+tar_make_future(workers = 6)
 
 # run scLANE (GLM backend) -- multi-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GLM_models_multi")
-tar_make_future(workers = 4)
+tar_make_future(workers = 6)

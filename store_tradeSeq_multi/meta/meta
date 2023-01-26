@@ -59,7 +59,7 @@ panc_sim_DEG_20_CELLS_500_balanced|object|59c378eaa4580dbe|||||||||||||||
 panc_sim_DEG_20_CELLS_500_unbalanced|object|adf2eb80cc028233|||||||||||||||
 panc_sim_DEG_20_CELLS_5000_balanced|object|7f91da6a53adc44d|||||||||||||||
 panc_sim_DEG_20_CELLS_5000_unbalanced|object|6565f5285dfc77ea|||||||||||||||
-QC_report|stem||de18faf4d467fd69|30a6c254e4f16060|268687371||t19381.2781569143s||0|file|local|vector|||25.866||targets data store ..store_tradeSeq_multi not found. Utility functions like tar_read and tar_load require a preexisting targets data store default _targets created by tar_make, tar_make_clustermq, or tar_make_future. Details httpsbooks.ropensci.orgtargetsdata.html
+QC_report|stem||de18faf4d467fd69|30a6c254e4f16060|268687371||t19381.2781569143s||0|file|local|vector|||230.88||Problem while computing aesthetics.ℹ Error occurred in the 2nd layer.Caused by error in FUN object N_CELLS not found
 run_tradeSeq|function|5692e0c622fd9c83|||||||||||||||
 run_tradeSeq_multi|function|abdf9fb771858601|||||||||||||||
 tradeSeq_res_brain_DEG_10_CELLS_100_balanced|stem|f1f0c879c7874f45|d93ec405833cfca0|483169ecfecbb0fb|1039106342||t19379.3134027778s|07ec859fa5f46987|17618313|qs|local|vector|||64.389||

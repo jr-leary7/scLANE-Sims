@@ -10,7 +10,8 @@ options(future.globals.maxSize = 100000 * 1024^2)  # 100GB max size -- necessary
 
 source("./R/functions_scLANE_GLM.R")
 
-tar_option_set(packages = c("glm2", 
+tar_option_set(packages = c("qs", 
+                            "glm2", 
                             "geeM", 
                             "mgcv", 
                             "pryr", 
@@ -35,100 +36,180 @@ tar_option_set(packages = c("glm2",
                imports = c("scLANE"), 
                error = "continue", 
                memory = "transient",
-               retrieval = "main", 
-               storage = "main", 
+               retrieval = "worker", 
+               storage = "worker", 
                garbage_collection = TRUE, 
                format = "qs")
 
-##### UPSTREAM TARGETS #####
-### BRAIN -- MULTI-SUBJECT 
-# 100 cells 
-brain_sim_DEG_10_CELLS_100_balanced <- tar_read(brain_sim_DEG_10_CELLS_100_balanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_100_balanced <- tar_read(brain_sim_DEG_20_CELLS_100_balanced, store = "store_simulation")
-brain_sim_DEG_10_CELLS_100_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_100_unbalanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_100_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_100_unbalanced, store = "store_simulation")
-# 500 cells 
-brain_sim_DEG_10_CELLS_500_balanced <- tar_read(brain_sim_DEG_10_CELLS_500_balanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_500_balanced <- tar_read(brain_sim_DEG_20_CELLS_500_balanced, store = "store_simulation")
-brain_sim_DEG_10_CELLS_500_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_500_unbalanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_500_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_500_unbalanced, store = "store_simulation")
-# 1000 cells 
-brain_sim_DEG_10_CELLS_1000_balanced <- tar_read(brain_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_1000_balanced <- tar_read(brain_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
-brain_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
-# 2500 cells 
-brain_sim_DEG_10_CELLS_2500_balanced <- tar_read(brain_sim_DEG_10_CELLS_2500_balanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_2500_balanced <- tar_read(brain_sim_DEG_20_CELLS_2500_balanced, store = "store_simulation")
-brain_sim_DEG_10_CELLS_2500_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_2500_unbalanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_2500_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_2500_unbalanced, store = "store_simulation")
-# 5000 cells 
-brain_sim_DEG_10_CELLS_5000_balanced <- tar_read(brain_sim_DEG_10_CELLS_5000_balanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_5000_balanced <- tar_read(brain_sim_DEG_20_CELLS_5000_balanced, store = "store_simulation")
-brain_sim_DEG_10_CELLS_5000_unbalanced <- tar_read(brain_sim_DEG_10_CELLS_5000_unbalanced, store = "store_simulation")
-brain_sim_DEG_20_CELLS_5000_unbalanced <- tar_read(brain_sim_DEG_20_CELLS_5000_unbalanced, store = "store_simulation")
-
-### PANCREAS -- MULTI-SUBJECT 
-# 100 cells 
-panc_sim_DEG_10_CELLS_100_balanced <- tar_read(panc_sim_DEG_10_CELLS_100_balanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_100_balanced <- tar_read(panc_sim_DEG_20_CELLS_100_balanced, store = "store_simulation")
-panc_sim_DEG_10_CELLS_100_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_100_unbalanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_100_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_100_unbalanced, store = "store_simulation")
-# 500 cells 
-panc_sim_DEG_10_CELLS_500_balanced <- tar_read(panc_sim_DEG_10_CELLS_500_balanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_500_balanced <- tar_read(panc_sim_DEG_20_CELLS_500_balanced, store = "store_simulation")
-panc_sim_DEG_10_CELLS_500_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_500_unbalanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_500_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_500_unbalanced, store = "store_simulation")
-# 1000 cells 
-panc_sim_DEG_10_CELLS_1000_balanced <- tar_read(panc_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000_balanced <- tar_read(panc_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
-panc_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
-# 1000 cells 
-panc_sim_DEG_10_CELLS_1000_balanced <- tar_read(panc_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000_balanced <- tar_read(panc_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
-panc_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
-# 2500 cells 
-panc_sim_DEG_10_CELLS_2500_balanced <- tar_read(panc_sim_DEG_10_CELLS_2500_balanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_2500_balanced <- tar_read(panc_sim_DEG_20_CELLS_2500_balanced, store = "store_simulation")
-panc_sim_DEG_10_CELLS_2500_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_2500_unbalanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_2500_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_2500_unbalanced, store = "store_simulation")
-# 5000 cells 
-panc_sim_DEG_10_CELLS_5000_balanced <- tar_read(panc_sim_DEG_10_CELLS_5000_balanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_5000_balanced <- tar_read(panc_sim_DEG_20_CELLS_5000_balanced, store = "store_simulation")
-panc_sim_DEG_10_CELLS_5000_unbalanced <- tar_read(panc_sim_DEG_10_CELLS_5000_unbalanced, store = "store_simulation")
-panc_sim_DEG_20_CELLS_5000_unbalanced <- tar_read(panc_sim_DEG_20_CELLS_5000_unbalanced, store = "store_simulation")
-
-### ENDOCRINOGENESIS -- MULTI-SUBJECT 
-# 100 cells 
-endo_sim_DEG_10_CELLS_100_balanced <- tar_read(endo_sim_DEG_10_CELLS_100_balanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_100_balanced <- tar_read(endo_sim_DEG_20_CELLS_100_balanced, store = "store_simulation")
-endo_sim_DEG_10_CELLS_100_unbalanced <- tar_read(endo_sim_DEG_10_CELLS_100_unbalanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_100_unbalanced <- tar_read(endo_sim_DEG_20_CELLS_100_unbalanced, store = "store_simulation")
-# 500 cells 
-endo_sim_DEG_10_CELLS_500_balanced <- tar_read(endo_sim_DEG_10_CELLS_500_balanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_500_balanced <- tar_read(endo_sim_DEG_20_CELLS_500_balanced, store = "store_simulation")
-endo_sim_DEG_10_CELLS_500_unbalanced <- tar_read(endo_sim_DEG_10_CELLS_500_unbalanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_500_unbalanced <- tar_read(endo_sim_DEG_20_CELLS_500_unbalanced, store = "store_simulation")
-# 1000 cells 
-endo_sim_DEG_10_CELLS_1000_balanced <- tar_read(endo_sim_DEG_10_CELLS_1000_balanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_1000_balanced <- tar_read(endo_sim_DEG_20_CELLS_1000_balanced, store = "store_simulation")
-endo_sim_DEG_10_CELLS_1000_unbalanced <- tar_read(endo_sim_DEG_10_CELLS_1000_unbalanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_1000_unbalanced <- tar_read(endo_sim_DEG_20_CELLS_1000_unbalanced, store = "store_simulation")
-# 2500 cells 
-endo_sim_DEG_10_CELLS_2500_balanced <- tar_read(endo_sim_DEG_10_CELLS_2500_balanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_2500_balanced <- tar_read(endo_sim_DEG_20_CELLS_2500_balanced, store = "store_simulation")
-endo_sim_DEG_10_CELLS_2500_unbalanced <- tar_read(endo_sim_DEG_10_CELLS_2500_unbalanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_2500_unbalanced <- tar_read(endo_sim_DEG_20_CELLS_2500_unbalanced, store = "store_simulation")
-# 5000 cells 
-endo_sim_DEG_10_CELLS_5000_balanced <- tar_read(endo_sim_DEG_10_CELLS_5000_balanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_5000_balanced <- tar_read(endo_sim_DEG_20_CELLS_5000_balanced, store = "store_simulation")
-endo_sim_DEG_10_CELLS_5000_unbalanced <- tar_read(endo_sim_DEG_10_CELLS_5000_unbalanced, store = "store_simulation")
-endo_sim_DEG_20_CELLS_5000_unbalanced <- tar_read(endo_sim_DEG_20_CELLS_5000_unbalanced, store = "store_simulation")
-
-# scLANE (GLM backend) model targets 
+# targets 
 list(
+  ##### UPSTREAM TARGETS #####
+  ##### BRAIN #####
+  ### FILES ###
+  # 100 cells
+  tar_target(brain_sim_DEG_10_CELLS_100_balanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_100_balanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_100_balanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_100_balanced", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_100_unbalanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_100_unbalanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_100_unbalanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_100_unbalanced", format = "file"),
+  # 500 cells
+  tar_target(brain_sim_DEG_10_CELLS_500_balanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_500_balanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_500_balanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_500_balanced", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_500_unbalanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_500_unbalanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_500_unbalanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_500_unbalanced", format = "file"),
+  # 1000 cells
+  tar_target(brain_sim_DEG_10_CELLS_1000_balanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_1000_balanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_1000_balanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_1000_balanced", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_1000_unbalanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_1000_unbalanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_1000_unbalanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_1000_unbalanced", format = "file"),
+  # 2500 cells
+  tar_target(brain_sim_DEG_10_CELLS_2500_balanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_2500_balanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_2500_balanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_2500_balanced", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_2500_unbalanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_2500_unbalanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_2500_unbalanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_2500_unbalanced", format = "file"),
+  # 5000 cells
+  tar_target(brain_sim_DEG_10_CELLS_5000_balanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_5000_balanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_5000_balanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_5000_balanced", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_5000_unbalanced_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_5000_unbalanced", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_5000_unbalanced_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_5000_unbalanced", format = "file"),
+  
+  ### OBJECTS ###
+  # 100 cells 
+  tar_target(brain_sim_DEG_10_CELLS_100_balanced, qs::qread(brain_sim_DEG_10_CELLS_100_balanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_100_balanced, qs::qread(brain_sim_DEG_20_CELLS_100_balanced_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_100_unbalanced, qs::qread(brain_sim_DEG_10_CELLS_100_unbalanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_100_unbalanced, qs::qread(brain_sim_DEG_20_CELLS_100_unbalanced_file)), 
+  # 500 cells 
+  tar_target(brain_sim_DEG_10_CELLS_500_balanced, qs::qread(brain_sim_DEG_10_CELLS_500_balanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_500_balanced, qs::qread(brain_sim_DEG_20_CELLS_500_balanced_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_500_unbalanced, qs::qread(brain_sim_DEG_10_CELLS_500_unbalanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_500_unbalanced, qs::qread(brain_sim_DEG_20_CELLS_500_unbalanced_file)), 
+  # 1000 cells 
+  tar_target(brain_sim_DEG_10_CELLS_1000_balanced, qs::qread(brain_sim_DEG_10_CELLS_1000_balanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_1000_balanced, qs::qread(brain_sim_DEG_20_CELLS_1000_balanced_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_1000_unbalanced, qs::qread(brain_sim_DEG_10_CELLS_1000_unbalanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_1000_unbalanced, qs::qread(brain_sim_DEG_20_CELLS_1000_unbalanced_file)), 
+  # 2500 cells
+  tar_target(brain_sim_DEG_10_CELLS_2500_balanced, qs::qread(brain_sim_DEG_10_CELLS_2500_balanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_2500_balanced, qs::qread(brain_sim_DEG_20_CELLS_2500_balanced_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_2500_unbalanced, qs::qread(brain_sim_DEG_10_CELLS_2500_unbalanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_2500_unbalanced, qs::qread(brain_sim_DEG_20_CELLS_2500_unbalanced_file)), 
+  # 5000 cells 
+  tar_target(brain_sim_DEG_10_CELLS_5000_balanced, qs::qread(brain_sim_DEG_10_CELLS_5000_balanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_5000_balanced, qs::qread(brain_sim_DEG_20_CELLS_5000_balanced_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_5000_unbalanced, qs::qread(brain_sim_DEG_10_CELLS_5000_unbalanced_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_5000_unbalanced, qs::qread(brain_sim_DEG_20_CELLS_5000_unbalanced_file)), 
+  
+  ##### PANCREAS #####
+  ### FILES ###
+  # 100 cells
+  tar_target(panc_sim_DEG_10_CELLS_100_balanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_100_balanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_100_balanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_100_balanced", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_100_unbalanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_100_unbalanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_100_unbalanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_100_unbalanced", format = "file"),
+  # 500 cells
+  tar_target(panc_sim_DEG_10_CELLS_500_balanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_500_balanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_500_balanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_500_balanced", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_500_unbalanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_500_unbalanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_500_unbalanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_500_unbalanced", format = "file"),
+  # 1000 cells
+  tar_target(panc_sim_DEG_10_CELLS_1000_balanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_1000_balanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_1000_balanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_1000_balanced", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_1000_unbalanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_1000_unbalanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_1000_unbalanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_1000_unbalanced", format = "file"),
+  # 2500 cells
+  tar_target(panc_sim_DEG_10_CELLS_2500_balanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_2500_balanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_2500_balanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_2500_balanced", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_2500_unbalanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_2500_unbalanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_2500_unbalanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_2500_unbalanced", format = "file"),
+  # 5000 cells
+  tar_target(panc_sim_DEG_10_CELLS_5000_balanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_5000_balanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_5000_balanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_5000_balanced", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_5000_unbalanced_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_5000_unbalanced", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_5000_unbalanced_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_5000_unbalanced", format = "file"),
+  
+  ### OBJECTS ###
+  # 100 cells 
+  tar_target(panc_sim_DEG_10_CELLS_100_balanced, qs::qread(panc_sim_DEG_10_CELLS_100_balanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_100_balanced, qs::qread(panc_sim_DEG_20_CELLS_100_balanced_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_100_unbalanced, qs::qread(panc_sim_DEG_10_CELLS_100_unbalanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_100_unbalanced, qs::qread(panc_sim_DEG_20_CELLS_100_unbalanced_file)), 
+  # 500 cells 
+  tar_target(panc_sim_DEG_10_CELLS_500_balanced, qs::qread(panc_sim_DEG_10_CELLS_500_balanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_500_balanced, qs::qread(panc_sim_DEG_20_CELLS_500_balanced_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_500_unbalanced, qs::qread(panc_sim_DEG_10_CELLS_500_unbalanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_500_unbalanced, qs::qread(panc_sim_DEG_20_CELLS_500_unbalanced_file)), 
+  # 1000 cells 
+  tar_target(panc_sim_DEG_10_CELLS_1000_balanced, qs::qread(panc_sim_DEG_10_CELLS_1000_balanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_1000_balanced, qs::qread(panc_sim_DEG_20_CELLS_1000_balanced_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_1000_unbalanced, qs::qread(panc_sim_DEG_10_CELLS_1000_unbalanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_1000_unbalanced, qs::qread(panc_sim_DEG_20_CELLS_1000_unbalanced_file)), 
+  # 2500 cells
+  tar_target(panc_sim_DEG_10_CELLS_2500_balanced, qs::qread(panc_sim_DEG_10_CELLS_2500_balanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_2500_balanced, qs::qread(panc_sim_DEG_20_CELLS_2500_balanced_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_2500_unbalanced, qs::qread(panc_sim_DEG_10_CELLS_2500_unbalanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_2500_unbalanced, qs::qread(panc_sim_DEG_20_CELLS_2500_unbalanced_file)), 
+  # 5000 cells 
+  tar_target(panc_sim_DEG_10_CELLS_5000_balanced, qs::qread(panc_sim_DEG_10_CELLS_5000_balanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_5000_balanced, qs::qread(panc_sim_DEG_20_CELLS_5000_balanced_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_5000_unbalanced, qs::qread(panc_sim_DEG_10_CELLS_5000_unbalanced_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_5000_unbalanced, qs::qread(panc_sim_DEG_20_CELLS_5000_unbalanced_file)), 
+  
+  ##### ENDOCRINOGENESIS #####
+  ### FILES ###
+  # 100 cells
+  tar_target(endo_sim_DEG_10_CELLS_100_balanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_100_balanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_100_balanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_100_balanced", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_100_unbalanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_100_unbalanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_100_unbalanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_100_unbalanced", format = "file"),
+  # 500 cells
+  tar_target(endo_sim_DEG_10_CELLS_500_balanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_500_balanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_500_balanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_500_balanced", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_500_unbalanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_500_unbalanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_500_unbalanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_500_unbalanced", format = "file"),
+  # 1000 cells
+  tar_target(endo_sim_DEG_10_CELLS_1000_balanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_1000_balanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_1000_balanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_1000_balanced", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_1000_unbalanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_1000_unbalanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_1000_unbalanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_1000_unbalanced", format = "file"),
+  # 2500 cells
+  tar_target(endo_sim_DEG_10_CELLS_2500_balanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_2500_balanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_2500_balanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_2500_balanced", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_2500_unbalanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_2500_unbalanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_2500_unbalanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_2500_unbalanced", format = "file"),
+  # 5000 cells
+  tar_target(endo_sim_DEG_10_CELLS_5000_balanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_5000_balanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_5000_balanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_5000_balanced", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_5000_unbalanced_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_5000_unbalanced", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_5000_unbalanced_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_5000_unbalanced", format = "file"),
+  
+  ### OBJECTS ###
+  # 100 cells 
+  tar_target(endo_sim_DEG_10_CELLS_100_balanced, qs::qread(endo_sim_DEG_10_CELLS_100_balanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_100_balanced, qs::qread(endo_sim_DEG_20_CELLS_100_balanced_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_100_unbalanced, qs::qread(endo_sim_DEG_10_CELLS_100_unbalanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_100_unbalanced, qs::qread(endo_sim_DEG_20_CELLS_100_unbalanced_file)), 
+  # 500 cells 
+  tar_target(endo_sim_DEG_10_CELLS_500_balanced, qs::qread(endo_sim_DEG_10_CELLS_500_balanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_500_balanced, qs::qread(endo_sim_DEG_20_CELLS_500_balanced_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_500_unbalanced, qs::qread(endo_sim_DEG_10_CELLS_500_unbalanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_500_unbalanced, qs::qread(endo_sim_DEG_20_CELLS_500_unbalanced_file)), 
+  # 1000 cells 
+  tar_target(endo_sim_DEG_10_CELLS_1000_balanced, qs::qread(endo_sim_DEG_10_CELLS_1000_balanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_1000_balanced, qs::qread(endo_sim_DEG_20_CELLS_1000_balanced_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_1000_unbalanced, qs::qread(endo_sim_DEG_10_CELLS_1000_unbalanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_1000_unbalanced, qs::qread(endo_sim_DEG_20_CELLS_1000_unbalanced_file)), 
+  # 2500 cells
+  tar_target(endo_sim_DEG_10_CELLS_2500_balanced, qs::qread(endo_sim_DEG_10_CELLS_2500_balanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_2500_balanced, qs::qread(endo_sim_DEG_20_CELLS_2500_balanced_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_2500_unbalanced, qs::qread(endo_sim_DEG_10_CELLS_2500_unbalanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_2500_unbalanced, qs::qread(endo_sim_DEG_20_CELLS_2500_unbalanced_file)), 
+  # 5000 cells 
+  tar_target(endo_sim_DEG_10_CELLS_5000_balanced, qs::qread(endo_sim_DEG_10_CELLS_5000_balanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_5000_balanced, qs::qread(endo_sim_DEG_20_CELLS_5000_balanced_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_5000_unbalanced, qs::qread(endo_sim_DEG_10_CELLS_5000_unbalanced_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_5000_unbalanced, qs::qread(endo_sim_DEG_20_CELLS_5000_unbalanced_file)), 
+  
+  ##### MODELS #####
   ##### BRAIN #####
   ### MULTI-SUBJECT
   # 100 cells
@@ -391,5 +472,8 @@ list(
   tar_target(scLANE_GLM_endo_DEG_20_CELLS_5000_unbalanced, run_scLANE_GLM(sim.data = endo_sim_DEG_20_CELLS_5000_unbalanced,
                                                                           n.genes.sample = 1800, 
                                                                           param.list = list(Prop_Dyn_Genes = 0.20, Cells = 5000, Allocation = "Unbalanced", Method = "GLM"),
-                                                                          n.cores = 4))
+                                                                          n.cores = 4)), 
+  
+  ##### QC #####
+  tar_render(QC_report, "Reports/Model_Results_scLANE_GLM_Multi.Rmd")
 )

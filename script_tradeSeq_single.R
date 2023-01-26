@@ -10,7 +10,8 @@ options(future.globals.maxSize = 100000 * 1024^2)  # 100GB max size -- necessary
 
 source("./R/functions_tradeSeq.R")
 
-tar_option_set(packages = c("mgcv", 
+tar_option_set(packages = c("qs", 
+                            "mgcv", 
                             "pryr", 
                             "tidyr", 
                             "stats", 
@@ -29,96 +30,181 @@ tar_option_set(packages = c("mgcv",
                             "SummarizedExperiment", 
                             "SingleCellExperiment"),
                error = "continue", 
-               retrieval = "main", 
-               storage = "main", 
+               retrieval = "worker", 
+               storage = "worker", 
                memory = "transient",
                garbage_collection = TRUE, 
                format = "qs")
 
-##### UPSTREAM TARGETS #####
-### BRAIN -- SINGLE-SUBJECT 
-# 100 cells
-brain_sim_DEG_01_CELLS_100 <- tar_read(brain_sim_DEG_01_CELLS_100, store = "store_simulation")
-brain_sim_DEG_05_CELLS_100 <- tar_read(brain_sim_DEG_05_CELLS_100, store = "store_simulation")
-brain_sim_DEG_10_CELLS_100 <- tar_read(brain_sim_DEG_10_CELLS_100, store = "store_simulation")
-brain_sim_DEG_20_CELLS_100 <- tar_read(brain_sim_DEG_20_CELLS_100, store = "store_simulation")
-# 500 cells
-brain_sim_DEG_01_CELLS_500 <- tar_read(brain_sim_DEG_01_CELLS_500, store = "store_simulation")
-brain_sim_DEG_05_CELLS_500 <- tar_read(brain_sim_DEG_05_CELLS_500, store = "store_simulation")
-brain_sim_DEG_10_CELLS_500 <- tar_read(brain_sim_DEG_10_CELLS_500, store = "store_simulation")
-brain_sim_DEG_20_CELLS_500 <- tar_read(brain_sim_DEG_20_CELLS_500, store = "store_simulation")
-# 1000 cells
-brain_sim_DEG_01_CELLS_1000 <- tar_read(brain_sim_DEG_01_CELLS_1000, store = "store_simulation")
-brain_sim_DEG_05_CELLS_1000 <- tar_read(brain_sim_DEG_05_CELLS_1000, store = "store_simulation")
-brain_sim_DEG_10_CELLS_1000 <- tar_read(brain_sim_DEG_10_CELLS_1000, store = "store_simulation")
-brain_sim_DEG_20_CELLS_1000 <- tar_read(brain_sim_DEG_20_CELLS_1000, store = "store_simulation")
-# 2500 cells
-brain_sim_DEG_01_CELLS_2500 <- tar_read(brain_sim_DEG_01_CELLS_2500, store = "store_simulation")
-brain_sim_DEG_05_CELLS_2500 <- tar_read(brain_sim_DEG_05_CELLS_2500, store = "store_simulation")
-brain_sim_DEG_10_CELLS_2500 <- tar_read(brain_sim_DEG_10_CELLS_2500, store = "store_simulation")
-brain_sim_DEG_20_CELLS_2500 <- tar_read(brain_sim_DEG_20_CELLS_2500, store = "store_simulation")
-# 1000 cells
-brain_sim_DEG_01_CELLS_5000 <- tar_read(brain_sim_DEG_01_CELLS_5000, store = "store_simulation")
-brain_sim_DEG_05_CELLS_5000 <- tar_read(brain_sim_DEG_05_CELLS_5000, store = "store_simulation")
-brain_sim_DEG_10_CELLS_5000 <- tar_read(brain_sim_DEG_10_CELLS_5000, store = "store_simulation")
-brain_sim_DEG_20_CELLS_5000 <- tar_read(brain_sim_DEG_20_CELLS_5000, store = "store_simulation")
-
-### PANCREAS -- SINGLE-SUBJECT 
-# 100 cells
-panc_sim_DEG_01_CELLS_100 <- tar_read(panc_sim_DEG_01_CELLS_100, store = "store_simulation")
-panc_sim_DEG_05_CELLS_100 <- tar_read(panc_sim_DEG_05_CELLS_100, store = "store_simulation")
-panc_sim_DEG_10_CELLS_100 <- tar_read(panc_sim_DEG_10_CELLS_100, store = "store_simulation")
-panc_sim_DEG_20_CELLS_100 <- tar_read(panc_sim_DEG_20_CELLS_100, store = "store_simulation")
-# 500 cells
-panc_sim_DEG_01_CELLS_500 <- tar_read(panc_sim_DEG_01_CELLS_500, store = "store_simulation")
-panc_sim_DEG_05_CELLS_500 <- tar_read(panc_sim_DEG_05_CELLS_500, store = "store_simulation")
-panc_sim_DEG_10_CELLS_500 <- tar_read(panc_sim_DEG_10_CELLS_500, store = "store_simulation")
-panc_sim_DEG_20_CELLS_500 <- tar_read(panc_sim_DEG_20_CELLS_500, store = "store_simulation")
-# 1000 cells
-panc_sim_DEG_01_CELLS_1000 <- tar_read(panc_sim_DEG_01_CELLS_1000, store = "store_simulation")
-panc_sim_DEG_05_CELLS_1000 <- tar_read(panc_sim_DEG_05_CELLS_1000, store = "store_simulation")
-panc_sim_DEG_10_CELLS_1000 <- tar_read(panc_sim_DEG_10_CELLS_1000, store = "store_simulation")
-panc_sim_DEG_20_CELLS_1000 <- tar_read(panc_sim_DEG_20_CELLS_1000, store = "store_simulation")
-# 2500 cells
-panc_sim_DEG_01_CELLS_2500 <- tar_read(panc_sim_DEG_01_CELLS_2500, store = "store_simulation")
-panc_sim_DEG_05_CELLS_2500 <- tar_read(panc_sim_DEG_05_CELLS_2500, store = "store_simulation")
-panc_sim_DEG_10_CELLS_2500 <- tar_read(panc_sim_DEG_10_CELLS_2500, store = "store_simulation")
-panc_sim_DEG_20_CELLS_2500 <- tar_read(panc_sim_DEG_20_CELLS_2500, store = "store_simulation")
-# 1000 cells
-panc_sim_DEG_01_CELLS_5000 <- tar_read(panc_sim_DEG_01_CELLS_5000, store = "store_simulation")
-panc_sim_DEG_05_CELLS_5000 <- tar_read(panc_sim_DEG_05_CELLS_5000, store = "store_simulation")
-panc_sim_DEG_10_CELLS_5000 <- tar_read(panc_sim_DEG_10_CELLS_5000, store = "store_simulation")
-panc_sim_DEG_20_CELLS_5000 <- tar_read(panc_sim_DEG_20_CELLS_5000, store = "store_simulation")
-
-### ENDOCRINOGENESIS -- SINGLE-SUBJECT 
-# 100 cells
-endo_sim_DEG_01_CELLS_100 <- tar_read(endo_sim_DEG_01_CELLS_100, store = "store_simulation")
-endo_sim_DEG_05_CELLS_100 <- tar_read(endo_sim_DEG_05_CELLS_100, store = "store_simulation")
-endo_sim_DEG_10_CELLS_100 <- tar_read(endo_sim_DEG_10_CELLS_100, store = "store_simulation")
-endo_sim_DEG_20_CELLS_100 <- tar_read(endo_sim_DEG_20_CELLS_100, store = "store_simulation")
-# 500 cells
-endo_sim_DEG_01_CELLS_500 <- tar_read(endo_sim_DEG_01_CELLS_500, store = "store_simulation")
-endo_sim_DEG_05_CELLS_500 <- tar_read(endo_sim_DEG_05_CELLS_500, store = "store_simulation")
-endo_sim_DEG_10_CELLS_500 <- tar_read(endo_sim_DEG_10_CELLS_500, store = "store_simulation")
-endo_sim_DEG_20_CELLS_500 <- tar_read(endo_sim_DEG_20_CELLS_500, store = "store_simulation")
-# 1000 cells
-endo_sim_DEG_01_CELLS_1000 <- tar_read(endo_sim_DEG_01_CELLS_1000, store = "store_simulation")
-endo_sim_DEG_05_CELLS_1000 <- tar_read(endo_sim_DEG_05_CELLS_1000, store = "store_simulation")
-endo_sim_DEG_10_CELLS_1000 <- tar_read(endo_sim_DEG_10_CELLS_1000, store = "store_simulation")
-endo_sim_DEG_20_CELLS_1000 <- tar_read(endo_sim_DEG_20_CELLS_1000, store = "store_simulation")
-# 2500 cells
-endo_sim_DEG_01_CELLS_2500 <- tar_read(endo_sim_DEG_01_CELLS_2500, store = "store_simulation")
-endo_sim_DEG_05_CELLS_2500 <- tar_read(endo_sim_DEG_05_CELLS_2500, store = "store_simulation")
-endo_sim_DEG_10_CELLS_2500 <- tar_read(endo_sim_DEG_10_CELLS_2500, store = "store_simulation")
-endo_sim_DEG_20_CELLS_2500 <- tar_read(endo_sim_DEG_20_CELLS_2500, store = "store_simulation")
-# 1000 cells
-endo_sim_DEG_01_CELLS_5000 <- tar_read(endo_sim_DEG_01_CELLS_5000, store = "store_simulation")
-endo_sim_DEG_05_CELLS_5000 <- tar_read(endo_sim_DEG_05_CELLS_5000, store = "store_simulation")
-endo_sim_DEG_10_CELLS_5000 <- tar_read(endo_sim_DEG_10_CELLS_5000, store = "store_simulation")
-endo_sim_DEG_20_CELLS_5000 <- tar_read(endo_sim_DEG_20_CELLS_5000, store = "store_simulation")
-
-# tradeSeq model targets 
+# targets 
 list(
+  ##### UPSTREAM TARGETS #####
+  ##### BRAIN #####
+  ### FILES ###
+  # 100 cells
+  tar_target(brain_sim_DEG_01_CELLS_100_file, "store_simulation/objects/brain_sim_DEG_01_CELLS_100", format = "file"),
+  tar_target(brain_sim_DEG_05_CELLS_100_file, "store_simulation/objects/brain_sim_DEG_05_CELLS_100", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_100_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_100", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_100_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_100", format = "file"),
+  # 500 cells
+  tar_target(brain_sim_DEG_01_CELLS_500_file, "store_simulation/objects/brain_sim_DEG_01_CELLS_500", format = "file"),
+  tar_target(brain_sim_DEG_05_CELLS_500_file, "store_simulation/objects/brain_sim_DEG_05_CELLS_500", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_500_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_500", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_500_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_500", format = "file"),
+  # 1000 cells
+  tar_target(brain_sim_DEG_01_CELLS_1000_file, "store_simulation/objects/brain_sim_DEG_01_CELLS_1000", format = "file"),
+  tar_target(brain_sim_DEG_05_CELLS_1000_file, "store_simulation/objects/brain_sim_DEG_05_CELLS_1000", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_1000_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_1000", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_1000_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_1000", format = "file"),
+  # 2500 cells
+  tar_target(brain_sim_DEG_01_CELLS_2500_file, "store_simulation/objects/brain_sim_DEG_01_CELLS_2500", format = "file"),
+  tar_target(brain_sim_DEG_05_CELLS_2500_file, "store_simulation/objects/brain_sim_DEG_05_CELLS_2500", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_2500_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_2500", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_2500_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_2500", format = "file"),
+  # 5000 cells
+  tar_target(brain_sim_DEG_01_CELLS_5000_file, "store_simulation/objects/brain_sim_DEG_01_CELLS_5000", format = "file"),
+  tar_target(brain_sim_DEG_05_CELLS_5000_file, "store_simulation/objects/brain_sim_DEG_05_CELLS_5000", format = "file"),
+  tar_target(brain_sim_DEG_10_CELLS_5000_file, "store_simulation/objects/brain_sim_DEG_10_CELLS_5000", format = "file"),
+  tar_target(brain_sim_DEG_20_CELLS_5000_file, "store_simulation/objects/brain_sim_DEG_20_CELLS_5000", format = "file"),
+  
+  ### OBJECTS ###
+  # 100 cells 
+  tar_target(brain_sim_DEG_01_CELLS_100, qs::qread(brain_sim_DEG_01_CELLS_100_file)), 
+  tar_target(brain_sim_DEG_05_CELLS_100, qs::qread(brain_sim_DEG_05_CELLS_100_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_100, qs::qread(brain_sim_DEG_10_CELLS_100_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_100, qs::qread(brain_sim_DEG_20_CELLS_100_file)), 
+  # 500 cells 
+  tar_target(brain_sim_DEG_01_CELLS_500, qs::qread(brain_sim_DEG_01_CELLS_500_file)), 
+  tar_target(brain_sim_DEG_05_CELLS_500, qs::qread(brain_sim_DEG_05_CELLS_500_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_500, qs::qread(brain_sim_DEG_10_CELLS_500_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_500, qs::qread(brain_sim_DEG_20_CELLS_500_file)), 
+  # 1000 cells 
+  tar_target(brain_sim_DEG_01_CELLS_1000, qs::qread(brain_sim_DEG_01_CELLS_1000_file)), 
+  tar_target(brain_sim_DEG_05_CELLS_1000, qs::qread(brain_sim_DEG_05_CELLS_1000_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_1000, qs::qread(brain_sim_DEG_10_CELLS_1000_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_1000, qs::qread(brain_sim_DEG_20_CELLS_1000_file)), 
+  # 2500 cells
+  tar_target(brain_sim_DEG_01_CELLS_2500, qs::qread(brain_sim_DEG_01_CELLS_2500_file)), 
+  tar_target(brain_sim_DEG_05_CELLS_2500, qs::qread(brain_sim_DEG_05_CELLS_2500_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_2500, qs::qread(brain_sim_DEG_10_CELLS_2500_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_2500, qs::qread(brain_sim_DEG_20_CELLS_2500_file)), 
+  # 5000 cells 
+  tar_target(brain_sim_DEG_01_CELLS_5000, qs::qread(brain_sim_DEG_01_CELLS_5000_file)), 
+  tar_target(brain_sim_DEG_05_CELLS_5000, qs::qread(brain_sim_DEG_05_CELLS_5000_file)), 
+  tar_target(brain_sim_DEG_10_CELLS_5000, qs::qread(brain_sim_DEG_10_CELLS_5000_file)), 
+  tar_target(brain_sim_DEG_20_CELLS_5000, qs::qread(brain_sim_DEG_20_CELLS_5000_file)), 
+  
+  ##### PANCREAS #####
+  ### FILES ###
+  # 100 cells
+  tar_target(panc_sim_DEG_01_CELLS_100_file, "store_simulation/objects/panc_sim_DEG_01_CELLS_100", format = "file"),
+  tar_target(panc_sim_DEG_05_CELLS_100_file, "store_simulation/objects/panc_sim_DEG_05_CELLS_100", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_100_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_100", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_100_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_100", format = "file"),
+  # 500 cells
+  tar_target(panc_sim_DEG_01_CELLS_500_file, "store_simulation/objects/panc_sim_DEG_01_CELLS_500", format = "file"),
+  tar_target(panc_sim_DEG_05_CELLS_500_file, "store_simulation/objects/panc_sim_DEG_05_CELLS_500", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_500_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_500", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_500_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_500", format = "file"),
+  # 1000 cells
+  tar_target(panc_sim_DEG_01_CELLS_1000_file, "store_simulation/objects/panc_sim_DEG_01_CELLS_1000", format = "file"),
+  tar_target(panc_sim_DEG_05_CELLS_1000_file, "store_simulation/objects/panc_sim_DEG_05_CELLS_1000", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_1000_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_1000", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_1000_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_1000", format = "file"),
+  # 2500 cells
+  tar_target(panc_sim_DEG_01_CELLS_2500_file, "store_simulation/objects/panc_sim_DEG_01_CELLS_2500", format = "file"),
+  tar_target(panc_sim_DEG_05_CELLS_2500_file, "store_simulation/objects/panc_sim_DEG_05_CELLS_2500", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_2500_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_2500", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_2500_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_2500", format = "file"),
+  # 5000 cells
+  tar_target(panc_sim_DEG_01_CELLS_5000_file, "store_simulation/objects/panc_sim_DEG_01_CELLS_5000", format = "file"),
+  tar_target(panc_sim_DEG_05_CELLS_5000_file, "store_simulation/objects/panc_sim_DEG_05_CELLS_5000", format = "file"),
+  tar_target(panc_sim_DEG_10_CELLS_5000_file, "store_simulation/objects/panc_sim_DEG_10_CELLS_5000", format = "file"),
+  tar_target(panc_sim_DEG_20_CELLS_5000_file, "store_simulation/objects/panc_sim_DEG_20_CELLS_5000", format = "file"),
+  
+  ### OBJECTS ###
+  # 100 cells 
+  tar_target(panc_sim_DEG_01_CELLS_100, qs::qread(panc_sim_DEG_01_CELLS_100_file)), 
+  tar_target(panc_sim_DEG_05_CELLS_100, qs::qread(panc_sim_DEG_05_CELLS_100_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_100, qs::qread(panc_sim_DEG_10_CELLS_100_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_100, qs::qread(panc_sim_DEG_20_CELLS_100_file)), 
+  # 500 cells 
+  tar_target(panc_sim_DEG_01_CELLS_500, qs::qread(panc_sim_DEG_01_CELLS_500_file)), 
+  tar_target(panc_sim_DEG_05_CELLS_500, qs::qread(panc_sim_DEG_05_CELLS_500_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_500, qs::qread(panc_sim_DEG_10_CELLS_500_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_500, qs::qread(panc_sim_DEG_20_CELLS_500_file)), 
+  # 1000 cells 
+  tar_target(panc_sim_DEG_01_CELLS_1000, qs::qread(panc_sim_DEG_01_CELLS_1000_file)), 
+  tar_target(panc_sim_DEG_05_CELLS_1000, qs::qread(panc_sim_DEG_05_CELLS_1000_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_1000, qs::qread(panc_sim_DEG_10_CELLS_1000_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_1000, qs::qread(panc_sim_DEG_20_CELLS_1000_file)), 
+  # 2500 cells
+  tar_target(panc_sim_DEG_01_CELLS_2500, qs::qread(panc_sim_DEG_01_CELLS_2500_file)), 
+  tar_target(panc_sim_DEG_05_CELLS_2500, qs::qread(panc_sim_DEG_05_CELLS_2500_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_2500, qs::qread(panc_sim_DEG_10_CELLS_2500_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_2500, qs::qread(panc_sim_DEG_20_CELLS_2500_file)), 
+  # 5000 cells 
+  tar_target(panc_sim_DEG_01_CELLS_5000, qs::qread(panc_sim_DEG_01_CELLS_5000_file)), 
+  tar_target(panc_sim_DEG_05_CELLS_5000, qs::qread(panc_sim_DEG_05_CELLS_5000_file)), 
+  tar_target(panc_sim_DEG_10_CELLS_5000, qs::qread(panc_sim_DEG_10_CELLS_5000_file)), 
+  tar_target(panc_sim_DEG_20_CELLS_5000, qs::qread(panc_sim_DEG_20_CELLS_5000_file)), 
+  
+  ##### ENDOCRINOGENESIS #####
+  ### FILES ###
+  # 100 cells
+  tar_target(endo_sim_DEG_01_CELLS_100_file, "store_simulation/objects/endo_sim_DEG_01_CELLS_100", format = "file"),
+  tar_target(endo_sim_DEG_05_CELLS_100_file, "store_simulation/objects/endo_sim_DEG_05_CELLS_100", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_100_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_100", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_100_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_100", format = "file"),
+  # 500 cells
+  tar_target(endo_sim_DEG_01_CELLS_500_file, "store_simulation/objects/endo_sim_DEG_01_CELLS_500", format = "file"),
+  tar_target(endo_sim_DEG_05_CELLS_500_file, "store_simulation/objects/endo_sim_DEG_05_CELLS_500", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_500_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_500", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_500_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_500", format = "file"),
+  # 1000 cells
+  tar_target(endo_sim_DEG_01_CELLS_1000_file, "store_simulation/objects/endo_sim_DEG_01_CELLS_1000", format = "file"),
+  tar_target(endo_sim_DEG_05_CELLS_1000_file, "store_simulation/objects/endo_sim_DEG_05_CELLS_1000", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_1000_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_1000", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_1000_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_1000", format = "file"),
+  # 2500 cells
+  tar_target(endo_sim_DEG_01_CELLS_2500_file, "store_simulation/objects/endo_sim_DEG_01_CELLS_2500", format = "file"),
+  tar_target(endo_sim_DEG_05_CELLS_2500_file, "store_simulation/objects/endo_sim_DEG_05_CELLS_2500", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_2500_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_2500", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_2500_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_2500", format = "file"),
+  # 5000 cells
+  tar_target(endo_sim_DEG_01_CELLS_5000_file, "store_simulation/objects/endo_sim_DEG_01_CELLS_5000", format = "file"),
+  tar_target(endo_sim_DEG_05_CELLS_5000_file, "store_simulation/objects/endo_sim_DEG_05_CELLS_5000", format = "file"),
+  tar_target(endo_sim_DEG_10_CELLS_5000_file, "store_simulation/objects/endo_sim_DEG_10_CELLS_5000", format = "file"),
+  tar_target(endo_sim_DEG_20_CELLS_5000_file, "store_simulation/objects/endo_sim_DEG_20_CELLS_5000", format = "file"),
+  
+  ### OBJECTS ###
+  # 100 cells 
+  tar_target(endo_sim_DEG_01_CELLS_100, qs::qread(endo_sim_DEG_01_CELLS_100_file)), 
+  tar_target(endo_sim_DEG_05_CELLS_100, qs::qread(endo_sim_DEG_05_CELLS_100_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_100, qs::qread(endo_sim_DEG_10_CELLS_100_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_100, qs::qread(endo_sim_DEG_20_CELLS_100_file)), 
+  # 500 cells 
+  tar_target(endo_sim_DEG_01_CELLS_500, qs::qread(endo_sim_DEG_01_CELLS_500_file)), 
+  tar_target(endo_sim_DEG_05_CELLS_500, qs::qread(endo_sim_DEG_05_CELLS_500_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_500, qs::qread(endo_sim_DEG_10_CELLS_500_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_500, qs::qread(endo_sim_DEG_20_CELLS_500_file)), 
+  # 1000 cells 
+  tar_target(endo_sim_DEG_01_CELLS_1000, qs::qread(endo_sim_DEG_01_CELLS_1000_file)), 
+  tar_target(endo_sim_DEG_05_CELLS_1000, qs::qread(endo_sim_DEG_05_CELLS_1000_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_1000, qs::qread(endo_sim_DEG_10_CELLS_1000_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_1000, qs::qread(endo_sim_DEG_20_CELLS_1000_file)), 
+  # 2500 cells
+  tar_target(endo_sim_DEG_01_CELLS_2500, qs::qread(endo_sim_DEG_01_CELLS_2500_file)), 
+  tar_target(endo_sim_DEG_05_CELLS_2500, qs::qread(endo_sim_DEG_05_CELLS_2500_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_2500, qs::qread(endo_sim_DEG_10_CELLS_2500_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_2500, qs::qread(endo_sim_DEG_20_CELLS_2500_file)), 
+  # 5000 cells 
+  tar_target(endo_sim_DEG_01_CELLS_5000, qs::qread(endo_sim_DEG_01_CELLS_5000_file)), 
+  tar_target(endo_sim_DEG_05_CELLS_5000, qs::qread(endo_sim_DEG_05_CELLS_5000_file)), 
+  tar_target(endo_sim_DEG_10_CELLS_5000, qs::qread(endo_sim_DEG_10_CELLS_5000_file)), 
+  tar_target(endo_sim_DEG_20_CELLS_5000, qs::qread(endo_sim_DEG_20_CELLS_5000_file)), 
+  
+  ##### MODELS #####
   ##### BRAIN #####
   ### SINGLE-SUBJECT 
   # 100 cells
