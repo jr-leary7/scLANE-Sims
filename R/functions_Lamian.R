@@ -1,3 +1,5 @@
+# reference: https://winnie09.github.io/Wenpin_Hou/pages/Lamian.html#tde-test
+
 # run Lamian on multi-subject data
 run_Lamian_multi <- function(sim.data = NULL, 
                              n.genes.sample = 1000,

@@ -1,5 +1,5 @@
 ---
-title: "`scLANE` Simulation Study - Process `monocle3` Single-subject Models"
+title: "Simulation Study - Process `monocle3` Single-subject Models"
 subtitle: "UF Dept. of Biostatistics - Bacher Group"
 author: "Jack Leary" 
 date: "`r Sys.Date()`"
@@ -115,6 +115,9 @@ mono_brain_metrics <- purrr::map(ls(pattern = "monocle3_res_brain*"), function(u
                  F_MEASURE = yardstick::f_meas_vec(truth = factor(obj$monocle3_results_tidy[[1]]$geneStatus, levels = c("Dynamic", "NotDynamic")), 
                                                    estimate = factor(ifelse(obj$monocle3_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
                                                                            levels = c("Dynamic", "NotDynamic"))),
+                 BAL_ACCURACY = yardstick::bal_accuracy_vec(truth = factor(obj$monocle3_results_tidy[[1]]$geneStatus, levels = c("Dynamic", "NotDynamic")), 
+                                                            estimate = factor(ifelse(obj$monocle3_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                                    levels = c("Dynamic", "NotDynamic"))), 
                  NIR = mean(obj$monocle3_results_tidy[[1]]$geneStatus == "NotDynamic"), 
                  ROC_CURVE = list(yardstick::roc_curve(obj$monocle3_results_tidy[[1]], 
                                                        truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
@@ -214,6 +217,9 @@ mono_panc_metrics <- purrr::map(ls(pattern = "monocle3_res_panc*"), function(u) 
                  F_MEASURE = yardstick::f_meas_vec(truth = factor(obj$monocle3_results_tidy[[1]]$geneStatus, levels = c("Dynamic", "NotDynamic")), 
                                                    estimate = factor(ifelse(obj$monocle3_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
                                                                            levels = c("Dynamic", "NotDynamic"))),
+                 BAL_ACCURACY = yardstick::bal_accuracy_vec(truth = factor(obj$monocle3_results_tidy[[1]]$geneStatus, levels = c("Dynamic", "NotDynamic")), 
+                                                            estimate = factor(ifelse(obj$monocle3_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                                    levels = c("Dynamic", "NotDynamic"))), 
                  NIR = mean(obj$monocle3_results_tidy[[1]]$geneStatus == "NotDynamic"), 
                  ROC_CURVE = list(yardstick::roc_curve(obj$monocle3_results_tidy[[1]], 
                                                        truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
@@ -313,6 +319,9 @@ mono_endo_metrics <- purrr::map(ls(pattern = "monocle3_res_endo*"), function(u) 
                  F_MEASURE = yardstick::f_meas_vec(truth = factor(obj$monocle3_results_tidy[[1]]$geneStatus, levels = c("Dynamic", "NotDynamic")), 
                                                    estimate = factor(ifelse(obj$monocle3_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
                                                                            levels = c("Dynamic", "NotDynamic"))),
+                 BAL_ACCURACY = yardstick::bal_accuracy_vec(truth = factor(obj$monocle3_results_tidy[[1]]$geneStatus, levels = c("Dynamic", "NotDynamic")), 
+                                                            estimate = factor(ifelse(obj$monocle3_results_tidy[[1]]$gene_dynamic_overall == 1, "Dynamic", "NotDynamic"), 
+                                                                                    levels = c("Dynamic", "NotDynamic"))), 
                  NIR = mean(obj$monocle3_results_tidy[[1]]$geneStatus == "NotDynamic"), 
                  ROC_CURVE = list(yardstick::roc_curve(obj$monocle3_results_tidy[[1]], 
                                                        truth = factor(geneStatus, levels = c("Dynamic", "NotDynamic")), 
@@ -469,15 +478,15 @@ When interpreting threshold-based metrics like this, it's important to keep in m
 
 ```{r}
 select(mono_metrics, 
-       DATASET_NAME, ACCURACY, SENSITIVITY, SPECIFICITY, ROC_AUC, PRECISION, RECALL, AUC_PR, F_MEASURE, NIR) %>% 
+       DATASET_NAME, ACCURACY, SENSITIVITY, SPECIFICITY, ROC_AUC, PRECISION, RECALL, AUC_PR, F_MEASURE, BAL_ACCURACY, NIR) %>% 
   tidyr::pivot_longer(cols = !DATASET_NAME, names_to = "METRIC", values_to = "VALUE") %>% 
   with_groups(METRIC, 
               summarise, 
-              mu = mean(VALUE), 
-              sd = sd(VALUE), 
-              med = median(VALUE), 
-              min = min(VALUE), 
-              max = max(VALUE)) %>% 
+              mu = mean(VALUE, na.rm = TRUE), 
+              sd = sd(VALUE, na.rm = TRUE), 
+              med = median(VALUE, na.rm = TRUE), 
+              min = min(VALUE, na.rm = TRUE), 
+              max = max(VALUE, na.rm = TRUE)) %>% 
   mutate(range = paste0("(", round(min, 2), ", ", round(max, 2), ")"), 
          across(where(is.numeric), round, digits = 2), 
          METRIC = snakecase::to_title_case(METRIC), 
@@ -485,6 +494,7 @@ select(mono_metrics,
                             METRIC == "Roc Auc" ~ "AUC-ROC", 
                             METRIC == "Auc Pr" ~ "AUC-PR", 
                             METRIC == "F Measure" ~ "F-measure", 
+                            METRIC == "Bal Accuracy" ~ "Balanced Accuracy", 
                             TRUE ~ METRIC)) %>% 
   select(-c(min, max)) %>% 
   kableExtra::kbl(col.names = c("Metric", "Mean", "S.D.", "Median", "Range"), 

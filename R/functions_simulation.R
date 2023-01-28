@@ -1,3 +1,5 @@
+# reference: https://www.rhondabacher.com/scaffold-vignette.pdf
+
 # pull data from La Manno et al (2016) -- https://doi.org/10.1016/j.cell.2016.09.027
 fetch_lamanno_brain_data <- function() {
   sce <- scRNAseq::LaMannoBrainData(which = "human-embryo")

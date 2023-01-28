@@ -1,3 +1,5 @@
+# reference: https://cole-trapnell-lab.github.io/monocle3/docs/differential/#regression-analysis
+
 # run monocle3 on subsampled single-subject data
 run_monocle3 <- function(sim.data = NULL,
                          n.genes.sample = 1000,

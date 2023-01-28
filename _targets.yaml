@@ -31,3 +31,7 @@ monocle3_models_multi:
   inherits: simulation
   script: script_monocle3_multi.R
   store: store_monocle3_multi
+scLANE_GEE_models_multi:
+  inherits: simulation
+  script: script_scLANE_GEE_multi.R
+  store: store_scLANE_GEE_multi

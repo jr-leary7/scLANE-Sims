@@ -13,8 +13,8 @@
 #                store = "store_scLANE_GLM_multi",
 #                project = "scLANE_GLM_models_multi",
 #                inherits = "simulation")
-# tar_config_set(script = "script_scLANE_GEE_multi.R", 
-#                store = "store_scLANE_GEE_multi", 
+# tar_config_set(script = "script_scLANE_GEE_multi.R",
+#                store = "store_scLANE_GEE_multi",
 #                project = "scLANE_GEE_models_multi",
 #                inherits = "simulation")
 # tar_config_set(script = "script_scLANE_GLMM_multi.R", 
@@ -87,4 +87,8 @@ tar_make_future(workers = 6)
 
 # run scLANE (GLM backend) -- multi-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GLM_models_multi")
+tar_make_future(workers = 6)
+
+# run scLANE (GEE backend) -- multi-subject
+Sys.setenv(TAR_PROJECT = "scLANE_GEE_models_multi")
 tar_make_future(workers = 6)

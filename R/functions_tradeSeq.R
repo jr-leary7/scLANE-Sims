@@ -1,3 +1,5 @@
+# reference: https://statomics.github.io/tradeSeq/articles/tradeSeq.html
+
 # run tradeSeq on subsampled single-subject data
 run_tradeSeq <- function(sim.data = NULL,
                          n.genes.sample = 1000,
