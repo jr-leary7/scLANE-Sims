@@ -1,4 +1,4 @@
-###### CONFIG #####
+##### CONFIG #####
 
 # tar_config_set(script = "script_simulation.R", 
 #                store = "store_simulation", 
