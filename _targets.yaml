@@ -35,3 +35,7 @@ scLANE_GEE_models_multi:
   inherits: simulation
   script: script_scLANE_GEE_multi.R
   store: store_scLANE_GEE_multi
+analysis:
+  inherits: simulation
+  script: script_analysis.R
+  store: store_analysis

@@ -357,6 +357,7 @@ We coerce everything to a single table.
 mono_metrics <- purrr::map(ls(pattern = "mono.*metrics"), \(x) eval(as.symbol(x))) %>% 
                 purrr::reduce(rbind) %>% 
                 mutate(DATASET_TYPE = "Single-subject", 
+                       ALLOCATION = NA_character_, 
                        .before = 2) %>% 
                 mutate(PERCENT_DEG = factor(PERCENT_DEG, levels = c("1%", "5%", "10%", "20%")), 
                        DATE_GENERATED = Sys.Date())

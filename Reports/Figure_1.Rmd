@@ -1,0 +1,362 @@
+---
+title: "Simulation Study - Figure 1"
+subtitle: "UF Dept. of Biostatistics - Bacher Group"
+author: "Jack Leary" 
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: journal
+    highlight: tango
+    code_folding: show
+    code_download: true 
+    toc: true 
+    toc_depth: 2
+    toc_float: true
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE); set.seed(312)  # lucky seed
+```
+
+# Libraries 
+
+First we'll load in the packages we need to tidy & analyze our simulation results. 
+
+```{r, results='hide', message=FALSE, warning=FALSE}
+library(dplyr)                 # data manipulation
+library(ggplot2)               # plots
+library(targets)               # pipeline tools
+library(paletteer)             # plot colors
+library(patchwork)             # plot combination
+library(SingleCellExperiment)  # scRNA-seq data structures
+```
+
+# Color Palette
+
+We'll pick out a cohesive & colorblind-friendly color palette to use in all our plots. 
+
+```{r, message=FALSE, warning=FALSE}
+model_palette <- paletteer_d("rcartocolor::Safe")
+```
+
+# Data 
+
+First we load in the master metric table generated at the beginning of the analysis pipeline. 
+
+```{r}
+tar_load(metric_table)
+```
+
+```{r}
+source("../R/functions_analysis.R")
+monocle3_metrics_single <- readRDS("../Data/monocle3_Metrics_Single_Subject.Rds") %>% mutate(ALLOCATION = NA_character_, .before = 3)
+monocle3_metrics_multi <- readRDS("../Data/monocle3_Metrics_Multi_Subject.Rds")
+tradeSeq_metrics_single <- readRDS("../Data/tradeSeq_Metrics_Single_Subject.Rds") %>% mutate(ALLOCATION = NA_character_, .before = 3)
+tradeSeq_metrics_multi <- readRDS("../Data/tradeSeq_Metrics_Multi_Subject.Rds")
+scLANE_GLM_metrics_single <- readRDS("../Data/scLANE_GLM_Metrics_Single_Subject.Rds") %>% mutate(ALLOCATION = NA_character_, .before = 3)
+scLANE_GLM_metrics_multi <- readRDS("../Data/scLANE_GLM_Metrics_Multi_Subject.Rds")
+# scLANE_GEE_metrics_multi <- readRDS("../Data/scLANE_GEE_Metrics_Multi_Subject.Rds")
+Lamian_metrics_multi <- readRDS("../Data/Lamian_Metrics_Multi_Subject.Rds")
+
+metric_table <- create_metric_table(metric.list = list(monocle3_metrics_single, 
+                                                       monocle3_metrics_multi, 
+                                                       tradeSeq_metrics_single, 
+                                                       tradeSeq_metrics_multi, 
+                                                       scLANE_GLM_metrics_single, 
+                                                       scLANE_GLM_metrics_multi,
+                                                       Lamian_metrics_multi))
+```
+
+# Figure 1 
+
+## A
+
+Figure **1A** will show a comparison of each modeling framework's fitted values for a cool-looking dynamic gene. We'll start by loading in the dataset. 
+
+```{r}
+tar_load(brain_sim_DEG_10_CELLS_2500_balanced, store = "../store_simulation")
+gene_data <- data.frame(exp = counts(brain_sim_DEG_10_CELLS_2500_balanced)["ERGIC2", ], 
+                        pt = brain_sim_DEG_10_CELLS_2500_balanced$cell_time_normed, 
+                        subject = brain_sim_DEG_10_CELLS_2500_balanced$subject)
+ggplot(gene_data, aes(x = pt, y = exp, color = subject)) + 
+  facet_wrap(~subject) + 
+  geom_point(alpha = 0.75) + 
+  scale_x_continuous(labels = scales::label_number(accuracy = .1)) + 
+  labs(x = "True Cell Ordering", 
+       y = "Expression", 
+       color = "Subject", 
+       title = "ERGIC2 Dynamics") + 
+  theme_classic(base_size = 14)
+```
+
+First we'll run `Lamian`. 
+
+```{r}
+source("../R/functions_Lamian.R")
+other_gene <- sample(rownames(brain_sim_DEG_10_CELLS_2500_balanced), 1)
+cell_anno <- colData(brain_sim_DEG_10_CELLS_2500_balanced) %>% 
+             as.data.frame() %>% 
+             mutate(Cell = rownames(.), .before = 1) %>% 
+             select(Cell, Sample = subject) %>% 
+             mutate(across(everything(), as.character)) %>% 
+             magrittr::set_rownames(NULL)
+cell_pt <- as.integer(rank(brain_sim_DEG_10_CELLS_2500_balanced$cell_time_normed))
+names(cell_pt) <- cell_anno$Cell
+samp_design <- data.frame(intercept = rep(1, length(unique(cell_anno$Sample)))) %>%
+               magrittr::set_rownames(unique(cell_anno$Sample)) %>%
+               as.matrix()
+sim_counts <- as.matrix(logcounts(brain_sim_DEG_10_CELLS_2500_balanced))[c("ERGIC2", other_gene), , drop = FALSE]
+Lamian_res <- Lamian::lamian_test(expr = sim_counts,
+                                  cellanno = cell_anno,
+                                  pseudotime = cell_pt,
+                                  design = samp_design,
+                                  test.type = "time", 
+                                  test.method = "permutation", 
+                                  permuiter = 100, 
+                                  ncores = 2)
+Lamian_preds_link <- get_preds_Lamian(lamian.res = Lamian_res)
+Lamian_preds_resp <- compute_resp_preds_Lamian(lamian.preds = Lamian_preds_link, 
+                                               orig.sce = brain_sim_DEG_10_CELLS_2500_balanced)
+gene_data <- mutate(gene_data, 
+                    pred_Lamian = Lamian_preds_resp["ERGIC2", ])
+ggplot(gene_data, aes(x = pt, y = exp, color = subject)) + 
+  facet_wrap(~subject) + 
+  geom_point(alpha = 0.75) + 
+  geom_line(aes(x = pt, y = pred_Lamian), color = "black") + 
+  scale_x_continuous(labels = scales::label_number(accuracy = .1)) + 
+  labs(x = "Pseudotime", 
+       y = "Expression", 
+       title = "Lamian Model of ERGIC2 Dynamics") + 
+  theme_classic(base_size = 14)
+```
+
+Next we'll run `monocle3`. 
+
+```{r}
+source("../R/functions_monocle3.R")
+cds <- monocle3::new_cell_data_set(expression_data = brain_sim_DEG_10_CELLS_2500_balanced@assays@data$counts, 
+                                   cell_metadata = as.data.frame(colData(brain_sim_DEG_10_CELLS_2500_balanced)), 
+                                   gene_metadata = as.data.frame(rowData(brain_sim_DEG_10_CELLS_2500_balanced)) %>% mutate(gene_short_name = rownames(.)))
+cds <- cds["ERGIC2", ]
+monocle3_res <- monocle3::fit_models(cds,
+                                     model_formula_str = "~cell_time_normed + subject",
+                                     expression_family = "negbinomial", 
+                                     cores = 1)
+monocle3_preds_link <- predict(monocle3_res$model$ERGIC2, 
+                       newdata = data.frame(f_expression = counts(cds)["ERGIC2", ], 
+                                            cell_time_normed = colData(cds)$cell_time_normed, 
+                                            Size_Factor = colData(cds)$Size_Factor, 
+                                            subject = colData(cds)$subject))
+
+mod <- MASS::glm.nb(counts(cds)["ERGIC2", ] ~ colData(cds)$cell_time_normed + colData(cds)$subject + offset(log(colData(cds)$Size_Factor)))
+monocle3_preds_resp <- exp(predict(mod))
+mono_df <- data.frame(exp = counts(cds)["ERGIC2", ], 
+                      pt = colData(cds)$cell_time_normed, 
+                      pred = monocle3_preds_resp, 
+                      subject = colData(cds)$subject) %>% 
+           with_groups(subject, 
+                       slice_sample, 
+                       prop = 0.1)
+gene_data <- mutate(gene_data, 
+                    pred_monocle3 = monocle3_preds_resp)
+marginal
+ggplot(gene_data, aes(x = pt, y = exp, color = subject)) + 
+  facet_wrap(~subject) + 
+  geom_point(alpha = 0.75) + 
+  geom_line(data = mono_df, aes(x = pt, y = pred), color = "black") + 
+  labs(x = "Pseudotime", y = "Expression", title = gene) + 
+  theme_classic(base_size = 14)
+```
+
+Next we'll run `tradeSeq`. 
+
+```{r}
+sim_counts <- counts(brain_sim_DEG_10_CELLS_2500_balanced)[c("ERGIC2", top_hvgs[1]), , drop = FALSE]
+pt_df <- colData(brain_sim_DEG_10_CELLS_2500_balanced) %>%
+         as.data.frame() %>%
+         select(cell_time_normed)
+tradeSeq_res <- tradeSeq::fitGAM(counts = sim_counts, 
+                                 pseudotime = pt_df, 
+                                 cellWeights = matrix(rep(1, nrow(pt_df)), ncol = 1), 
+                                 nknots = 6, 
+                                 sce = FALSE, 
+                                 parallel = FALSE, 
+                                 verbose = FALSE)
+gene_data <- mutate(gene_data, 
+                    pred_tradeSeq = tradeSeq_res$ERGIC2$fitted.values)
+ggplot(gene_data, aes(x = pt, y = exp, color = subject)) + 
+  facet_wrap(~subject) + 
+  geom_point(alpha = 0.75) + 
+  geom_smooth(aes(x = pt, y = pred_tradeSeq), color = "black") + 
+  labs(x = "Pseudotime", y = "Expression", title = gene) + 
+  theme_classic(base_size = 14)
+tradeSeq::plotSmoothers(tradeSeq_res$ERGIC2)$data %>% 
+  ggplot(aes(x = time, y = log(gene_count + 1))) + 
+  geom_point() + 
+  geom_smooth(method = "gam")
+
+model <- tradeSeq_res$ERGIC2
+df <- tradeSeq:::.getPredictRangeDf(model$model, lineageId = 1, nPoints = length(unique(pt_df$cell_time_normed))) %>% 
+      mutate(pred = predict(model, type = "response", newdata = .))
+
+a <- predict(tradeSeq_res$ERGIC2, type = "reponse")
+
+ggplot(gene_data, aes(x = pt, y = exp, color = subject)) + 
+  facet_wrap(~subject) + 
+  geom_point(alpha = 0.75) + 
+  geom_smooth(aes(x = pt, y = pred_tradeSeq), color = "red", size = 1, method = "gam") + 
+  geom_line(data = df, aes(x = t1, y = pred), color = "black", size = 1) + 
+  labs(x = "Pseudotime", y = "Expression", title = gene) + 
+  theme_classic(base_size = 14)
+```
+
+## B 
+
+Figure **1B** compares each framework's performance metrics of interest on the single-subject datasets. 
+
+```{r}
+perf_single <- select(metric_table, 
+                      DATASET_NAME, 
+                      DATASET_TYPE, 
+                      MODEL_TYPE, 
+                      ROC_AUC, 
+                      ACCURACY, 
+                      SENSITIVITY, 
+                      SPECIFICITY, 
+                      F_MEASURE, 
+                      AUC_PR, 
+                      BAL_ACCURACY) %>% 
+               filter(DATASET_TYPE == "Single-subject") %>% 
+               select(-DATASET_TYPE)
+```
+
+```{r}
+perf_single %>% 
+  tidyr::pivot_longer(cols = !c(DATASET_NAME, MODEL_TYPE), values_to = "VALUE", names_to = "METRIC") %>% 
+  filter(METRIC == "F_MEASURE") %>% 
+  mutate(MODEL_TYPE = if_else(MODEL_TYPE == "scLANE", "scLANE (GLM)", MODEL_TYPE)) %>% 
+  ggplot(aes(x = MODEL_TYPE, y = VALUE, fill = MODEL_TYPE)) + 
+  geom_violin(draw_quantiles = 0.5, size = 1) + 
+  scale_fill_manual(values = model_palette) + 
+  labs(x = "Model", y = "F-measure", fill = "Model") + 
+  theme_classic(base_size = 14)
+```
+
+```{r}
+perf_single %>% 
+  tidyr::pivot_longer(cols = !c(DATASET_NAME, MODEL_TYPE), values_to = "VALUE", names_to = "METRIC") %>% 
+  filter(METRIC == "SENSITIVITY") %>% 
+  mutate(MODEL_TYPE = if_else(MODEL_TYPE == "scLANE", "scLANE (GLM)", MODEL_TYPE)) %>% 
+  ggplot(aes(x = MODEL_TYPE, y = VALUE, fill = MODEL_TYPE)) + 
+  geom_violin(draw_quantiles = 0.5, size = 1) + 
+  scale_fill_manual(values = model_palette) + 
+  labs(x = "Model", y = "Sensitivity", fill = "Model") + 
+  theme_classic(base_size = 14)
+```
+
+```{r}
+perf_single %>% 
+  tidyr::pivot_longer(cols = !c(DATASET_NAME, MODEL_TYPE), values_to = "VALUE", names_to = "METRIC") %>% 
+  filter(METRIC == "ROC_AUC") %>% 
+  mutate(MODEL_TYPE = if_else(MODEL_TYPE == "scLANE", "scLANE (GLM)", MODEL_TYPE)) %>% 
+  ggplot(aes(x = MODEL_TYPE, y = VALUE, fill = MODEL_TYPE)) + 
+  geom_violin(draw_quantiles = 0.5, size = 1) + 
+  scale_fill_manual(values = model_palette) + 
+  labs(x = "Model", y = "AUC-ROC", fill = "Model") + 
+  theme_classic(base_size = 14)
+```
+
+## C 
+
+Figure **1C** compares each framework's performance metrics of interest on the multi-subject datasets. 
+
+```{r}
+perf_multi <- select(metric_table, 
+                     DATASET_NAME, 
+                     DATASET_TYPE, 
+                     MODEL_TYPE, 
+                     ROC_AUC, 
+                     ACCURACY, 
+                     SENSITIVITY, 
+                     SPECIFICITY, 
+                     F_MEASURE, 
+                     AUC_PR, 
+                     BAL_ACCURACY) %>% 
+              filter(DATASET_TYPE == "Multi-subject") %>% 
+              select(-DATASET_TYPE)
+```
+
+```{r}
+perf_multi %>% 
+  tidyr::pivot_longer(cols = !c(DATASET_NAME, MODEL_TYPE), values_to = "VALUE", names_to = "METRIC") %>% 
+  filter(METRIC == "F_MEASURE") %>% 
+  mutate(MODEL_TYPE = if_else(MODEL_TYPE == "scLANE", "scLANE (GLM)", MODEL_TYPE)) %>% 
+  ggplot(aes(x = MODEL_TYPE, y = VALUE, fill = MODEL_TYPE)) + 
+  geom_violin(draw_quantiles = 0.5, size = 1) + 
+  scale_fill_manual(values = model_palette) + 
+  labs(x = "Model", y = "F-measure", fill = "Model") + 
+  theme_classic(base_size = 14)
+```
+
+```{r}
+perf_multi %>% 
+  tidyr::pivot_longer(cols = !c(DATASET_NAME, MODEL_TYPE), values_to = "VALUE", names_to = "METRIC") %>% 
+  filter(METRIC == "SENSITIVITY") %>% 
+  mutate(MODEL_TYPE = if_else(MODEL_TYPE == "scLANE", "scLANE (GLM)", MODEL_TYPE)) %>% 
+  ggplot(aes(x = MODEL_TYPE, y = VALUE, fill = MODEL_TYPE)) + 
+  geom_violin(draw_quantiles = 0.5, size = 1) + 
+  scale_fill_manual(values = model_palette) + 
+  labs(x = "Model", y = "Sensitivity", fill = "Model") + 
+  theme_classic(base_size = 14)
+```
+
+```{r}
+perf_multi %>% 
+  tidyr::pivot_longer(cols = !c(DATASET_NAME, MODEL_TYPE), values_to = "VALUE", names_to = "METRIC") %>% 
+  filter(METRIC == "ROC_AUC") %>% 
+  mutate(MODEL_TYPE = if_else(MODEL_TYPE == "scLANE", "scLANE (GLM)", MODEL_TYPE)) %>% 
+  ggplot(aes(x = MODEL_TYPE, y = VALUE, fill = MODEL_TYPE)) + 
+  geom_violin(draw_quantiles = 0.5, size = 1) + 
+  scale_fill_manual(values = model_palette) + 
+  labs(x = "Model", y = "AUC-ROC", fill = "Model") + 
+  theme_classic(base_size = 14)
+```8 
+
+## D 
+
+In Figure **1D**, we show `scLANE` models of several dynamic & non-dynamic genes to showcase the model's flexibility & interpretability. 
+
+## E 
+
+Figure **1E** summarize & visualizes one of the simulated datasets that the models were evaluated on. 
+
+## F
+
+Lastly, **1F** contains a table of of all `scLANE`'s values of relevant performance metrics on all of the datasets. 
+
+```{r}
+
+```
+
+## Combined Figure
+
+We can align everything using the `{patchwork}` package to create an example of what the figure will look like in the manuscript. 
+
+```{r}
+
+```
+
+# Save Figures 
+
+Here we save the individual figure components, as well as the aligned version of the entire figure we made above. 
+
+```{r}
+
+```
+
+# Session Info 
+
+```{r}
+sessioninfo::session_info()
+```

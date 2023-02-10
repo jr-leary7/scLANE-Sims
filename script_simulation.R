@@ -1,4 +1,4 @@
-##### SETUP #####
+##### setup #####
 
 library(future)
 library(targets)
@@ -29,6 +29,7 @@ tar_option_set(packages = c("stats",
                garbage_collection = TRUE, 
                format = "qs")
 
+# targets
 list(
   ##### BRAIN #####
   # reference data 
