@@ -51,6 +51,14 @@ Simulation_Success.R
 scLANESimRates.out
 sim_successes
 
-# targets stuff
-_targets/objects/
+# targets objects
+store*/objects/
 
+# compiled HTML reports
+Reports/*html
+
+# generated PDF figures
+Figures/*
+
+# data directory from scVELO
+/data/
