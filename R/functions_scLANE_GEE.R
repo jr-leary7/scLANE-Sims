@@ -62,7 +62,7 @@ run_scLANE_GEE <- function(sim.data = NULL,
         start_time <- Sys.time()
         gene_stats <- testDynamic(expr.mat = sim_counts,
                                   pt = pt_df,
-                                  parallel.exec = FALSE,
+                                  parallel.exec = TRUE,
                                   n.cores = n.cores,
                                   n.potential.basis.fns = 5,
                                   is.gee = TRUE,

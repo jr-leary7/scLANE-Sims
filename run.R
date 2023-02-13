@@ -52,7 +52,7 @@
 
 ##### BATCH JOB #####
 
-# sbatch -t 80:00:00 -c 2 --mem=250G -J scLANE_sim --account=biostat-dept --qos=biostat-dept-b --mail-type=ALL --mail-user=j.leary@ufl.edu --wrap="module load R; Rscript run.R"
+# sbatch -t 80:00:00 -c 2 --mem=250G -J scLANE_sim --account=biostat-dept --qos=biostat-dept-b --mail-type=END --mail-user=j.leary@ufl.edu --wrap="module load R; Rscript run.R"
 
 ##### MONITORING #####
 
