@@ -34,9 +34,6 @@ tar_option_set(packages = c("qs",
                             "SingleCellExperiment"), 
                imports = c("scLANE"), 
                error = "continue", 
-               memory = "transient",
-               retrieval = "worker", 
-               storage = "worker", 
                garbage_collection = TRUE, 
                format = "qs")
 

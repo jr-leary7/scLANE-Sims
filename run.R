@@ -56,7 +56,7 @@
 
 ##### MONITORING #####
 
-# tar_watch(level_separation = 1200, seconds = 120, seconds_max = 360, project = "scLANE_GEE_models_multi")
+# targets::tar_watch(level_separation = 1200, seconds = 120, seconds_max = 360, project = "scLANE_GEE_models_multi")
 
 ##### PIPELINES #####
 
