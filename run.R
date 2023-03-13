@@ -53,6 +53,7 @@
 ##### BATCH JOB #####
 
 # sbatch -t 80:00:00 -c 2 --mem=250G -J scLANE_sim --account=biostat-dept --qos=biostat-dept-b --mail-type=END --mail-user=j.leary@ufl.edu --wrap="module load R; Rscript run.R"
+# sbatch -t 80:00:00 -c 1 --mem=100G -J scLANE_sim --account=biostat-dept --qos=biostat-dept-b --mail-type=END --mail-user=j.leary@ufl.edu --wrap="module load R; Rscript run.R"
 
 ##### MONITORING #####
 
@@ -99,7 +100,8 @@ tar_make_future(workers = 6)
 
 # run scLANE (GEE backend) -- multi-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GEE_models_multi")
-tar_make_future(workers = 6)
+tar_make()
+#tar_make_future(workers = 6)
 
 # generate downstream analyses
 Sys.setenv(TAR_PROJECT = "analysis")
