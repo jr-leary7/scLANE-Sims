@@ -100,8 +100,8 @@ tar_make_future(workers = 6)
 
 # run scLANE (GEE backend) -- multi-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GEE_models_multi")
-tar_make()
-#tar_make_future(workers = 6)
+# tar_make()
+tar_make_future(workers = 3)
 
 # generate downstream analyses
 Sys.setenv(TAR_PROJECT = "analysis")

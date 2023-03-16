@@ -1,0 +1,22 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+create_metric_table|function|938afe0a31b10fce|||||||||||||||
+Figure_1|stem||5198c575ca8de68f|97d4ebf9b3a7617a|-983165930||t19432.3583851969s||0|qs|local|vector|||0.003||argument path is missing, with no default
+Lamian_metrics_multi|stem|0aa90029b0c27ce3|be6d884faa3caf07|3b11886958d2888d|-1965578582||t19432.3584259259s|0d09c60ea3e718de|3082571|qs|local|vector|||0.076||
+Lamian_metrics_multi_file|stem|1b28e74dd286e07c|6ba556a54926b0a6|ef46db3751d8e999|-356401597|Data/Lamian_Metrics_Multi_Subject.Rds|t19390.6425694444s|c74516c0b556761a|3407857|file|local|vector|||0.001||
+metric_list|stem||8476a4d79f801fc1|7572a87840ce5173|-172970775||t19432.3585180937s||0|qs|local|vector|||0.002||could not load dependencies of target metric_list. Expecting a single string value typecharacter extent0.
+metric_table|stem||88e3275bc92dd1f3|d365ed1968b96c67|-1509966390||t19432.3585301162s||0|qs|local|vector|||0.001||could not load dependencies of target metric_table. Expecting a single string value typecharacter extent0.
+monocle3_metrics_multi|stem|2590120bbd10fdb0|d3e202856cbdba6a|73ab0906d1319299|563109733||t19432.3584606481s|ac61d5bfcca26ad2|4359580|qs|local|vector|||0.099||
+monocle3_metrics_multi_file|stem|677b16a336c831a2|6dfd1f80cfbdaa8e|ef46db3751d8e999|1781963655|Data/monocle3_Metrics_Multi_Subject.Rds|t19385.9795023148s|1b9a05cfa028a7c8|4789590|file|local|vector|||0||
+monocle3_metrics_single|stem|93c8634269e8bfa2|216a9128b99bcf0b|3d7869c0913aa925|1421014301||t19432.3583912037s|590a9f592508a5dd|3904100|qs|local|vector|||0.089||
+monocle3_metrics_single_file|stem|d30bc23ba5676e25|e75918f60c8b662f|ef46db3751d8e999|890431002|Data/monocle3_Metrics_Single_Subject.Rds|t19390.6316319444s|0f47481853e02789|4479636|file|local|vector|||14.875||
+save_figures|function|77b3fcf8d7a86b84|||||||||||||||
+scLANE_GEE_metrics_multi|stem||d66e53174705816e|af63e9bed37fb443|-1508579384||t19432.3584783136s||0|qs|local|vector|||0.002|cannot open compressed file DatascLANE_GEE_Metrics_Multi_Subject.Rds, probable reason No such file or directory|cannot open the connection
+scLANE_GEE_metrics_multi_file|stem||f000e7da933ac48f|ef46db3751d8e999|-75119295|Data/scLANE_GEE_Metrics_Multi_Subject.Rds|t19432.3583490755s||0|file|local|vector|||||_paths_ missing files DatascLANE_GEE_Metrics_Multi_Subject.Rds
+scLANE_GLM_metrics_multi|stem|fd92f5a4cda5698d|cb5180ccde0e2b58|ab7fb37dafcc9564|169940166||t19432.3584375s|9d17267d19eb5e6f|2051888|qs|local|vector|||0.052||
+scLANE_GLM_metrics_multi_file|stem|1336d286d1143a21|f96fcf051ae71988|ef46db3751d8e999|-1902388651|Data/scLANE_GLM_Metrics_Multi_Subject.Rds|t19386.7448148148s|3a405049610d041b|2405283|file|local|vector|||0||
+scLANE_GLM_metrics_single|stem|af125cb56ddfa7ad|cf63caafbe291b4d|0a4576adf67b46f0|-6663570||t19432.3584953704s|18651bba2c85c865|2066314|qs|local|vector|||0.052||
+scLANE_GLM_metrics_single_file|stem|bc6feab7b65f5cef|38b3f6d35316eca2|ef46db3751d8e999|230686660|Data/scLANE_GLM_Metrics_Single_Subject.Rds|t19390.644525463s|05c8165f10980d6d|2535153|file|local|vector|||0.001||
+tradeSeq_metrics_multi|stem|f966fdecc4902ecd|6acd60c904a6502a|2e07f7e9e65cf5f4|-721460852||t19432.3584143519s|d313420d7449ccb4|2748839|qs|local|vector|||0.071||
+tradeSeq_metrics_multi_file|stem|af77ac38303bb62a|b1e54714a20bc47c|ef46db3751d8e999|-1509689477|Data/tradeSeq_Metrics_Multi_Subject.Rds|t19385.9943402778s|04e8e3b6b8f6ad86|3126503|file|local|vector|||0.001||
+tradeSeq_metrics_single|stem|748186147ef2725f|850acdec7d77f5cb|a742300eb9ab890d|-1133190474||t19432.3584837963s|6c0e24d9c44c615d|2898240|qs|local|vector|||0.074||
+tradeSeq_metrics_single_file|stem|3e9c662cefc266ef|0f438ff956faae82|ef46db3751d8e999|1627279813|Data/tradeSeq_Metrics_Single_Subject.Rds|t19390.6410648148s|6e0b98e225b090ef|3387628|file|local|vector|||0.001||
