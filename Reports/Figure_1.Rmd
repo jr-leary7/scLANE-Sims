@@ -321,7 +321,7 @@ perf_multi %>%
   scale_fill_manual(values = model_palette) + 
   labs(x = "Model", y = "AUC-ROC", fill = "Model") + 
   theme_classic(base_size = 14)
-```8 
+```
 
 ## D 
 

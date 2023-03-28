@@ -92,16 +92,15 @@ tar_make_future(workers = 6)
 
 # run scLANE (GLM backend) -- single-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GLM_models_single")
-tar_make_future(workers = 6)
+tar_make_future(workers = 4)
 
 # run scLANE (GLM backend) -- multi-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GLM_models_multi")
-tar_make_future(workers = 6)
+tar_make_future(workers = 4)
 
 # run scLANE (GEE backend) -- multi-subject
 Sys.setenv(TAR_PROJECT = "scLANE_GEE_models_multi")
-# tar_make()
-tar_make_future(workers = 3)
+tar_make_future(workers = 4)
 
 # generate downstream analyses
 Sys.setenv(TAR_PROJECT = "analysis")
