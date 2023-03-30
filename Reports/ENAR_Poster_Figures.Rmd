@@ -155,7 +155,90 @@ p4
 
 ## Runtime Plots 
 
+```{r, fig.width=16, fig.height=10}
+metric_table %>% 
+  filter(MODEL_TYPE != "scLANE (GEE)") %>% 
+  ggplot(aes(x = MODEL_TYPE, y = RUNTIME_HOURS, fill = MODEL_TYPE)) + 
+  facet_wrap(~DATASET_TYPE + N_CELLS, scales = "free_y") + 
+  geom_violin(show.legend = FALSE, 
+              draw_quantiles = 0.5, 
+              size = 1, 
+              scale = "width") + 
+  scale_fill_manual(values = palette_model) + 
+  scale_y_continuous(labels = scales::label_number(accuracy = 0.1)) + 
+  labs(y = "Runtime (hours)") + 
+  theme_classic(base_size = 24) + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   vjust = 1, 
+                                   hjust = 1, 
+                                   color = "black"), 
+        axis.text.y = element_text(color = "black"), 
+        axis.title.x = element_blank(), 
+        plot.tag = element_text(face = "bold"))
+```
+
+```{r, fig.width=16, fig.height=10}
+metric_table %>% 
+  mutate(RUNTIME_MINS = RUNTIME_HOURS * 60, 
+         GENES_PER_MIN = N_GENES / RUNTIME_MINS) %>% 
+  filter(MODEL_TYPE != "scLANE (GEE)") %>% 
+  ggplot(aes(x = MODEL_TYPE, y = GENES_PER_MIN, fill = MODEL_TYPE)) + 
+  facet_wrap(~N_CELLS, scales = "free_y") + 
+  geom_violin(show.legend = FALSE, 
+              draw_quantiles = 0.5, 
+              size = 1, 
+              scale = "width") + 
+  scale_fill_manual(values = palette_model) + 
+  scale_y_continuous(labels = scales::label_comma(accuracy = 1)) + 
+  labs(y = "Genes Per Minute") + 
+  theme_classic(base_size = 24) + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   vjust = 1, 
+                                   hjust = 1, 
+                                   color = "black"), 
+        axis.text.y = element_text(color = "black"), 
+        axis.title.x = element_blank(), 
+        plot.tag = element_text(face = "bold"))
+```
+
 ## Memory Usage Plots 
+
+```{r, fig.width=16, fig.height=10}
+metric_table %>% 
+  filter(MODEL_TYPE != "scLANE (GEE)") %>% 
+  ggplot(aes(x = MODEL_TYPE, y = MEM_USED, fill = MODEL_TYPE)) + 
+  facet_wrap(~DATASET_TYPE + N_CELLS, scales = "free_y") + 
+  geom_violin(show.legend = FALSE, 
+              draw_quantiles = 0.5, 
+              size = 1, 
+              scale = "width") + 
+  scale_fill_manual(values = palette_model) + 
+  scale_y_continuous(labels = scales::label_comma(accuracy = 1)) + 
+  labs(y = "Memory Usage (MB)") + 
+  theme_classic(base_size = 24) + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   vjust = 1, 
+                                   hjust = 1, 
+                                   color = "black"), 
+        axis.text.y = element_text(color = "black"), 
+        axis.title.x = element_blank(), 
+        plot.tag = element_text(face = "bold"))
+```
+
+```{r}
+with_groups(metric_table ,
+            MODEL_TYPE, 
+            summarise, 
+            mu = mean(MEM_USED), 
+            med = median(MEM_USED), 
+            sigma = sd(MEM_USED)) %>% 
+  arrange(mu) %>% 
+  kableExtra::kbl(digits = 3,
+                  booktabs = TRUE, 
+                  caption = "Memory used (MB)", 
+                  col.names = c("Model", "Mean", "Median", "S.D.")) %>% 
+  kableExtra::kable_classic(full_width = FALSE, "hover")
+```
 
 ## Table of Other Metric Values
 
