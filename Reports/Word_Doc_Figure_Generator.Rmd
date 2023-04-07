@@ -1,0 +1,455 @@
+---
+title: "`scLANE` Figures"
+subtitle: "UF Dept. of Biostatistics - Bacher Group"
+author: "Jack Leary"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE, comment = NA); set.seed(312)  # lucky seed
+```
+
+```{r}
+##### libraries #####
+library(dplyr)                 # data manipulation 
+library(Seurat)                # scRNA-seq tools 
+library(ggplot2)               # plots
+library(targets)               # pipeline tools
+library(paletteer)             # plot colors 
+library(patchwork)             # plot combination
+library(SingleCellExperiment)  # scRNA-seq data structures
+```
+
+```{r}
+##### color palettes #####
+palette_model <- paletteer_d("ggsci::default_jama")[-1]
+palette_sim <- paletteer_d("pals::kelly", direction = -1)
+```
+
+```{r}
+##### data #####
+source("../R/functions_analysis.R")
+monocle3_metrics_single <- readRDS("../Data/monocle3_Metrics_Single_Subject.Rds") %>% mutate(ALLOCATION = NA_character_, .before = 3)
+monocle3_metrics_multi <- readRDS("../Data/monocle3_Metrics_Multi_Subject.Rds")
+tradeSeq_metrics_single <- readRDS("../Data/tradeSeq_Metrics_Single_Subject.Rds") %>% mutate(ALLOCATION = NA_character_, .before = 3)
+tradeSeq_metrics_multi <- readRDS("../Data/tradeSeq_Metrics_Multi_Subject.Rds")
+scLANE_GLM_metrics_single <- readRDS("../Data/scLANE_GLM_Metrics_Single_Subject.Rds") %>% mutate(ALLOCATION = NA_character_, .before = 3)
+scLANE_GLM_metrics_multi <- readRDS("../Data/scLANE_GLM_Metrics_Multi_Subject.Rds")
+scLANE_GEE_metrics_multi <- readRDS("../Data/scLANE_GEE_Metrics_Multi_Subject.Rds")
+Lamian_metrics_multi <- readRDS("../Data/Lamian_Metrics_Multi_Subject.Rds")
+
+metric_table <- create_metric_table(metric.list = list(monocle3_metrics_single, 
+                                                       monocle3_metrics_multi, 
+                                                       tradeSeq_metrics_single, 
+                                                       tradeSeq_metrics_multi, 
+                                                       scLANE_GLM_metrics_single, 
+                                                       scLANE_GLM_metrics_multi,
+                                                       scLANE_GEE_metrics_multi, 
+                                                       Lamian_metrics_multi)) %>% 
+                mutate(MODEL_TYPE = case_when(grepl("scLANE_GLM", DATASET_NAME) ~ "scLANE (GLM)", 
+                                              grepl("scLANE_GEE", DATASET_NAME) ~ "scLANE (GEE)", 
+                                              TRUE ~ MODEL_TYPE))
+```
+
+# Case Study 
+
+**Figure 1** is a case study of one of our datasets simulated from the Baron *et al* (2016) healthy human pancreas reference. The true subject labels and an unsupervised clustering are displayed in **1A**, the ground truth cell ordering by subject in **1B**, and the fitted models for three dynamic genes from `scLANE` in **1C**. 
+
+```{r, fig.height=10, fig.width=18}
+tar_load(brain_sim_DEG_10_CELLS_500_unbalanced, store = "../store_simulation/")
+tar_load(scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced, store = "../store_scLANE_GLM_multi/")
+reducedDim(brain_sim_DEG_10_CELLS_500_unbalanced, "PCAsub") <- NULL
+brain_sim_seu <- as.Seurat(brain_sim_DEG_10_CELLS_500_unbalanced, 
+                           counts = "counts", 
+                           data = "logcounts")
+legend_clust <- ggpubr::get_legend(p = (data.frame(UMAP1 = brain_sim_seu@reductions$UMAP@cell.embeddings[, 1], 
+                                                   UMAP2 = brain_sim_seu@reductions$UMAP@cell.embeddings[, 2], 
+                                                   cluster = brain_sim_seu$label) %>% 
+                                        ggplot(aes(x = UMAP1, y = UMAP2, color = cluster)) + 
+                                        geom_point() + 
+                                        scale_color_manual(values = palette_sim[1:length(unique(brain_sim_seu$label))]) + 
+                                        labs(color = "Louvain\nCluster") + 
+                                        theme_classic(base_size = 24) + 
+                                        theme(legend.text.align = 0.5) + 
+                                        guides(color = guide_legend(override.aes = list(size = 4)))))
+legend_subj <- ggpubr::get_legend(p = (data.frame(UMAP1 = brain_sim_seu@reductions$UMAP@cell.embeddings[, 1], 
+                                                  UMAP2 = brain_sim_seu@reductions$UMAP@cell.embeddings[, 2], 
+                                                  subject = brain_sim_seu$subject) %>% 
+                                       ggplot(aes(x = UMAP1, y = UMAP2, color = subject)) + 
+                                       geom_point() + 
+                                       scale_color_manual(values = palette_sim[(length(unique(brain_sim_seu$label)) + 1):length(palette_sim)]) + 
+                                       labs(color = "Subject") + 
+                                       theme_classic(base_size = 24) + 
+                                       guides(color = guide_legend(override.aes = list(size = 4)))))
+p3 <- data.frame(UMAP1 = brain_sim_seu@reductions$UMAP@cell.embeddings[, 1], 
+                 UMAP2 = brain_sim_seu@reductions$UMAP@cell.embeddings[, 2], 
+                 cluster = brain_sim_seu$label, 
+                 subject = brain_sim_seu$subject) %>% 
+      tidyr::pivot_longer(cols = c(cluster, subject), 
+                          names_to = "ident", 
+                          values_to = "ident_value") %>% 
+      mutate(ident = if_else(ident == "cluster", "Louvain Cluster", "Subject")) %>% 
+      ggplot(aes(x = UMAP1, y = UMAP2, color = ident_value, group = ident)) + 
+      facet_wrap(~ident) + 
+      geom_point(alpha = 0.75) + 
+      scale_color_manual(values = palette_sim) + 
+      labs(x = "UMAP 1",
+           y = "UMAP 2", 
+           tag = "A") + 
+      theme_classic(base_size = 24) + 
+      theme(legend.position = "none", 
+            axis.text = element_blank(), 
+            axis.ticks = element_blank(), 
+            plot.tag = element_text(face = "bold"))
+legend_pseudotime <- ggpubr::get_legend(p = (data.frame(PC1 = brain_sim_seu@reductions$PCA@cell.embeddings[, 1], 
+                                                        PC2 = brain_sim_seu@reductions$PCA@cell.embeddings[, 2], 
+                                                        cell_time = brain_sim_seu$cell_time_normed) %>% 
+                                             ggplot(aes(x = PC1, y = PC2, color = cell_time)) + 
+                                             geom_point() + 
+                                             scale_color_gradientn(colors = paletteer_d("wesanderson::Zissou1"), 
+                                                                   labels = scales::label_number(accuracy = 0.1), 
+                                                                   limits = c(0, 1), 
+                                                                   n.breaks = 5) +
+                                             labs(color = "True Ordering") + 
+                                             theme_classic(base_size = 24) + 
+                                             guides(color = guide_colorbar(barheight = 10))))
+p5 <- data.frame(PC1 = brain_sim_seu@reductions$PCA@cell.embeddings[, 1], 
+                 PC2 = brain_sim_seu@reductions$PCA@cell.embeddings[, 2], 
+                 cell_time = brain_sim_seu$cell_time_normed, 
+                 subject = brain_sim_seu$subject) %>% 
+      ggplot(aes(x = PC1, y = PC2, color = cell_time)) + 
+      facet_wrap(~subject) + 
+      geom_point(alpha = 0.75) + 
+      scale_color_gradientn(colors = paletteer_d("wesanderson::Zissou1")) + 
+      labs(x = "PC 1", 
+           y = "PC 2", 
+           tag = "B") + 
+      theme_classic(base_size = 24) + 
+      theme(legend.position = "none", 
+            axis.ticks = element_blank(), 
+            axis.text = element_blank(), 
+            plot.tag = element_text(face = "bold"))
+
+var_decomp <- scran::modelGeneVar(brain_sim_DEG_10_CELLS_500_unbalanced)
+hvgs <- scran::getTopHVGs(var_decomp, n = 2000)
+hvgs <- hvgs[which(hvgs %in% names(scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced$testDynamic_results_raw[[1]]))]
+
+p6 <- purrr::map(hvgs[c(1, 4, 6)], 
+                 function(g) {
+                   data.frame(PT = brain_sim_DEG_10_CELLS_500_unbalanced$cell_time_normed, 
+                              EXP = counts(brain_sim_DEG_10_CELLS_500_unbalanced)[g, ], 
+                              EXP_FIT_LINK = scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced$testDynamic_results_raw[[1]][[g]]$Lineage_A$MARGE_Preds$marge_link_fit, 
+                              EXP_SE_LINK = scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced$testDynamic_results_raw[[1]][[g]]$Lineage_A$MARGE_Preds$marge_link_se, 
+                              GENE = g) %>% 
+                     mutate(EXP_FIT = exp(EXP_FIT_LINK), 
+                            EXP_SE = exp(EXP_SE_LINK), 
+                            EXP_CI_LO = exp(EXP_FIT_LINK - qnorm(0.975) * EXP_SE_LINK), 
+                            EXP_CI_HI = exp(EXP_FIT_LINK + qnorm(0.975) * EXP_SE_LINK), 
+                            .before = 5)
+                 }) %>% 
+      purrr::reduce(rbind) %>% 
+      ggplot(aes(x = PT, y = EXP, color = GENE)) + 
+      facet_wrap(~GENE, nrow = 3, scales = "free_y") + 
+      geom_point(alpha = 0.75, show.legend = FALSE) + 
+      geom_ribbon(aes(ymin = EXP_CI_LO, ymax = EXP_CI_HI, color = NULL),
+                  size = 0, 
+                  fill = "black", 
+                  alpha = 0.4, 
+                  show.legend = FALSE) + 
+      geom_line(aes(x = PT, y = EXP_FIT), 
+                color = "black", 
+                size = 1) + 
+      labs(x = "True Ordering", 
+           y = "Expression", 
+           tag = "C") + 
+      scale_x_continuous(labels = scales::label_number(accuracy = 0.1)) + 
+      scale_y_continuous(labels = scales::label_number(accuracy = 1)) + 
+      scale_color_paletteer_d("MetBrewer::Egypt") + 
+      theme_classic(base_size = 24) + 
+      theme(plot.tag = element_text(face = "bold"))
+p7 <- (p3 | wrap_elements(legend_clust) | wrap_elements(legend_subj)) + plot_layout(widths = c(3, 0.5, 0.5))
+p8 <- (p5 | wrap_elements(legend_pseudotime)) + plot_layout(widths = c(3, 1))
+p9 <- ((((p7 / p8) + plot_layout(heights = c(1, 2))) | p6) + 
+      plot_layout(widths = c(3, 1))) + 
+      plot_annotation(title = "Figure 1", 
+                      theme = theme(plot.title = element_text(size = 40, face = "bold")))
+p9
+```
+
+# Classification Metrics 
+
+**Figure 2** shows the distributions of two AUC metrics (ROC & precision-recall) in **2A-B**, balanced accuracy in **2C**, and F-measure in **2D** split by modeling method. These metrics each attempt (in different ways) to account for 1) the need of decision threshold for whether a gene is classified as dynamic and 2) the high no information rate (NIR) inherent to the data i.e., that somewhere between 80-90% accuracy could be achieved simply by classifying all genes as non-dynamic. 
+
+```{r, fig.height=10, fig.width=20}
+p0 <- metric_table %>% 
+      ggplot(aes(x = MODEL_TYPE, y = ROC_AUC, fill = MODEL_TYPE)) + 
+      facet_wrap(~DATASET_TYPE, scales = "free_x") + 
+      geom_violin(show.legend = FALSE, 
+                  draw_quantiles = 0.5, 
+                  size = 1, 
+                  scale = "width") + 
+      scale_fill_manual(values = palette_model) + 
+      scale_y_continuous(labels = scales::label_percent(accuracy = 1)) + 
+      labs(y = "ROC-AUC", 
+           tag = "B") + 
+      theme_classic(base_size = 24) + 
+      theme(axis.text.x = element_text(angle = 45, 
+                                       vjust = 1, 
+                                       hjust = 1, 
+                                       color = "black"), 
+            axis.text.y = element_text(color = "black"), 
+            axis.title.x = element_blank(), 
+            plot.tag = element_text(face = "bold"))
+p1 <- metric_table %>% 
+      ggplot(aes(x = MODEL_TYPE, y = AUC_PR, fill = MODEL_TYPE)) + 
+      facet_wrap(~DATASET_TYPE, scales = "free_x") + 
+      geom_violin(show.legend = FALSE, 
+                  draw_quantiles = 0.5, 
+                  size = 1, 
+                  scale = "width") + 
+      scale_fill_manual(values = palette_model) + 
+      scale_y_continuous(labels = scales::label_percent(accuracy = 1)) + 
+      labs(y = "PR-AUC", 
+           tag = "A") + 
+      theme_classic(base_size = 24) + 
+      theme(axis.text.y = element_text(color = "black"), 
+            plot.tag = element_text(face = "bold"), 
+            axis.text.x = element_blank(), 
+            axis.title.x = element_blank(), 
+            axis.line.x = element_blank(), 
+            axis.ticks.x = element_blank())
+p2 <- metric_table %>% 
+      ggplot(aes(x = MODEL_TYPE, y = F_MEASURE, fill = MODEL_TYPE)) + 
+      facet_wrap(~DATASET_TYPE, scales = "free_x") + 
+      geom_violin(show.legend = FALSE, 
+                  draw_quantiles = 0.5, 
+                  size = 1, 
+                  scale = "width") + 
+      scale_fill_manual(values = palette_model) + 
+      scale_y_continuous(labels = scales::label_percent(accuracy = 1)) + 
+      labs(y = "F-measure", 
+           tag = "D") + 
+      theme_classic(base_size = 24) + 
+      theme(axis.text.x = element_text(angle = 45, 
+                                       vjust = 1, 
+                                       hjust = 1, 
+                                       color = "black"), 
+            axis.text.y = element_text(color = "black"), 
+            plot.tag = element_text(face = "bold"), 
+            axis.title.x = element_blank())
+p3 <- metric_table %>% 
+      ggplot(aes(x = MODEL_TYPE, y = BAL_ACCURACY, fill = MODEL_TYPE)) + 
+      facet_wrap(~DATASET_TYPE, scales = "free_x") + 
+      geom_violin(show.legend = FALSE, 
+                  draw_quantiles = 0.5, 
+                  size = 1, 
+                  scale = "width") + 
+      scale_fill_manual(values = palette_model) + 
+      scale_y_continuous(labels = scales::label_percent(accuracy = 1)) + 
+      labs(y = "Balanced Accuracy", 
+           tag = "C") + 
+      theme_classic(base_size = 24) + 
+      theme(axis.text.y = element_text(color = "black"), 
+            plot.tag = element_text(face = "bold"), 
+            axis.text.x = element_blank(), 
+            axis.title.x = element_blank(), 
+            axis.line.x = element_blank(), 
+            axis.ticks.x = element_blank())
+p4 <- ((p1 / p0) | (p3 / p2)) + plot_layout(nrow = 1, ncol = 2) + 
+      plot_annotation(title = "Figure 2", 
+                      theme = theme(plot.title = element_text(size = 40, face = "bold")))
+p4
+```
+
+# Detailed Model Output 
+
+In **Figure 3** we show more granular model output from `scLANE`. **3A** displays the fitted model for a dynamic gene in our simulated dataset. **3B** shows the estimated optimal hinge functions & accompanying test statistics for this gene of interest, while **3C** shows the simplified piecewise generalized linear model obtain by simplifying those hinge functions within each pseudotime interval. 
+
+```{r, fig.width=12, fig.height=8}
+p10 <- data.frame(PT = brain_sim_DEG_10_CELLS_500_unbalanced$cell_time_normed, 
+                  EXP = counts(brain_sim_DEG_10_CELLS_500_unbalanced)[hvgs[17], ], 
+                  EXP_FIT_LINK = scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced$testDynamic_results_raw[[1]][[hvgs[17]]]$Lineage_A$MARGE_Preds$marge_link_fit, 
+                  EXP_SE_LINK = scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced$testDynamic_results_raw[[1]][[hvgs[17]]]$Lineage_A$MARGE_Preds$marge_link_se, 
+                  GENE = hvgs[17]) %>% 
+       mutate(EXP_FIT = exp(EXP_FIT_LINK), 
+              EXP_SE = exp(EXP_SE_LINK), 
+              EXP_CI_LO = exp(EXP_FIT_LINK - qnorm(0.975) * EXP_SE_LINK), 
+              EXP_CI_HI = exp(EXP_FIT_LINK + qnorm(0.975) * EXP_SE_LINK), 
+              .before = 5) %>% 
+       ggplot(aes(x = PT, y = EXP)) + 
+       facet_wrap(~hvgs[17]) + 
+       geom_vline(aes(xintercept = 0.08, color = "scLANE knots"), 
+                  linetype = "dashed", 
+                  size = 1, 
+                  show.legend = TRUE, 
+                  key_glyph = "vline") + 
+       geom_vline(aes(xintercept = 0.52, color = "scLANE knots"), 
+                  linetype = "dashed", 
+                  size = 1, 
+                  show.legend = TRUE, 
+                  key_glyph = "vline") + 
+       geom_point(alpha = 0.75, 
+                  color = "purple2", 
+                  show.legend = FALSE) + 
+       geom_ribbon(aes(ymin = EXP_CI_LO, ymax = EXP_CI_HI, color = NULL),
+                   size = 0, 
+                   fill = "black", 
+                   alpha = 0.4, 
+                   show.legend = FALSE) + 
+       geom_line(aes(x = PT, y = EXP_FIT), 
+                 color = "black", 
+                 size = 1) + 
+       labs(x = "True Ordering", 
+            y = "Expression", 
+            tag = "A") + 
+       scale_x_continuous(labels = scales::label_number(accuracy = 0.1)) + 
+       scale_y_continuous(labels = scales::label_number(accuracy = 1)) + 
+       scale_color_manual(values = c("grey50")) + 
+       theme_classic(base_size = 24) + 
+       theme(plot.tag = element_text(face = "bold"), 
+             legend.title = element_blank()) + 
+       guides(color = guide_legend(override.aes = list(linewidth = 3, linetype = "solid")))
+legend_knots <- ggpubr::get_legend(p10)
+p10 <- p10 + theme(legend.position = "none")
+coef_df <- scLANE_GLM_brain_DEG_10_CELLS_500_unbalanced$testDynamic_results_raw[[1]][[hvgs[17]]]$Lineage_A$MARGE_Summary %>% 
+           mutate(estimate_ci_lo = estimate - qnorm(0.975) * std.error, 
+                  estimate_ci_hi = estimate + qnorm(0.975) * std.error, 
+                  estimate_ci = paste0("(", round(estimate_ci_lo, 2), ", ", round(estimate_ci_hi, 2), ")")) %>% 
+           select(term, 
+                  estimate, 
+                  std.error, 
+                  statistic, 
+                  p.value) %>% 
+           mutate(term = if_else(term == "B_finalIntercept", "Intercept", gsub("B_final", "h", term)), 
+                  term = gsub("-Lineage_A", " - x", term), 
+                  term = gsub("Lineage_A-", "x - ", term), 
+                  p.value = case_when(p.value < 0.001 ~ "<0.001", 
+                                      p.value < 0.01 ~ "<0.01", 
+                                      p.value < 0.05 ~ "<0.05", 
+                                      TRUE ~ "≥ 0.05"), 
+                  across(where(is.numeric), round, digits = 3))
+coef_table <- gridExtra::tableGrob(coef_df, 
+                                   rows = NULL, 
+                                   cols = c("Hinge Function", "Coefficient", "Std. Error", "T-statistic", "P-value"), 
+                                   theme = gridExtra::ttheme_minimal(base_size = 16, 
+                                                                     core = list(fg_params = list(hjust = 0, x = 0.05)), 
+                                                                     colhead = list(fg_params = list(hjust = 0, x = 0.05)))) %>% 
+              gtable::gtable_add_grob(grobs = grid::rectGrob(gp = grid::gpar(fill = NA, lwd = 2)), 
+                                      t = 2, 
+                                      b = nrow(.), 
+                                      l = 1, 
+                                      r = ncol(.)) %>% 
+              gtable::gtable_add_grob(grobs = grid::rectGrob(gp = grid::gpar(fill = NA, lwd = 2)), 
+                                      t = 1, 
+                                      l = 1, 
+                                      r = ncol(.))
+eqn_df <- data.frame(interval = c("[0, 0.08)", "[0.08, 0.52)", "[0.52, 1]"), 
+                     equation = c("-1.27 + 6.67x", "-1.06 + 4.09x", "2.41 - 2.58x"))
+eqn_table <- gridExtra::tableGrob(eqn_df, 
+                                  rows = NULL, 
+                                  cols = c("Pseudotime Interval", "Model (Link Scale)"), 
+                                  theme = gridExtra::ttheme_minimal(base_size = 16, 
+                                                                    core = list(fg_params = list(hjust = 0, x = 0.05)), 
+                                                                    colhead = list(fg_params = list(hjust = 0, x = 0.05)))) %>% 
+             gtable::gtable_add_grob(grobs = grid::rectGrob(gp = grid::gpar(fill = NA, lwd = 2)), 
+                                     t = 2, 
+                                     b = nrow(.), 
+                                     l = 1, 
+                                     r = ncol(.)) %>% 
+             gtable::gtable_add_grob(grobs = grid::rectGrob(gp = grid::gpar(fill = NA, lwd = 2)), 
+                                     t = 1, 
+                                     l = 1, 
+                                     r = ncol(.))
+model_table <- ((wrap_elements(coef_table) + labs(tag = "B") + theme(plot.tag = element_text(face = "bold", size = 28))) | plot_spacer() | (wrap_elements(eqn_table) + labs(tag = "C") + theme(plot.tag = element_text(face = "bold", size = 28)))) + plot_layout(widths = c(1.1, 0.2, 1))
+p11 <- (((p10 | wrap_elements(legend_knots)) + plot_layout(widths = c(4, 1))) / model_table) + plot_layout(heights = c(2, 1)) + 
+       plot_annotation(title = "Figure 3", 
+                       theme = theme(plot.title = element_text(face = "bold", size = 40)))
+p11
+```
+
+# Model-Specific Figures 
+
+## `scLANE` - GLM Backend 
+
+### Single Subject
+
+```{r}
+F4a <- select(scLANE_GLM_metrics_single, 
+              DATASET_NAME, 
+              RUNTIME_HOURS, 
+              MEM_USED) %>% 
+       tidyr::pivot_longer(cols = !DATASET_NAME, 
+                           names_to = "metric", 
+                           values_to = "value") %>% 
+       mutate(metric = if_else(metric == "RUNTIME_HOURS", "Runtime (hours)", "Memory Usage (MB)")) %>% 
+       ggplot(aes(x = value, fill = metric, color = metric)) + 
+       facet_wrap(~metric, nrow = 1, scales = "free") + 
+       geom_histogram(size = 0.5, alpha = 0.5, show.legend = FALSE) + 
+       scale_x_continuous(labels = scales::label_comma()) + 
+       labs(y = "Frequency") + 
+       theme_classic(base_size = 14) + 
+       theme(axis.title.x = element_blank())
+F4a
+```
+
+### Multiple Subjects
+
+```{r}
+F5a <- select(scLANE_GLM_metrics_multi, 
+              DATASET_NAME, 
+              RUNTIME_HOURS, 
+              MEM_USED) %>% 
+       tidyr::pivot_longer(cols = !DATASET_NAME, 
+                           names_to = "metric", 
+                           values_to = "value") %>% 
+       mutate(metric = if_else(metric == "RUNTIME_HOURS", "Runtime (hours)", "Memory Usage (MB)")) %>% 
+       ggplot(aes(x = value, fill = metric, color = metric)) + 
+       facet_wrap(~metric, nrow = 1, scales = "free") + 
+       geom_histogram(size = 0.5, alpha = 0.5, show.legend = FALSE) + 
+       scale_x_continuous(labels = scales::label_comma()) + 
+       labs(y = "Frequency") + 
+       theme_classic(base_size = 14) + 
+       theme(axis.title.x = element_blank())
+F5a
+```
+
+## `scLANE` - GEE Backend 
+
+### Multiple Subjects
+
+```{r}
+F6a <- select(scLANE_GEE_metrics_multi, 
+              DATASET_NAME, 
+              RUNTIME_HOURS, 
+              MEM_USED) %>% 
+       tidyr::pivot_longer(cols = !DATASET_NAME, 
+                           names_to = "metric", 
+                           values_to = "value") %>% 
+       mutate(metric = if_else(metric == "RUNTIME_HOURS", "Runtime (hours)", "Memory Usage (MB)")) %>% 
+       ggplot(aes(x = value, fill = metric, color = metric)) + 
+       facet_wrap(~metric, nrow = 1, scales = "free") + 
+       geom_histogram(size = 0.5, alpha = 0.5, show.legend = FALSE) + 
+       scale_x_continuous(labels = scales::label_comma()) + 
+       labs(y = "Frequency") + 
+       theme_classic(base_size = 14) + 
+       theme(axis.title.x = element_blank())
+F6a
+```
+
+## `tradeSeq`
+
+### Single Subject
+
+### Multiple Subjects 
+
+## `monocle3`
+
+### Single Subject
+
+### Multiple Subjects 
+
+## `Lamian`
+
+### Multiple Subject 
+
